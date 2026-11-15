@@ -125,7 +125,10 @@ class ConfigTest(unittest.TestCase):
             "HARNESS_LLM_MODE": "policy",
             "HARNESS_MAX_WALL_SECONDS": "600",
         }
-        with mock.patch.dict(os.environ, env, clear=False), \
+        # ``clear=True`` is deliberate: the test must not be influenced by
+        # whatever the shell happens to export (a developer's RUL_DATA_ROOT
+        # pointing at a data pack that is not there, for instance).
+        with mock.patch.dict(os.environ, env, clear=True), \
                 mock.patch("harness.orchestrator.Harness", FakeHarness):
             # The loop is stubbed out; only the configuration path is under test.
             try:
@@ -142,7 +145,7 @@ class ConfigTest(unittest.TestCase):
         """A typo in the container's environment must not be silently ignored."""
         from harness.orchestrator import main
 
-        with mock.patch.dict(os.environ, {"HARNESS_MAX_EXPERIMENTS": "many"}, clear=False):
+        with mock.patch.dict(os.environ, {"HARNESS_MAX_EXPERIMENTS": "many"}, clear=True):
             with self.assertRaises(SystemExit):
                 main([])
 

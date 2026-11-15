@@ -1,7 +1,7 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 369039,
+  "total_bytes": 368712,
   "file_count": 73,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "files": {
@@ -146,8 +146,8 @@
       "sha256": "dc93796c3517b0171575c9ab150ef006e79151f84b2146411226b546b68f99c7"
     },
     "tools/build_github_repo.py": {
-      "bytes": 12213,
-      "sha256": "7cc9db7a12507f0f06424af8abdfa01815a3aec1e208040d99f51c5fd263d61b"
+      "bytes": 11910,
+      "sha256": "62d84f25c4183bfb9c73270417151678b27a598f6e10b4237700cf13f201160a"
     },
     "tools/demo_safety.py": {
       "bytes": 3120,
@@ -170,8 +170,8 @@
       "sha256": "05ad952256676afb1d08cb41870b14759c69b2460ff69980177be384858f89f8"
     },
     "tools/verify_repo.py": {
-      "bytes": 3348,
-      "sha256": "b911cd97a2c684cfed10db11d8a3430d1d59170eb6707110e882513d2cc5fa28"
+      "bytes": 3255,
+      "sha256": "e4e3bd255aaa54708a120c4fc8a0800ff1cbd505a887b889f9b0cdb0adf8ab5f"
     },
     "research/diag.py": {
       "bytes": 3713,
@@ -214,16 +214,16 @@
       "sha256": "719be3163d66230a139e1fd2a26a8a93e3fb0b2598c42f8c346a96c096677781"
     },
     "tests/test_config.py": {
-      "bytes": 6486,
-      "sha256": "6bedd01e921770e3fae58dc222706f7feef4d7a98ddf513e0ec9922ff85b6c23"
+      "bytes": 6703,
+      "sha256": "ccedbced63fd7d5267b5824eeb742ad45f90eae0e299ca9a4af43ce43e866384"
     },
     "tests/test_features.py": {
       "bytes": 3038,
       "sha256": "c4e3731cae64d7b1bebc9546bec629cde9d52fcded4a77fa90aa53b44411b7d5"
     },
     "tests/test_fusion.py": {
-      "bytes": 6774,
-      "sha256": "833240cc7008bd393f98555085e2b0f3a252ec90bd6502b90e6c0909e8825d72"
+      "bytes": 6626,
+      "sha256": "e008566033a0f8a7b84d5c10553c3d2623e0364afd6fdf14fdc4a45596e6d3fd"
     },
     "tests/test_gate.py": {
       "bytes": 2770,
