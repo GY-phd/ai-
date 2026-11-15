@@ -1,0 +1,3 @@
+# Optional but recommended for complete experiment records in SwanLab.
+# Python >= 3.9. 0.10.5 is the version verified with the offline adapter.
+swanlab==0.10.5

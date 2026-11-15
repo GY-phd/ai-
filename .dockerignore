@@ -1,0 +1,9 @@
+.git
+.gitignore
+runs/
+demo-stream/
+harness-work/
+__pycache__/
+*.py[cod]
+*.zip
+*.pdf
