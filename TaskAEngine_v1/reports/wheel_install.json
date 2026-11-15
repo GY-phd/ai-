@@ -1,0 +1,11 @@
+{
+  "wheel": "task_a_engine-1.0.0-py3-none-any.whl",
+  "sha256": "sha256:54f829720ec93d648efbeab732be7a65e1ce642d0fd93edb4020ab40d8b87d75",
+  "offline_target_install": true,
+  "installed_asset_validation": true,
+  "five_variants_predicted": true,
+  "three_stage_mock_passed": true,
+  "utf8_json_adapter_passed": true,
+  "setuptools_build_version": "80.9.0",
+  "wheel_build_version": "0.45.1"
+}

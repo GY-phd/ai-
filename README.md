@@ -11,6 +11,7 @@
 | --- | --- | --- |
 | `AI2/` | `GY-ai+-2` | **赛道 B（轴承 RUL）完整交付包**：Harness 闭环 + 工业模型 + 证据链 + Docker 镜像 |
 | `A_research_round09/` | `feature/task-a-engine` | **赛道 A（气体传感器漂移识别）** 引擎与 Round 09 复现配方 |
+| `A_research_round09/README.md` | `feature/task-a-engine` | 赛道 A 详细说明（供团队成员阅读） |
 | `cpu-c-guide-20261110-v1/` | `feat/minimal-harness` | **赛道 C（涡扇发动机 RUL）** 官方 CPU 参考基线包 |
 | `harness/` | `feat/minimal-harness` | 最小可用闭环：漂移检测、诊断、实验、门控、上线/回滚 |
 | `tools/` | `feat/minimal-harness` | 离线演示、漂移基准、镜像构建脚本 |
@@ -19,8 +20,8 @@
 各赛道的详细说明请见：
 
 - 赛道 B → [`AI2/README.md`](AI2/README.md)，运行手册 → [`AI2/docs/RUNBOOK.md`](AI2/docs/RUNBOOK.md)
-- 赛道 A → [`A_research_round09/REPORT.md`](A_research_round09/REPORT.md)、[`A_research_round09/API.md`](A_research_round09/API.md)
-- 赛道 C → [`赛题9规则：“智训引擎”—工业制造场景下的模型训练与超参数优化(2).pdf`](赛题9规则：“智训引擎”—工业制造场景下的模型训练与超参数优化(2).pdf)
+- 赛道 A → [`A_research_round09/README.md`](A_research_round09/README.md)、[`A_research_round09/REPORT.md`](A_research_round09/REPORT.md)、[`A_research_round09/API.md`](A_research_round09/API.md)
+- 赛道 C → 官方基线包内的 `START.md` / `TASK.md` / `TRAINING_GUIDE.md`
 
 ## 赛道 B 成绩速览
 
@@ -40,3 +41,7 @@
 | `GY-ai+-2` | 赛道 B 交付包 |
 | `feature/task-a-engine` | 赛道 A 引擎 |
 | `feat/minimal-harness` | 赛道 C 基线包与最小闭环 |
+
+## 许可
+
+见 [`LICENSE`](LICENSE)。

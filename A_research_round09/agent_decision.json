@@ -1,0 +1,18 @@
+{
+  "task": "A",
+  "research_round": 9,
+  "decision": "no_update",
+  "default_model": "stable",
+  "recipe": "C_replay_anchor",
+  "recipe_status": "optional_candidate_only",
+  "fixed_configuration": "round08_hybrid_lambda1_parent_output_anchor",
+  "independent_generalization_verified": false,
+  "batch2_used_this_round": false,
+  "evidence": ["Batch1_same_month_group_holdout", "fixed_synthetic_composite_stress", "reused_reverse_month_diagnostic"],
+  "limitations": ["only_two_same_month_acetaldehyde_groups", "label_budget_gain_not_monotonic", "missing_class_effect_inconsistent", "order_sensitive", "can_underperform_stable"],
+  "training_requires": ["legally_released_training_labels", "structured_parent", "parent_bound_six_class_replay", "no_train_eval_overlap", "no_repeated_calibration_in_lineage"],
+  "activation_requires": ["real_mode", "fresh_legally_released_independent_evaluation", "all_six_classes_evaluated", "paired_gain_and_existing_local_guardrails", "current_revision_and_checkpoint_identity", "Harness_review_of_sampling_and_uncertainty"],
+  "reliable_minimum_training_label_count": null,
+  "llm_calls": 0,
+  "llm_tokens": 0
+}

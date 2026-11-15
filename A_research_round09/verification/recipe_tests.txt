@@ -1,0 +1,13 @@
+test_failed_fit_keeps_active_and_records_exposure (test_recipe.RecipeTest.test_failed_fit_keeps_active_and_records_exposure) ... ok
+test_recipe_matches_previous_balanced_twelve_label_formula (test_recipe.RecipeTest.test_recipe_matches_previous_balanced_twelve_label_formula) ... ok
+test_replay_and_lineage_consistency (test_recipe.RecipeTest.test_replay_and_lineage_consistency) ... ok
+test_tampered_checkpoint_is_rejected (test_recipe.RecipeTest.test_tampered_checkpoint_is_rejected) ... ok
+test_three_stage_lifecycle_and_mock_cannot_activate (test_recipe.RecipeTest.test_three_stage_lifecycle_and_mock_cannot_activate) ... ok
+test_training_and_evaluation_overlap_by_features_is_rejected (test_recipe.RecipeTest.test_training_and_evaluation_overlap_by_features_is_rejected) ... ok
+test_unreleased_labels_and_development_identity_rejected (test_recipe.RecipeTest.test_unreleased_labels_and_development_identity_rejected) ... ok
+test_zero_and_missing_labels_are_finite_and_scaler_frozen (test_recipe.RecipeTest.test_zero_and_missing_labels_are_finite_and_scaler_frozen) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 3.022s
+
+OK

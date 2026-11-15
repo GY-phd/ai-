@@ -1,0 +1,30 @@
+{
+  "python": "3.13.9",
+  "numpy": "2.2.6",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "suites": [
+    {
+      "suite": "engine",
+      "command": "python -B -m unittest discover -s tests -v",
+      "returncode": 0,
+      "tests": 16,
+      "wall_seconds": 7.416271200054325
+    },
+    {
+      "suite": "original_research",
+      "command": "python -B -m unittest discover -s A_acetaldehyde/tests -v",
+      "returncode": 0,
+      "tests": 11,
+      "wall_seconds": 4.404078599996865
+    },
+    {
+      "suite": "original_baseline",
+      "command": "unittest discover baselines/tests (workspace temporary directory)",
+      "returncode": 0,
+      "tests": 9,
+      "wall_seconds": 1.1295336000039242
+    }
+  ],
+  "passed": true,
+  "note": "Original baseline temporary-file permissions required using a writable workspace temp directory; no original test or model code was changed."
+}

@@ -1,0 +1,38 @@
+{
+  "scientific_records_exactly_reproduced": true,
+  "checkpoints_verified": 24,
+  "checkpoint_digests_exactly_reproduced": 24,
+  "original_sources_hash_verified": true,
+  "stable_checkpoint_sha256": "2c2050b0b0d738b633e9edd1e0bd869a1a89d1254f8e02013125068ad6638ed5",
+  "v1_zip_sha256": "8ff9effc8db11578c8b764a835c62177725e4f1750e462b51563200fd4809e8c",
+  "unchanged_v1_files_checked": 46,
+  "test_suites": [
+    {
+      "suite": "recipe",
+      "exit_code": 0,
+      "summary": [
+        "Ran 8 tests in 3.022s"
+      ]
+    },
+    {
+      "suite": "engine_v1",
+      "exit_code": 0,
+      "summary": [
+        "Ran 16 tests in 6.189s"
+      ]
+    }
+  ],
+  "portable_three_stage_mock_passed": true,
+  "default_active_model": "stable",
+  "independent_real_activation_tested": false,
+  "current_source_sha256": {
+    "benchmark.py": "dcb4e083503ea9949cb9160e39a0d25a1b1f54b023c75b50d134b374c689bb0f",
+    "engine_recipe.py": "1a91fcd3990533defdee89af6277c55caaa8e1a9268d61af545d859aa3632f3e",
+    "mock_demo.py": "255d631dbd1fd14e8829962feeadd4ca119da6a395b7bfb33ec34f66e45e4957",
+    "recipe.py": "d9e4387637a21a495e5931609ea3cb31417ead22b5d0a20bd3fc730fbaa5279d",
+    "structured_model.py": "3b14413887f65ae09400ab2460889372daf8a01d7b1812a4f521b12d9eb18c16",
+    "study.py": "bcf8c0eb1e9490fc11a3a1d36c6551caacad61c5cb29ca2087d52bfc620b8763",
+    "test_recipe.py": "9fde96096e9e95571b509c1c0bd800cdf7cbc53eb968c44b88940e1b0f0566b7",
+    "verify.py": "f3200b4f34e15280eed2d0109813952428d0ed59455d3ac4947aa8fbde16e85f"
+  }
+}
