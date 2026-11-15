@@ -44,7 +44,7 @@ DEFAULTS: dict[str, Any] = {
         "min_improvement": 0.01,
         "guard_max_degradation": 0.01,
         "static_tolerance": 0.0,
-        "rollback_margin": 0.05,
+        "rollback_margin": 0.01,
     },
     "guard": {
         "rows": 2000,

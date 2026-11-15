@@ -149,7 +149,7 @@ class RollbackTests(unittest.TestCase):
         self.assertFalse(decision.checks["previous_batch_not_worse_than_static"])
 
     def test_no_rollback_below_margin(self):
-        decision = self.decide((102, 102))
+        decision = self.decide((100.5, 100.5))
         self.assertFalse(decision.should_rollback)
 
     def test_static_champion_cannot_roll_back(self):

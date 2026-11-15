@@ -447,8 +447,11 @@ class HarnessEngine:
                                 hypotheses=context["hypotheses"], planned=context["planned"])
 
             if self.dry_run:
+                dry_selected = champion_summary(self.state["champion"])
+                dry_selected["metrics"] = {
+                    "batch": champion_metrics["batch"], "guard": champion_metrics["guard"]}
                 record = self._build_decision_record(
-                    context, decision="hold", selected=champion_summary(self.state["champion"]),
+                    context, decision="hold", selected=dry_selected,
                     reason="dry-run：已完成漂移分析、诊断与实验规划，但未执行训练，champion 保持不变。",
                     dry_run=True,
                 )
@@ -490,6 +493,8 @@ class HarnessEngine:
                     }
                     add_event(self.state, "hold", batch_id=batch_id, reason=reason)
                     selected = champion_summary(self.state["champion"])
+                    selected["metrics"] = {
+                        "batch": champion_metrics["batch"], "guard": champion_metrics["guard"]}
 
             record = self._build_decision_record(context, decision=decision, selected=selected,
                                                  reason=reason, dry_run=False,
@@ -536,6 +541,7 @@ class HarnessEngine:
             if self.verbose:
                 traceback.print_exc()
             selected = champion_summary(self.state["champion"])
+            selected["metrics"] = context.get("champion_metrics")
             record = self._build_decision_record(
                 context, decision="hold", selected=selected,
                 reason=f"批次处理失败，保持当前 champion：{error}",

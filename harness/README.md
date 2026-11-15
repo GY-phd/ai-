@@ -84,6 +84,12 @@ python tools/run_offline_demo.py --require-swanlab
 
 报告写入 `runs/offline-demo/offline-report.md`，SwanLab 本地记录写入 `runs/offline-demo/logs/swanlab/`。若未安装 SwanLab，可去掉 `--require-swanlab`，核心闭环仍会运行，只是记录被禁用。
 
+离线漂移基准：
+
+```sh
+python tools/run_drift_benchmark.py
+```
+
 分步运行：
 
 ```sh
@@ -144,7 +150,7 @@ python -m harness.cli doctor --workdir runs/demo   # 离线/CPU/依赖自检
 
 ### 回滚
 
-当本批没有候选通过门控，且当前 champion 相对静态基线在批次或 guard 上的劣化超过 `rollback_margin`（默认 5%）：
+当本批没有候选通过门控，且当前 champion 相对静态基线在批次或 guard 上的劣化超过 `rollback_margin`（默认 1%）：
 
 - 若上一 champion 在本批上至少好于当前 champion `min_improvement`，且批次与 guard 都不差于静态基线 → 回滚到上一 champion；
 - 否则 → 回滚到官方静态基线（保证回滚后仍满足静态地板）。
@@ -218,7 +224,7 @@ SwanLab 不是运行硬依赖：`offline` 模式下包缺失会告警并禁用�
 python -m unittest discover -s harness/tests -v
 ```
 
-58 项测试覆盖：配置校验、漂移判定、实验规划、门控与回滚、训练集合并/剔除、状态持久化、SwanLab 适配与遥测负载、环境自检，以及端到端场景（正常流、dry-run、`--force` 索引、fake SwanLab 离线记录）。端到端测试会真实调用官方 `baselines.train`，在普通 CPU 上约需 1 分钟。
+62 项测试覆盖：配置校验、漂移判定、实验规划、门控与回滚、训练集合并/剔除、状态持久化、SwanLab 适配与遥测负载、环境自检、基准聚合，以及端到端场景（正常流、dry-run、`--force` 索引、fake SwanLab 离线记录）。端到端测试会真实调用官方 `baselines.train`，在普通 CPU 上约需 1 分钟。
 
 官方基线测试：
 
@@ -227,7 +233,40 @@ cd cpu-c-guide-20261110-v1
 python -m unittest discover -s baselines/tests -v
 ```
 
-## 10. 当前边界与扩展点
+## 10. 离线漂移基准
+
+`tools/run_drift_benchmark.py` 用公开 C 数据构造 10 个 engine-disjoint 批次：稳定批次、FD001→FD002→FD003→FD004 真实域迁移、传感器标定漂移、RUL 偏移压力批次。训练行来自 public train 发动机，验证行来自 public validation 发动机，unit 在各自 split 内不复用。
+
+```sh
+python tools/run_drift_benchmark.py
+# 报告：runs/drift-benchmark*/benchmark-report.md
+# 原始：runs/drift-benchmark*/benchmark.json
+```
+
+默认严格策略（`static_tolerance=0`、`rollback_margin=1%`、CPU 单线程、无 GPU、无网络）实测：
+
+| 批次 | 漂移类型 | 决策 | 静态 RMSE | Harness RMSE | 增益 |
+| --- | --- | --- | ---: | ---: | ---: |
+| b01 | FD001 stable | hold | 54.748 | 54.748 | 0.00% |
+| b02 | FD001 stable-new-engines | hold | 45.551 | 45.551 | 0.00% |
+| b03 | FD001 sensor-calibration | promote | 96.220 | 42.764 | +55.56% |
+| b04 | FD002 domain-shift | rollback | 44.253 | 44.253 | 0.00% |
+| b05 | FD002 sensor-calibration | promote | 73.386 | 57.624 | +21.48% |
+| b06 | FD003 domain-shift | promote | 37.045 | 33.552 | +9.43% |
+| b07 | FD004 domain-shift | rollback | 77.951 | 77.801 | +0.19% |
+| b08 | FD001 concept-shift | rollback | 35.463 | 35.463 | 0.00% |
+| b09 | FD004 stable-new-engines | promote | 124.213 | 122.584 | +1.31% |
+| b10 | FD002 domain-return | hold | 40.835 | 40.639 | +0.48% |
+
+- 平均相对增益 **8.84%**，中位数 0.34%
+- 累计 RMSE 增益 **74.686**，累计回退 **0.000**
+- 改善 / 持平 / 变差批次：**6 / 4 / 0**
+- 决策：promote 4、rollback 3、hold 3；共 **22 次实验**，平均 2.2 次/批
+- 训练耗时 0.78 s，总 wall time 34 s；静态地板违规 **0**
+
+收紧回滚阈值到 1% 后，原先 5% 阈值下的两批轻微回退（-2.60%、-1.33%）被消除，平均增益从 8.38% 提升到 8.84%。这是离线公开数据上的开发证据，不等同于平台隐藏集成绩。
+
+## 11. 当前边界与扩展点
 
 - 本最小构建只支持 **C 赛道回归/RMSE**；A/B 分类需要扩展 `baseline.regression_metrics`、门控指标与漂移目标统计。
 - 批次目录在 CLI 启动时发现；若平台逐批释放数据，可在新批次出现后用同一 workdir 再次运行，已完成批次会被幂等跳过。
@@ -236,7 +275,7 @@ python -m unittest discover -s baselines/tests -v
 - SwanLab 0.10.5 的 **offline** 模式已在本机真实跑通（CPU、无 GPU、无网络）；`cloud/required` 需要联网与有效凭据，当前环境未做在线验证。适配器同时兼容旧版 `experiment_name/logdir` 参数。
 - 镜像打包时应包含 `harness/`、`tools/`、官方基线包与本文件，以及 `harness/requirements-swanlab.txt`；`runs/`、`demo-stream/` 属于运行产物，不应进入镜像。
 
-## 11. 离线镜像
+## 12. 离线镜像
 
 仓库根目录提供 `Dockerfile`（Python 3.12-slim、CPU、SwanLab offline）：
 

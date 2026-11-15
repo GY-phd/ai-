@@ -15,6 +15,7 @@
 | `harness/` | 最小可用闭环 Harness：漂移检测、诊断、实验、门控、上线／回滚 |
 | `tools/make_demo_stream.py` | 生成带合成漂移的演示批次流 |
 | `tools/run_offline_demo.py` | 一键离线闭环：生成流、自主运行、SwanLab offline 记录、证据报告 |
+| `tools/run_drift_benchmark.py` | 离线漂移流基准：逐批/累计 RMSE 增益、回退、门控与资源统计 |
 | `Dockerfile` | 离线 CPU 镜像（Python 3.12-slim + SwanLab offline），构建脚本见 Harness 文档 |
 
 ## 基线包 `cpu-c-guide-20261110-v1/`
@@ -73,6 +74,9 @@ python -m pip install -r harness/requirements-swanlab.txt
 # 一条命令完成离线闭环并生成证据报告
 python tools/run_offline_demo.py --require-swanlab
 
+# 离线漂移基准：10 个 engine-disjoint 批次，对比静态基线
+python tools/run_drift_benchmark.py
+
 # 分步运行
 python tools/make_demo_stream.py --output demo-stream
 python -m harness.cli run \
@@ -85,7 +89,9 @@ python -m harness.cli doctor --workdir runs/demo
 python -m unittest discover -s harness/tests -v
 ```
 
-正式策略使用 `harness/configs/default.json`（严格门控：候选必须在批次和固定 guard 上同时不差于官方静态基线）。默认 SwanLab 为 offline：本地完整记录 batch/漂移/门控/候选指标/逐 epoch 曲线/资源使用/决策文本，不访问网络。设计、决策 JSON、门控公式、SwanLab 记录项与扩展点见 [harness/README.md](harness/README.md)。
+正式策略使用 `harness/configs/default.json`（严格门控：候选必须在批次和固定 guard 上同时不差于官方静态基线）。默认 SwanLab 为 offline：本地完整记录 batch/漂移/门控/候选指标/逐 epoch 曲线/资源使用/决策文本，不访问网络。
+
+离线基准（公开 C 数据、CPU 单线程、无 GPU/网络）当前结果：10 批次、22 次实验，平均 RMSE 改善 **8.84%**，累计回退 **0**，改善/持平/变差批次 **6/4/0**。这是公开数据开发证据，不等同于平台隐藏集成绩。设计、决策 JSON、门控公式、SwanLab 记录项与扩展点见 [harness/README.md](harness/README.md)。
 
 ## 数据与评测边界
 

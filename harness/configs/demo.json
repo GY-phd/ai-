@@ -35,7 +35,7 @@
     "min_improvement": 0.005,
     "guard_max_degradation": 0.08,
     "static_tolerance": 0.1,
-    "rollback_margin": 0.1
+    "rollback_margin": 0.01
   },
   "guard": {
     "rows": 800,
