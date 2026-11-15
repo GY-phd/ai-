@@ -12,6 +12,8 @@
 | `赛题.txt` | 赛道速览：C 赛道为发动机剩余寿命预测 |
 | `赛题逐字稿.txt` | 赛题说明会的逐字记录 |
 | `harness工程.md` | 赛题要点整理 |
+| `harness/` | 最小可用闭环 Harness：漂移检测、诊断、实验、门控、上线／回滚 |
+| `tools/make_demo_stream.py` | 生成带合成漂移的演示批次流 |
 
 ## 基线包 `cpu-c-guide-20261110-v1/`
 
@@ -56,6 +58,30 @@ python -m baselines.train --profile C \
 ```
 
 续训时使用 `--resume round-1/checkpoint.npz`，并输出到新目录。`--from-baseline` 与 `--resume` 都会恢复权重和优化器状态，不会重新初始化。
+
+## 最小可用 Harness
+
+`harness/` 在官方 CPU-C 基线之上实现赛题要求的自主闭环：逐批完成漂移检测 → 诊断 → 受控实验 → 独立评估 → promote / hold / rollback，并在读取下一批前先落盘决策。官方基线包保持只读，候选模型通过其公开训练入口续训。
+
+```sh
+python -m pip install -r harness/requirements.txt
+
+# 1) 生成 4 个批次的合成演示流（含传感器标定漂移与目标偏移，仅用于演示）
+python tools/make_demo_stream.py --output demo-stream
+
+# 2) 自主运行：每个 batch 产出一个决策
+python -m harness.cli run \
+  --stream demo-stream --workdir runs/demo \
+  --config harness/configs/demo.json
+
+# 3) 查看 champion 血缘、尝试次数与批次账本
+python -m harness.cli status --workdir runs/demo
+
+# 4) 测试
+python -m unittest discover -s harness/tests -v
+```
+
+正式策略使用 `harness/configs/default.json`（严格门控：候选必须在批次和固定 guard 上同时不差于官方静态基线）。设计、决策 JSON、门控公式、SwanLab 接入与扩展点见 [harness/README.md](harness/README.md)。
 
 ## 数据与评测边界
 

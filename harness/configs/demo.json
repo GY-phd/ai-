@@ -1,0 +1,45 @@
+{
+  "format": "harness.config.v1",
+  "profile": "C",
+  "task": "regression",
+  "metric": "rmse",
+  "drift": {
+    "performance_warn": 0.05,
+    "performance_critical": 0.15,
+    "static_warn": 0.03,
+    "static_critical": 0.1,
+    "feature_max_z_warn": 2.0,
+    "feature_max_z_critical": 4.0,
+    "feature_fraction_z": 1.5,
+    "feature_fraction_warn": 0.15,
+    "feature_fraction_critical": 0.4,
+    "target_mean_shift_warn": 0.25,
+    "target_mean_shift_critical": 0.75
+  },
+  "experiments": {
+    "min_attempts": 3,
+    "max_candidates": 2,
+    "epochs": 4,
+    "exploration_every": 2,
+    "time_budget_seconds": 300.0,
+    "experiment_timeout_seconds": 120.0,
+    "learning_rate_multipliers": [0.5, 1.0, 2.0],
+    "replay_rows": 2000,
+    "batch_size": null
+  },
+  "gate": {
+    "min_improvement": 0.005,
+    "guard_max_degradation": 0.08,
+    "static_tolerance": 0.1,
+    "rollback_margin": 0.1
+  },
+  "guard": {
+    "rows": 800,
+    "seed": 42
+  },
+  "logging": {
+    "swanlab": "off",
+    "project": "harness-cpu-c-demo",
+    "experiment": "cpu-c-demo"
+  }
+}
