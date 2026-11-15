@@ -202,7 +202,7 @@ python -m harness.cli run ... --swanlab offline
 - **文本证据**：漂移摘要与 findings、诊断假设、每个候选的门控结果、决策理由、最终 champion/批次账本；
 - **最终汇总**：champion 代数、最终指标、尝试/升级/回滚/错误计数。
 
-SwanLab 不是运行硬依赖：`offline` 模式下包缺失会告警并禁用记录，核心闭环继续；只有 `required` 会因此失败。
+SwanLab 不是运行硬依赖：`offline` 模式下包缺失会告警并禁用记录，核心闭环继续；只有 `required` 会因此失败。`cloud/required` 如需公开链接，请在 SwanLab 项目设置中公开；适配器不会自动修改项目可见性。
 
 ## 8. 安全与资源边界
 
