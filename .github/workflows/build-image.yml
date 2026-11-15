@@ -64,6 +64,14 @@ jobs:
               assert config["architecture"] == "amd64"
           PY
 
+      - name: Round-trip docker load
+        run: |
+          docker image rm "${{ inputs.tag }}"
+          docker load -i cpu-c-harness-linux-amd64.tar
+          docker image inspect "${{ inputs.tag }}" \
+            --format 'loaded os={{.Os}} arch={{.Architecture}}'
+          docker run --rm "${{ inputs.tag }}" doctor
+
       - uses: actions/upload-artifact@v4
         with:
           name: cpu-c-harness-linux-amd64-tar
