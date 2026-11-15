@@ -1,0 +1,71 @@
+{
+  "run_name": "harness-b-bearing-rul",
+  "data": {
+    "train": "data/public/train.jsonl",
+    "validation": "data/public/validation.jsonl",
+    "baseline_checkpoint": "data/checkpoint.npz"
+  },
+  "stream": {
+    "path": "data/public/validation.jsonl",
+    "batch_size": 200,
+    "has_labels": true,
+    "label_delay_batches": 0
+  },
+  "llm": {
+    "model_id": "Qwen3.8-27B",
+    "base_url_env": "HARNESS_LLM_BASE_URL",
+    "api_key_env": "HARNESS_LLM_API_KEY",
+    "timeout_s": 30,
+    "max_tokens": 1024,
+    "temperature": 0.0,
+    "mode": "auto"
+  },
+  "bootstrap": {
+    "mode": "baseline_only"
+  },
+  "budget": {
+    "max_experiments": 5,
+    "max_train_seconds": 900,
+    "max_tokens": 20000,
+    "max_wall_seconds": 2400
+  },
+  "detector": {
+    "ks_warn": 0.12,
+    "ks_alarm": 0.22,
+    "share_warn": 0.15,
+    "share_alarm": 0.25,
+    "perf_drop_pct": 5.0
+  },
+  "gate": {
+    "min_gain_pct": 1.0,
+    "max_local_regression_pct_of_global": 20.0
+  },
+  "train": {
+    "hidden": 96,
+    "epochs": 400,
+    "learning_rate": 0.003,
+    "weight_decay": 0.01,
+    "batch_size": 128,
+    "feature_transform": "eng34",
+    "transfer_epochs": 80,
+    "seed": 42
+  },
+  "search": {
+    "hidden": [
+      96
+    ],
+    "epochs": [
+      400,
+      600
+    ],
+    "weight_decay": [
+      0.01
+    ],
+    "init": [
+      "reinit",
+      "transfer"
+    ],
+    "max_trials": 3
+  },
+  "workspace": "runs/harness"
+}
