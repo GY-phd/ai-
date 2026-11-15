@@ -23,7 +23,11 @@
     "exploration_every": 3,
     "time_budget_seconds": 180.0,
     "experiment_timeout_seconds": 120.0,
-    "learning_rate_multipliers": [0.5, 1.0, 2.0],
+    "learning_rate_multipliers": [
+      0.5,
+      1.0,
+      2.0
+    ],
     "replay_rows": 3000,
     "batch_size": null
   },
@@ -38,8 +42,10 @@
     "seed": 42
   },
   "logging": {
-    "swanlab": "off",
+    "swanlab": "offline",
     "project": "harness-cpu-c",
-    "experiment": "cpu-c-harness"
+    "experiment": "cpu-c-harness",
+    "logdir": "logs/swanlab",
+    "description": "Offline CPU-C drift-aware training harness"
   }
 }

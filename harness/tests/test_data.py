@@ -3,6 +3,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
+from harness.baseline import read_history
 from harness.data import guard_dataset, merge_training_sources, replay_dataset
 from harness.util import (parse_json, resolve_workdir_path, sample_jsonl_lines,
                           unique_path, write_json_atomic)
@@ -75,6 +76,26 @@ class DataTests(unittest.TestCase):
                              (root / "models" / "x.npz").resolve())
             with self.assertRaisesRegex(ValueError, "escapes the workdir"):
                 resolve_workdir_path(root, "../outside.npz")
+
+    def test_baseline_history_is_parsed_for_curves(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "history.jsonl").write_text(
+                json.dumps({"stage_id": "s", "seed": 42, "epoch": 1, "step": 3, "loss": 0.5,
+                            "validation": {"rmse": 10.0, "mae": 8.0}}) + "\n" +
+                json.dumps({"stage_id": "s", "seed": 42, "epoch": 2, "step": 6, "loss": 0.4,
+                            "validation": {"rmse": 9.0, "mae": 7.0}}) + "\n",
+                encoding="utf-8")
+            history = read_history(root)
+            self.assertEqual([item["epoch"] for item in history], [1, 2])
+            self.assertEqual(history[1]["step"], 6)
+            self.assertAlmostEqual(history[1]["validation"]["rmse"], 9.0)
+            self.assertEqual(history[0]["seed"], 42)
+            (root / "history.jsonl").write_text(
+                '{"epoch": 1, "step": 1, "loss": 1, "validation": {"rmse": NaN, "mae": 1}}\n',
+                encoding="utf-8")
+            with self.assertRaises(ValueError):
+                read_history(root)
 
     def test_atomic_json_round_trip(self):
         with tempfile.TemporaryDirectory() as temp:

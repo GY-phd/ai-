@@ -2,6 +2,6 @@
 # Python 3.10-3.12 is the reference range documented by the baseline package.
 numpy==1.26.4
 
-# Optional experiment tracking. The core loop runs without it; install only
-# when SwanLab logging is requested:
-#   python -m pip install swanlab
+# Optional experiment tracking. The core loop runs without it; install the
+# verified backend with:
+#   python -m pip install -r harness/requirements-swanlab.txt

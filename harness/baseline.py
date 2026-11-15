@@ -21,7 +21,7 @@ from typing import Any
 
 import numpy as np
 
-from .util import load_json, sha256_file
+from .util import load_json, parse_json, read_text, sha256_file
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_BASELINE_ROOT = REPO_ROOT / "cpu-c-guide-20261110-v1"
@@ -84,6 +84,44 @@ def regression_metrics(predicted: np.ndarray, expected: np.ndarray) -> dict[str,
     if not all(math.isfinite(value) for value in result.values()):
         raise ValueError("regression metrics overflowed to a non-finite value")
     return result
+
+
+def read_history(output_dir: Path | str) -> list[dict[str, Any]]:
+    """Read the baseline trainer's per-epoch history for SwanLab curves."""
+    path = Path(output_dir) / "history.jsonl"
+    if path.is_symlink() or not path.is_file():
+        return []
+    records: list[dict[str, Any]] = []
+    for number, line in enumerate(read_text(path, 64 * 1024 * 1024).splitlines(), 1):
+        if not line.strip():
+            continue
+        row = parse_json(line)
+        if not isinstance(row, dict):
+            raise ValueError(f"history line {number} is not an object")
+        epoch, step = row.get("epoch"), row.get("step")
+        loss, validation = row.get("loss"), row.get("validation")
+        if (isinstance(epoch, bool) or not isinstance(epoch, int) or epoch < 1
+                or isinstance(step, bool) or not isinstance(step, int) or step < 0
+                or not isinstance(validation, dict)):
+            raise ValueError(f"history line {number} has invalid epoch/step/validation")
+        try:
+            loss_value = float(loss)
+            rmse = float(validation["rmse"])
+            mae = float(validation["mae"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError(f"history line {number} has invalid metrics") from exc
+        if not all(math.isfinite(value) for value in (loss_value, rmse, mae)):
+            raise ValueError(f"history line {number} has non-finite metrics")
+        record = {"epoch": epoch, "step": step, "loss": loss_value,
+                  "validation": {"rmse": rmse, "mae": mae}}
+        if isinstance(row.get("stage_id"), str):
+            record["stage_id"] = row["stage_id"]
+        if isinstance(row.get("seed"), int) and not isinstance(row.get("seed"), bool):
+            record["seed"] = row["seed"]
+        records.append(record)
+        if len(records) > 10000:
+            raise ValueError("history exceeds 10,000 epochs")
+    return records
 
 
 class Baseline:

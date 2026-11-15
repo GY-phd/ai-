@@ -66,9 +66,11 @@ def make_config(root):
     return path
 
 
-def run_cli(arguments):
+def run_cli(arguments, extra_env=None):
     environment = os.environ.copy()
     environment["PYTHONIOENCODING"] = "utf-8"
+    if extra_env:
+        environment.update(extra_env)
     return subprocess.run(
         [sys.executable, "-m", "harness.cli", *arguments],
         cwd=str(ROOT), env=environment, capture_output=True, text=True,
@@ -138,6 +140,72 @@ class EngineEndToEndTests(unittest.TestCase):
             self.assertEqual(state["batches"], [])
             self.assertEqual(state["counters"]["attempts"], 0)
             self.assertTrue(list((workdir / "decisions").glob("dry-run-*.json")))
+
+    def test_swanlab_offline_receives_complete_batch_and_curve_records(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            stream = make_stream(root / "stream")
+            config = make_config(root)
+            fake_root = root / "fake"
+            package = fake_root / "swanlab"
+            package.mkdir(parents=True)
+            (package / "__init__.py").write_text(
+                "import json, os\n"
+                "_EVENTS = os.environ['FAKE_SWANLAB_EVENTS']\n"
+                "class _Run:\n"
+                "    id = 'fake-run'\n"
+                "    dir = 'fake-run-dir'\n"
+                "    @property\n"
+                "    def url(self):\n"
+                "        raise ValueError('offline')\n"
+                "def _write(event, **payload):\n"
+                "    with open(_EVENTS, 'a', encoding='utf-8') as stream:\n"
+                "        stream.write(json.dumps({'event': event, **payload}, ensure_ascii=False) + '\\n')\n"
+                "def init(**kwargs):\n"
+                "    _write('init', mode=kwargs.get('mode'), project=kwargs.get('project'),\n"
+                "           name=kwargs.get('name'), log_dir=kwargs.get('log_dir'),\n"
+                "           config=kwargs.get('config'))\n"
+                "    return _Run()\n"
+                "def log(data, step=None):\n"
+                "    _write('log', data=data, step=step)\n"
+                "def log_text(key, data, step=None):\n"
+                "    _write('text', key=key, text=data, step=step)\n"
+                "def finish():\n"
+                "    _write('finish')\n",
+                encoding="utf-8")
+            events = root / "swanlab-events.jsonl"
+            workdir = root / "swan"
+            environment = {
+                "PYTHONPATH": str(fake_root) + os.pathsep + os.environ.get("PYTHONPATH", ""),
+                "FAKE_SWANLAB_EVENTS": str(events),
+            }
+            completed = run_cli(["run", "--batch", str(stream / "batch-01"),
+                                 "--workdir", str(workdir), "--config", str(config),
+                                 "--swanlab", "offline", "--quiet", "--json"],
+                                extra_env=environment)
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            records = [json.loads(line) for line in events.read_text(encoding="utf-8").splitlines()]
+            init = next(item for item in records if item["event"] == "init")
+            self.assertEqual(init["mode"], "offline")
+            self.assertEqual(init["project"], "harness-cpu-c")
+            self.assertTrue(init["log_dir"].startswith(str(workdir.resolve())))
+            logged = {}
+            steps = []
+            for item in records:
+                if item["event"] == "log":
+                    logged.update(item["data"])
+                    steps.append(item["step"])
+            for key in ("bootstrap/static_public_rmse", "batch/index", "batch/decision_promote",
+                        "candidates/c01/batch_rmse", "candidates/c01/gate_passed",
+                        "drift/performance_delta", "resources/cpu_threads",
+                        "curves/b0001/c01/val_rmse", "curves/b0001/c01/train_loss"):
+                self.assertIn(key, logged)
+            self.assertIn(1, steps)
+            texts = {item["key"]: item["text"] for item in records if item["event"] == "text"}
+            self.assertIn("drift/batch-01", texts)
+            self.assertIn("decision/batch-01", texts)
+            self.assertIn("final/summary", texts)
+            self.assertTrue(any(item["event"] == "finish" for item in records))
 
     def test_force_reuses_stored_batch_index_after_ledger_reordering(self):
         with tempfile.TemporaryDirectory() as temp:

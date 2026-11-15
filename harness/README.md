@@ -66,29 +66,35 @@ workdir/
 ```sh
 python -m venv .venv
 # Linux/macOS
-.venv/bin/pip install -r cpu-c-guide-20261110-v1/baselines/requirements.txt
-# Windows: .venv\Scripts\pip install -r cpu-c-guide-20261110-v1\baselines\requirements.txt
+.venv/bin/pip install -r harness/requirements.txt
+# Windows: .venv\Scripts\pip install -r harness\requirements.txt
 ```
 
-生成 4 个批次的**合成演示流**（传感器标定漂移 + 目标偏移，仅用于演示闭环）：
+SwanLab 完整记录所需（可选，但正式评测建议安装）：
+
+```sh
+python -m pip install -r harness/requirements-swanlab.txt
+```
+
+**一键离线闭环**（生成合成漂移流 → 自主运行 → SwanLab offline 记录 → 证据报告）：
+
+```sh
+python tools/run_offline_demo.py --require-swanlab
+```
+
+报告写入 `runs/offline-demo/offline-report.md`，SwanLab 本地记录写入 `runs/offline-demo/logs/swanlab/`。若未安装 SwanLab，可去掉 `--require-swanlab`，核心闭环仍会运行，只是记录被禁用。
+
+分步运行：
 
 ```sh
 python tools/make_demo_stream.py --output demo-stream
-```
-
-运行：
-
-```sh
 python -m harness.cli run \
   --stream demo-stream \
   --workdir runs/demo \
-  --config harness/configs/demo.json
-```
-
-查看状态：
-
-```sh
+  --config harness/configs/demo.json \
+  --swanlab offline
 python -m harness.cli status --workdir runs/demo
+python -m harness.cli doctor --workdir runs/demo   # 离线/CPU/依赖自检
 ```
 
 演示流会依次触发：稳定批次的探索性提升、传感器漂移批次的自适应提升、概念漂移批次因 guard 退化被门控拒绝并回滚、以及后续批次的再次提升。演示配置放宽了门控阈值，只用于展示；正式策略请使用 `harness/configs/default.json`。
@@ -170,20 +176,37 @@ champion 本身是静态基线时不再回滚。
 
 `journal.jsonl` 是同一事实的追加式审计版本，包含 `batch_started`、`drift`、`diagnosis`、`training_data`、`experiment_started`、`experiment_finished`、`gate`、`decision`、`batch_error` 等事件。
 
-## 7. SwanLab
+## 7. SwanLab 完整记录
 
 ```sh
-python -m pip install swanlab
+python -m pip install -r harness/requirements-swanlab.txt
 python -m harness.cli run ... --swanlab offline
 ```
 
-- 记录对象是**工业模型**的批次指标、漂移信号、候选门控与决策，不是驱动 Agent 的大模型训练。
-- `offline` 适合离线评测镜像；`cloud` 需要网络；`required` 在包缺失或初始化失败时直接报错。默认 `off`，SwanLab 永远不会成为运行硬依赖。
-- 每批记录 champion/static/候选的 batch/guard RMSE、漂移幅度、尝试/升级/回滚计数。
+默认配置为 `offline`：本地写入 `workdir/logs/swanlab/`，**不访问网络**，可在有网环境用 `swanlab sync <run_dir>` 上传。模式语义：
+
+| 模式 | 行为 |
+| --- | --- |
+| `off` | 完全关闭，不导入 SwanLab |
+| `offline` | 本地完整记录，无需网络；默认 |
+| `cloud` | 在线同步；瞬时网络故障降级为 offline |
+| `required` | 在线同步；包缺失/初始化/在线错误直接失败 |
+
+记录对象是**工业模型与 Harness 决策**，不是驱动 Agent 的大模型训练。每个 batch 记录：
+
+- **数据/资源**：batch/guard/train 行数、CPU 线程、进程核数、GPU 使用=0、训练耗时、实验耗时、参数规模；
+- **漂移**：severity、performance/static delta、输入特征最大 |z|、偏移特征比例、目标均值偏移等全部数值信号；
+- **模型指标**：champion / static / selected 的 batch+guard RMSE、MAE、NASA 分数、偏差；
+- **候选与门控**：每个候选的 RMSE/MAE/NASA、gate 通过/失败项、改善幅度、学习率、epochs、步数、耗时、错误；
+- **训练曲线**：从官方 `history.jsonl` 读取逐 epoch train loss / val RMSE / val MAE，按 batch+candidate 独立成图；
+- **文本证据**：漂移摘要与 findings、诊断假设、每个候选的门控结果、决策理由、最终 champion/批次账本；
+- **最终汇总**：champion 代数、最终指标、尝试/升级/回滚/错误计数。
+
+SwanLab 不是运行硬依赖：`offline` 模式下包缺失会告警并禁用记录，核心闭环继续；只有 `required` 会因此失败。
 
 ## 8. 安全与资源边界
 
-- 只读 `public/train.jsonl`、`public/validation.jsonl`、批次目录和显式命令行路径；不扫描隐藏目录，不访问网络。
+- 只读 `public/train.jsonl`、`public/validation.jsonl`、批次目录和显式命令行路径；不扫描隐藏目录。核心闭环与默认 SwanLab offline 模式不访问网络；只有显式选择 `cloud`/`required` 才联网。
 - 官方基线代码与检查点只读；候选输出写入新的 workdir 目录，基线训练器自身仍会拒绝覆盖旧轮次。
 - 检查点、guard、replay、训练数据均校验摘要；NPZ 由官方加载器以 `allow_pickle=False` 读取。
 - 默认 `BASELINE_CPU_THREADS=1`，可通过环境变量设为 1–8；不调用 GPU。
@@ -195,7 +218,7 @@ python -m harness.cli run ... --swanlab offline
 python -m unittest discover -s harness/tests -v
 ```
 
-测试覆盖：配置校验、漂移判定、实验规划、门控与回滚、训练集合并/剔除、状态持久化，以及端到端场景（正常流、dry-run、`--force` 索引）。端到端测试会真实调用官方 `baselines.train`，在普通 CPU 上约需 1 分钟。
+58 项测试覆盖：配置校验、漂移判定、实验规划、门控与回滚、训练集合并/剔除、状态持久化、SwanLab 适配与遥测负载、环境自检，以及端到端场景（正常流、dry-run、`--force` 索引、fake SwanLab 离线记录）。端到端测试会真实调用官方 `baselines.train`，在普通 CPU 上约需 1 分钟。
 
 官方基线测试：
 
@@ -210,4 +233,18 @@ python -m unittest discover -s baselines/tests -v
 - 批次目录在 CLI 启动时发现；若平台逐批释放数据，可在新批次出现后用同一 workdir 再次运行，已完成批次会被幂等跳过。
 - 当前策略是确定性规则，便于复现和审计；接入 PyTRiO 上的 Qwen 作为"策略 Agent"时，可让模型输出 `Hypothesis` / `ExperimentSpec`，但门控、独立评估和静态基线地板必须保留在规则层，避免模型自报自批。
 - 公开数据包不含隐藏测试集；平台隐藏评测仍是最终权威。本 Harness 的本地 guard 与批次验证只是上线决策的代理指标。
-- 镜像打包时应包含 `harness/`、`tools/`、官方基线包与本文件；`runs/`、`demo-stream/` 属于运行产物，不应进入镜像。
+- SwanLab 0.10.5 的 **offline** 模式已在本机真实跑通（CPU、无 GPU、无网络）；`cloud/required` 需要联网与有效凭据，当前环境未做在线验证。适配器同时兼容旧版 `experiment_name/logdir` 参数。
+- 镜像打包时应包含 `harness/`、`tools/`、官方基线包与本文件，以及 `harness/requirements-swanlab.txt`；`runs/`、`demo-stream/` 属于运行产物，不应进入镜像。
+
+## 11. 离线镜像
+
+仓库根目录提供 `Dockerfile`（Python 3.12-slim、CPU、SwanLab offline）：
+
+```sh
+docker build -t cpu-c-harness .
+docker run --rm cpu-c-harness doctor
+docker run --rm -v "$PWD/runs:/app/runs" --entrypoint python \
+  cpu-c-harness tools/run_offline_demo.py --require-swanlab
+```
+
+镜像内包含 Harness、演示工具、官方 CPU-C 基线包与 SwanLab；不含 GPU、模型 API 或外部网络依赖。当前开发机没有 Docker，因此镜像构建未在本机执行验证；核心流程、测试与真实 SwanLab offline 记录已在宿主机验证。

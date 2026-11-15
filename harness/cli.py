@@ -10,6 +10,7 @@ from pathlib import Path
 
 from .baseline import default_baseline_root
 from .config import load_config
+from .doctor import collect_environment, print_environment
 from .engine import HarnessEngine, discover_batches
 from .state import STATE_FILE, champion_summary, load_state
 
@@ -45,6 +46,12 @@ def _parser() -> argparse.ArgumentParser:
     status = subparsers.add_parser("status", help="show champion lineage and batch ledger")
     status.add_argument("--workdir", required=True)
     status.add_argument("--json", action="store_true")
+
+    doctor = subparsers.add_parser("doctor", help="offline / CPU-only environment preflight")
+    doctor.add_argument("--baseline-root", default=str(default_baseline_root()))
+    doctor.add_argument("--workdir", default=str(Path.cwd()))
+    doctor.add_argument("--config", default=str(DEFAULT_CONFIG))
+    doctor.add_argument("--json", action="store_true")
     return parser
 
 
@@ -117,6 +124,16 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 _print_status(status)
             return 0
+
+        if args.command == "doctor":
+            config = load_config(args.config)
+            report = collect_environment(baseline_root=args.baseline_root,
+                                         workdir=args.workdir, config=config)
+            if args.json:
+                print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True, allow_nan=False))
+            else:
+                print_environment(report)
+            return 1 if report["errors"] else 0
 
         if args.max_batches is not None and args.max_batches < 1:
             parser.error("--max-batches must be at least 1")

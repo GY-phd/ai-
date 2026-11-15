@@ -14,6 +14,8 @@
 | `harness工程.md` | 赛题要点整理 |
 | `harness/` | 最小可用闭环 Harness：漂移检测、诊断、实验、门控、上线／回滚 |
 | `tools/make_demo_stream.py` | 生成带合成漂移的演示批次流 |
+| `tools/run_offline_demo.py` | 一键离线闭环：生成流、自主运行、SwanLab offline 记录、证据报告 |
+| `Dockerfile` | 离线 CPU 镜像（Python 3.12-slim + SwanLab offline），构建脚本见 Harness 文档 |
 
 ## 基线包 `cpu-c-guide-20261110-v1/`
 
@@ -65,23 +67,25 @@ python -m baselines.train --profile C \
 
 ```sh
 python -m pip install -r harness/requirements.txt
+# 可选：SwanLab 完整记录（离线模式，无网络）
+python -m pip install -r harness/requirements-swanlab.txt
 
-# 1) 生成 4 个批次的合成演示流（含传感器标定漂移与目标偏移，仅用于演示）
+# 一条命令完成离线闭环并生成证据报告
+python tools/run_offline_demo.py --require-swanlab
+
+# 分步运行
 python tools/make_demo_stream.py --output demo-stream
-
-# 2) 自主运行：每个 batch 产出一个决策
 python -m harness.cli run \
   --stream demo-stream --workdir runs/demo \
-  --config harness/configs/demo.json
-
-# 3) 查看 champion 血缘、尝试次数与批次账本
+  --config harness/configs/demo.json --swanlab offline
 python -m harness.cli status --workdir runs/demo
+python -m harness.cli doctor --workdir runs/demo
 
-# 4) 测试
+# 测试
 python -m unittest discover -s harness/tests -v
 ```
 
-正式策略使用 `harness/configs/default.json`（严格门控：候选必须在批次和固定 guard 上同时不差于官方静态基线）。设计、决策 JSON、门控公式、SwanLab 接入与扩展点见 [harness/README.md](harness/README.md)。
+正式策略使用 `harness/configs/default.json`（严格门控：候选必须在批次和固定 guard 上同时不差于官方静态基线）。默认 SwanLab 为 offline：本地完整记录 batch/漂移/门控/候选指标/逐 epoch 曲线/资源使用/决策文本，不访问网络。设计、决策 JSON、门控公式、SwanLab 记录项与扩展点见 [harness/README.md](harness/README.md)。
 
 ## 数据与评测边界
 

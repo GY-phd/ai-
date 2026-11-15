@@ -8,8 +8,10 @@ official baseline remains untouched and serves as the static floor.
 
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
+import platform
 import shutil
 import sys
 import time
@@ -18,8 +20,9 @@ from typing import Any
 
 import numpy as np
 
-from .baseline import Baseline, default_baseline_root
-from .config import HarnessConfig
+from . import __version__
+from .baseline import Baseline, default_baseline_root, read_history
+from .config import HarnessConfig, config_to_dict
 from .data import guard_dataset, load_optional_batch_metadata, merge_training_sources, replay_dataset
 from .drift import analyze_drift
 from .journal import Journal
@@ -28,6 +31,7 @@ from .policy import (best_passing_candidate, diagnose, gate_candidate, plan_expe
 from .state import (add_event, champion_summary, load_state, new_state, processed_batches,
                     record_batch, save_state, STATE_FILE)
 from .swanlab_logger import SwanLabLogger
+from .telemetry import batch_metrics, candidate_metrics, epoch_metrics, final_metrics, text_records
 from .util import (now_utc, relative_to_workdir, resolve_workdir_path,
                    safe_name, sha256_file, unique_path, write_json_atomic)
 
@@ -52,7 +56,25 @@ class HarnessEngine:
             directory.mkdir(parents=True, exist_ok=True)
         self.state_path = self.workdir / STATE_FILE
         self.journal = Journal(self.workdir / "journal.jsonl")
-        self.swanlab = SwanLabLogger(config.logging)
+        self.run_config = {
+            "harness_version": __version__,
+            "config": config_to_dict(config),
+            "baseline": {
+                "root": str(self.baseline.root),
+                "profile": config.profile,
+                "checkpoint_sha256": sha256_file(self.baseline.checkpoint),
+            },
+            "environment": {
+                "python": platform.python_version(),
+                "numpy": np.__version__,
+                "cpu_count": os.cpu_count(),
+                "cpu_threads": int(os.environ.get("BASELINE_CPU_THREADS", "1")),
+                "gpu_used": False,
+                "swanlab_mode": config.logging.swanlab,
+            },
+        }
+        self.swanlab = SwanLabLogger(config.logging, workdir=self.workdir,
+                                     run_config=self.run_config)
         self._static_model_cache = None
         self._guard_cache = None
         self.state = self._load_or_bootstrap()
@@ -126,8 +148,19 @@ class HarnessEngine:
                             guard_dataset=guard_info, replay_dataset=replay_info)
         self._say(f"[harness] bootstrap: static RMSE={public_metrics['rmse']:.3f} "
                   f"guard RMSE={guard_metrics['rmse']:.3f}")
-        self.swanlab.log({"bootstrap/static_rmse": public_metrics["rmse"],
-                          "bootstrap/static_guard_rmse": guard_metrics["rmse"]}, step=0)
+        self.swanlab.log({
+            "bootstrap/static_public_rmse": public_metrics["rmse"],
+            "bootstrap/static_public_mae": public_metrics["mae"],
+            "bootstrap/static_guard_rmse": guard_metrics["rmse"],
+            "bootstrap/static_guard_mae": guard_metrics["mae"],
+            "bootstrap/parameter_count": model.meta["parameter_count"],
+            "bootstrap/guard_rows": guard_metrics["n"],
+            "bootstrap/public_rows": public_metrics["n"],
+            "bootstrap/cpu_threads": int(os.environ.get("BASELINE_CPU_THREADS", "1")),
+            "bootstrap/gpu_used": 0,
+        }, step=0)
+        self.swanlab.log_text("bootstrap/config", json.dumps(
+            self.run_config, ensure_ascii=False, allow_nan=False, indent=2), step=0)
         return state
 
     # ------------------------------------------------------------------ helpers
@@ -295,6 +328,7 @@ class HarnessEngine:
             "guard": self.state["data"].get("guard"),
             "replay": self.state["data"].get("replay"),
             "swanlab_enabled": self.swanlab.enabled,
+            "swanlab": self.swanlab.describe(),
         }
 
     def run(self, batches: list[Path], *, max_batches: int | None = None) -> list[dict[str, Any]]:
@@ -329,6 +363,7 @@ class HarnessEngine:
                     index = next_index
                     next_index += 1
                 results.append(self.run_batch(batch_dir, batch_index=index))
+            self._log_final()
         finally:
             self.swanlab.finish()
         return results
@@ -580,7 +615,7 @@ class HarnessEngine:
                 "spec": spec.to_dict(), "stage_id": stage_id,
                 "training": self._training_summary(result),
                 "metrics": None, "gate": None, "model_meta": None,
-                "report_rmse": None, "report_mismatch": None,
+                "report_rmse": None, "report_mismatch": None, "history": [],
             }
             if result.ok:
                 try:
@@ -602,6 +637,13 @@ class HarnessEngine:
                     entry["report_mismatch"] = abs(report_rmse - metrics["batch"]["rmse"])
                     self.journal.append("gate", batch_id=context["batch_id"], stage_id=stage_id,
                                         gate=gate.to_dict(), metrics=metrics)
+                    try:
+                        entry["history"] = read_history(result.output_dir)
+                    except Exception as exc:  # noqa: BLE001 - curves are evidence, not a gate
+                        entry["history"] = []
+                        entry["history_error"] = f"{type(exc).__name__}: {exc}"
+                        self.journal.append("history_error", batch_id=context["batch_id"],
+                                            stage_id=stage_id, error=entry["history_error"])
                 except Exception as exc:  # noqa: BLE001 - a bad candidate is a failed experiment
                     self.state["counters"]["failed_experiments"] += 1
                     entry["error"] = f"{type(exc).__name__}: {exc}"
@@ -863,36 +905,44 @@ class HarnessEngine:
     def _log_swanlab(self, record: dict[str, Any]) -> None:
         if not self.swanlab.enabled:
             return
-        metrics = record.get("metrics") or {}
-        champion = ((metrics.get("champion_before") or {}).get("batch") or {})
-        static = ((metrics.get("static") or {}).get("batch") or {})
-        selected = ((record.get("selected_model") or {}).get("metrics") or {}).get("batch") or {}
-        data: dict[str, Any] = {
-            "batch/index": record["batch"]["index"],
-            "batch/decision_promote": int(record["decision"] == "promote"),
-            "batch/decision_rollback": int(record["decision"] == "rollback"),
-            "metrics/champion_batch_rmse": champion.get("rmse"),
-            "metrics/static_batch_rmse": static.get("rmse"),
-            "metrics/selected_batch_rmse": selected.get("rmse"),
-            "drift/performance_delta": (record.get("drift") or {}).get("signals", {}).get("performance_delta"),
-            "drift/feature_max_abs_mean_z": (record.get("drift") or {}).get("signals", {}).get("feature_max_abs_mean_z"),
-            "drift/severity": {"stable": 0, "warning": 1, "critical": 2}.get(
-                (record.get("drift") or {}).get("severity"), -1),
-            "counters/attempts": record["counters"]["attempts"],
-            "counters/promotions": record["counters"]["promotions"],
-            "counters/rollbacks": record["counters"]["rollbacks"],
-            "budget/experiment_seconds": (record.get("budget") or {}).get("elapsed_seconds"),
+        step = int(record["batch"]["index"])
+        experiments = record.get("experiments") or []
+        training_seconds = sum(
+            float((item.get("training") or {}).get("training_seconds") or 0.0)
+            for item in experiments if isinstance(item, dict))
+        champion_model = self.state["champion"].get("model") or {}
+        metrics = batch_metrics(record)
+        metrics.update({
+            "resources/cpu_threads": int(os.environ.get("BASELINE_CPU_THREADS", "1")),
+            "resources/process_cpu_count": os.cpu_count() or 1,
+            "resources/gpu_used": 0,
+            "resources/candidates": len(experiments),
+            "resources/training_seconds_total": training_seconds,
+            "resources/parameter_count": champion_model.get("parameter_count"),
+        })
+        self.swanlab.log(metrics, step=step)
+        self.swanlab.log(candidate_metrics(record), step=step)
+        for epoch, data in sorted(epoch_metrics(record).items()):
+            self.swanlab.log(data, step=epoch)
+        for key, text in text_records(record):
+            self.swanlab.log_text(key, text, step=step)
+
+    def _log_final(self) -> None:
+        if not self.swanlab.enabled:
+            return
+        status = self.status()
+        step = max(1, len(status.get("batches") or []) + 1)
+        self.swanlab.log(final_metrics(status), step=step)
+        summary = {
+            "champion": status.get("champion"),
+            "counters": status.get("counters"),
+            "batches": [{"batch_id": item.get("batch_id"), "decision": item.get("decision"),
+                         "drift": item.get("drift_severity"), "decision_file": item.get("decision_file")}
+                        for item in status.get("batches") or []],
+            "swanlab": self.swanlab.describe(),
         }
-        for index, experiment in enumerate(record.get("experiments") or [], 1):
-            candidate = (experiment.get("metrics") or {}).get("batch") or {}
-            guard = (experiment.get("metrics") or {}).get("guard") or {}
-            data[f"candidate/{index}/batch_rmse"] = candidate.get("rmse")
-            data[f"candidate/{index}/guard_rmse"] = guard.get("rmse")
-            gate = experiment.get("gate")
-            data[f"candidate/{index}/gate_passed"] = int(
-                gate.passed if hasattr(gate, "passed") else bool((gate or {}).get("passed")))
-        self.swanlab.log({key: value for key, value in data.items() if value is not None},
-                         step=record["batch"]["index"])
+        self.swanlab.log_text("final/summary", json.dumps(
+            summary, ensure_ascii=False, allow_nan=False, indent=2), step=step)
 
 
 def _serialize_experiments(results: list[dict[str, Any]]) -> list[dict[str, Any]]:

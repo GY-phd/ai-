@@ -51,9 +51,11 @@ DEFAULTS: dict[str, Any] = {
         "seed": 42,
     },
     "logging": {
-        "swanlab": "off",
+        "swanlab": "offline",
         "project": "harness-cpu-c",
         "experiment": "cpu-c-harness",
+        "logdir": "logs/swanlab",
+        "description": "Offline CPU-C drift-aware training harness",
     },
 }
 
@@ -105,6 +107,8 @@ class LoggingConfig:
     swanlab: str
     project: str
     experiment: str
+    logdir: str
+    description: str
 
 
 @dataclass(frozen=True)
@@ -228,10 +232,15 @@ def from_mapping(raw: dict[str, Any], *, source: dict[str, Any] | None = None) -
     mode = _text(l["swanlab"], "logging.swanlab")
     if mode not in ("off", "offline", "cloud", "required"):
         raise ValueError("logging.swanlab must be one of: off, offline, cloud, required")
+    description = l["description"]
+    if not isinstance(description, str) or len(description) > 500:
+        raise ValueError("logging.description must be a string of at most 500 characters")
     logging = LoggingConfig(
         swanlab=mode,
         project=_text(l["project"], "logging.project"),
         experiment=_text(l["experiment"], "logging.experiment"),
+        logdir=_text(l["logdir"], "logging.logdir"),
+        description=description,
     )
     return HarnessConfig(profile=profile, task=task, metric=metric, drift=drift, experiments=experiments,
                          gate=gate, guard=guard, logging=logging, source=source or {})
