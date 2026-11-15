@@ -1,0 +1,903 @@
+{
+  "scope": "synthetic_mock_lifecycle_only",
+  "independent_generalization_verified": false,
+  "competition_score": null,
+  "initial_active_model_id": "stable",
+  "stages": [
+    {
+      "stage": 1,
+      "data_scope": "unlabeled_stream",
+      "active_model_id": "stable",
+      "prediction_resources": {
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.00019650004105642438,
+        "llm_calls": 0,
+        "llm_tokens": 0,
+        "prediction_calls": 1
+      },
+      "diagnosis": {
+        "model_id": "stable",
+        "rows": 24,
+        "revision": 0,
+        "reference": "parent_training_scaler",
+        "mean_shift_l2": 5.49579096129665,
+        "outside_3sd_fraction": 0.08138020833333333,
+        "top_sensors": [
+          {
+            "sensor": 3,
+            "mean_shift_l2": 1.4498135287855236
+          },
+          {
+            "sensor": 6,
+            "mean_shift_l2": 1.4396695448004053
+          },
+          {
+            "sensor": 8,
+            "mean_shift_l2": 1.4345510027695072
+          }
+        ],
+        "predicted_counts": {
+          "Ethanol": 8,
+          "Ethylene": 0,
+          "Ammonia": 8,
+          "Acetaldehyde": 0,
+          "Acetone": 0,
+          "Toluene": 8
+        },
+        "mean_entropy": 0.572946630453634,
+        "labels_used": false,
+        "interpretation": "descriptive_shift_may_include_class_mix",
+        "resources": {
+          "cpu_seconds": 0.0,
+          "wall_seconds": 0.000354300020262599,
+          "llm_calls": 0,
+          "llm_tokens": 0,
+          "prediction_calls": 1
+        }
+      },
+      "proposal": {
+        "active_model_id": "stable",
+        "revision": 0,
+        "candidates": [
+          {
+            "method": "no_update",
+            "reason": "retain_current_version"
+          }
+        ],
+        "reason": "training_labels_unavailable",
+        "agent_decides": true,
+        "llm_calls": 0,
+        "llm_tokens": 0
+      },
+      "outcome": "keep_without_released_labels"
+    },
+    {
+      "stage": 2,
+      "data_scope": "mock_independent_release",
+      "active_before": "stable",
+      "prediction_resources": {
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.00018689996795728803,
+        "llm_calls": 0,
+        "llm_tokens": 0,
+        "prediction_calls": 1
+      },
+      "diagnosis": {
+        "model_id": "stable",
+        "rows": 48,
+        "revision": 0,
+        "reference": "parent_training_scaler",
+        "mean_shift_l2": 5.47929996960971,
+        "outside_3sd_fraction": 0.0791015625,
+        "top_sensors": [
+          {
+            "sensor": 13,
+            "mean_shift_l2": 1.4337294871855377
+          },
+          {
+            "sensor": 3,
+            "mean_shift_l2": 1.4288023560940994
+          },
+          {
+            "sensor": 15,
+            "mean_shift_l2": 1.4261173689706392
+          }
+        ],
+        "predicted_counts": {
+          "Ethanol": 16,
+          "Ethylene": 0,
+          "Ammonia": 16,
+          "Acetaldehyde": 0,
+          "Acetone": 0,
+          "Toluene": 16
+        },
+        "mean_entropy": 0.5761510703802967,
+        "labels_used": false,
+        "interpretation": "descriptive_shift_may_include_class_mix",
+        "resources": {
+          "cpu_seconds": 0.0,
+          "wall_seconds": 0.00030369998421519995,
+          "llm_calls": 0,
+          "llm_tokens": 0,
+          "prediction_calls": 1
+        }
+      },
+      "proposal": {
+        "active_model_id": "stable",
+        "revision": 0,
+        "candidates": [
+          {
+            "method": "no_update",
+            "reason": "retain_current_version"
+          },
+          {
+            "method": "mlp_continue",
+            "parent_id": "stable",
+            "parameters": {
+              "epochs": 5,
+              "learning_rate": 0.001
+            },
+            "requires": "released_training_labels"
+          },
+          {
+            "method": "fusion_refit",
+            "parent_id": "stable",
+            "parameters": {},
+            "requires": "released_training_labels_for_all_six_classes"
+          }
+        ],
+        "reason": "small_fixed_recipe_set",
+        "agent_decides": true,
+        "llm_calls": 0,
+        "llm_tokens": 0
+      },
+      "training": {
+        "status": "trained",
+        "model_id": "a_a968563b36464d93",
+        "parent_id": "stable",
+        "sha256": "sha256:b5a362884cf3857becaabf11f67aedf8835a84c5a08b6eb013d8afe96475b459",
+        "active_model_id": "stable",
+        "training_rows": 72,
+        "method": "mlp_continue",
+        "resources": {
+          "cpu_seconds": 0.015625,
+          "wall_seconds": 0.008371500007342547,
+          "llm_calls": 0,
+          "llm_tokens": 0
+        },
+        "training_summary": {
+          "initial_steps": 160,
+          "final_steps": 164,
+          "last_loss": 0.04961198497982385
+        }
+      },
+      "evaluation": {
+        "evaluation_id": "eval_787ba7290bcf41ea",
+        "model_id": "a_a968563b36464d93",
+        "model_sha256": "sha256:b5a362884cf3857becaabf11f67aedf8835a84c5a08b6eb013d8afe96475b459",
+        "incumbent_id": "stable",
+        "incumbent_sha256": "sha256:4577d069ddd096fdb27bf9c39ef43c499aefee73c0233bb06f40344ee7185435",
+        "revision": 0,
+        "dataset": {
+          "sha256": "sha256:abe6e5cf7d6bca04d37ee7567a1855bd6f3e6a18e0c96b7958bd318571c3e1cc",
+          "release": {
+            "purpose": "evaluate",
+            "labels": "released",
+            "release_id": "mock-2-evaluate",
+            "kind": "mock",
+            "independent": true
+          },
+          "rows": 48
+        },
+        "evidence": {
+          "scope": "mock",
+          "independent_attested": true,
+          "previously_evaluated": false,
+          "known_development_set": false,
+          "independent_usable": true,
+          "generalization_verified": false
+        },
+        "metrics": {
+          "incumbent": {
+            "macro_f1": 0.0,
+            "accuracy": 0.0,
+            "per_class": {
+              "Ethanol": {
+                "support": 8,
+                "correct": 0,
+                "predicted": 16,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+              },
+              "Ethylene": {
+                "support": 8,
+                "correct": 0,
+                "predicted": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+              },
+              "Ammonia": {
+                "support": 8,
+                "correct": 0,
+                "predicted": 16,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+              },
+              "Acetaldehyde": {
+                "support": 8,
+                "correct": 0,
+                "predicted": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+              },
+              "Acetone": {
+                "support": 8,
+                "correct": 0,
+                "predicted": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+              },
+              "Toluene": {
+                "support": 8,
+                "correct": 0,
+                "predicted": 16,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+              }
+            },
+            "worst_recall": 0.0,
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                8
+              ],
+              [
+                0,
+                0,
+                8,
+                0,
+                0,
+                0
+              ],
+              [
+                8,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                8
+              ],
+              [
+                0,
+                0,
+                8,
+                0,
+                0,
+                0
+              ],
+              [
+                8,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ]
+          },
+          "candidate": {
+            "macro_f1": 1.0,
+            "accuracy": 1.0,
+            "per_class": {
+              "Ethanol": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 8,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "Ethylene": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 8,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "Ammonia": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 8,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "Acetaldehyde": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 8,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "Acetone": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 8,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "Toluene": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 8,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              }
+            },
+            "worst_recall": 1.0,
+            "confusion_matrix": [
+              [
+                8,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                8,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                8,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                8,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                8,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                8
+              ]
+            ]
+          }
+        },
+        "policy": {
+          "thresholds": {
+            "min_macro_f1_gain": 0.005,
+            "min_acetaldehyde_precision": 0.65,
+            "max_other_recall_drop": 0.03
+          },
+          "candidates": {
+            "a_a968563b36464d93": {
+              "passed": true,
+              "delta_macro_f1": 1.0,
+              "violations": []
+            }
+          }
+        },
+        "eligible": true,
+        "reason": "passed_independent_evaluation",
+        "resources": {
+          "cpu_seconds": 0.0,
+          "wall_seconds": 0.0006404999876394868,
+          "llm_calls": 0,
+          "llm_tokens": 0,
+          "prediction_calls": 2
+        },
+        "agent_summary": {
+          "decision": "promote",
+          "reason": "passed_independent_evaluation",
+          "evidence": "independent_released",
+          "candidate": "a_a968563b36464d93",
+          "delta_macro_f1": 1.0,
+          "failed_checks": [],
+          "evidence_scope": "mock"
+        },
+        "metric_protocol": {
+          "main": "macro_f1",
+          "secondary": "accuracy",
+          "macro_classes": "observed_true_or_predicted",
+          "policy_is_official_score": false
+        }
+      },
+      "activation": {
+        "status": "activated",
+        "active_model_id": "a_a968563b36464d93",
+        "revision": 1,
+        "evidence_scope": "mock"
+      }
+    },
+    {
+      "stage": 3,
+      "data_scope": "mock_independent_release",
+      "active_before": "a_a968563b36464d93",
+      "prediction_resources": {
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.00019839999731630087,
+        "llm_calls": 0,
+        "llm_tokens": 0,
+        "prediction_calls": 1
+      },
+      "diagnosis": {
+        "model_id": "a_a968563b36464d93",
+        "rows": 48,
+        "revision": 1,
+        "reference": "parent_training_scaler",
+        "mean_shift_l2": 5.478475471947792,
+        "outside_3sd_fraction": 0.08056640625,
+        "top_sensors": [
+          {
+            "sensor": 9,
+            "mean_shift_l2": 1.4330156105757823
+          },
+          {
+            "sensor": 4,
+            "mean_shift_l2": 1.4279266656524299
+          },
+          {
+            "sensor": 15,
+            "mean_shift_l2": 1.426565276067028
+          }
+        ],
+        "predicted_counts": {
+          "Ethanol": 8,
+          "Ethylene": 8,
+          "Ammonia": 8,
+          "Acetaldehyde": 8,
+          "Acetone": 8,
+          "Toluene": 8
+        },
+        "mean_entropy": 0.14365098466574305,
+        "labels_used": false,
+        "interpretation": "descriptive_shift_may_include_class_mix",
+        "resources": {
+          "cpu_seconds": 0.0,
+          "wall_seconds": 0.00029399996856227517,
+          "llm_calls": 0,
+          "llm_tokens": 0,
+          "prediction_calls": 1
+        }
+      },
+      "proposal": {
+        "active_model_id": "a_a968563b36464d93",
+        "revision": 1,
+        "candidates": [
+          {
+            "method": "no_update",
+            "reason": "retain_current_version"
+          },
+          {
+            "method": "mlp_continue",
+            "parent_id": "a_a968563b36464d93",
+            "parameters": {
+              "epochs": 5,
+              "learning_rate": 0.001
+            },
+            "requires": "released_training_labels"
+          },
+          {
+            "method": "fusion_refit",
+            "parent_id": "a_a968563b36464d93",
+            "parameters": {},
+            "requires": "released_training_labels_for_all_six_classes"
+          }
+        ],
+        "reason": "small_fixed_recipe_set",
+        "agent_decides": true,
+        "llm_calls": 0,
+        "llm_tokens": 0
+      },
+      "training": {
+        "status": "trained",
+        "model_id": "a_4b86cdb0741f4a63",
+        "parent_id": "a_a968563b36464d93",
+        "sha256": "sha256:5864e26b5fe68222b5a7202b3ae241c16f2303a074434bd801b947ca7b211fe7",
+        "active_model_id": "a_a968563b36464d93",
+        "training_rows": 72,
+        "method": "mlp_continue",
+        "resources": {
+          "cpu_seconds": 0.0,
+          "wall_seconds": 0.005326899990905076,
+          "llm_calls": 0,
+          "llm_tokens": 0
+        },
+        "training_summary": {
+          "initial_steps": 164,
+          "final_steps": 168,
+          "last_loss": 2.0904978336272486
+        }
+      },
+      "evaluation": {
+        "evaluation_id": "eval_c997390c2ebe4540",
+        "model_id": "a_4b86cdb0741f4a63",
+        "model_sha256": "sha256:5864e26b5fe68222b5a7202b3ae241c16f2303a074434bd801b947ca7b211fe7",
+        "incumbent_id": "a_a968563b36464d93",
+        "incumbent_sha256": "sha256:b5a362884cf3857becaabf11f67aedf8835a84c5a08b6eb013d8afe96475b459",
+        "revision": 1,
+        "dataset": {
+          "sha256": "sha256:3f2584db9f7edb5a3f3a6fa8fc50903cc89974641e27c6ea8977eccbf393e417",
+          "release": {
+            "purpose": "evaluate",
+            "labels": "released",
+            "release_id": "mock-3-evaluate",
+            "kind": "mock",
+            "independent": true
+          },
+          "rows": 48
+        },
+        "evidence": {
+          "scope": "mock",
+          "independent_attested": true,
+          "previously_evaluated": false,
+          "known_development_set": false,
+          "independent_usable": true,
+          "generalization_verified": false
+        },
+        "metrics": {
+          "incumbent": {
+            "macro_f1": 1.0,
+            "accuracy": 1.0,
+            "per_class": {
+              "Ethanol": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 8,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "Ethylene": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 8,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "Ammonia": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 8,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "Acetaldehyde": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 8,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "Acetone": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 8,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "Toluene": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 8,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              }
+            },
+            "worst_recall": 1.0,
+            "confusion_matrix": [
+              [
+                8,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                8,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                8,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                8,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                8,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                8
+              ]
+            ]
+          },
+          "candidate": {
+            "macro_f1": 0.2222222222222222,
+            "accuracy": 0.3333333333333333,
+            "per_class": {
+              "Ethanol": {
+                "support": 8,
+                "correct": 0,
+                "predicted": 8,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+              },
+              "Ethylene": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 16,
+                "precision": 0.5,
+                "recall": 1.0,
+                "f1": 0.6666666666666666
+              },
+              "Ammonia": {
+                "support": 8,
+                "correct": 0,
+                "predicted": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+              },
+              "Acetaldehyde": {
+                "support": 8,
+                "correct": 0,
+                "predicted": 8,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+              },
+              "Acetone": {
+                "support": 8,
+                "correct": 8,
+                "predicted": 16,
+                "precision": 0.5,
+                "recall": 1.0,
+                "f1": 0.6666666666666666
+              },
+              "Toluene": {
+                "support": 8,
+                "correct": 0,
+                "predicted": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+              }
+            },
+            "worst_recall": 0.0,
+            "confusion_matrix": [
+              [
+                0,
+                8,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                8,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                8,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                8,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                8,
+                0
+              ],
+              [
+                8,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ]
+          }
+        },
+        "policy": {
+          "thresholds": {
+            "min_macro_f1_gain": 0.005,
+            "min_acetaldehyde_precision": 0.65,
+            "max_other_recall_drop": 0.03
+          },
+          "candidates": {
+            "a_4b86cdb0741f4a63": {
+              "passed": false,
+              "delta_macro_f1": -0.7777777777777778,
+              "violations": [
+                {
+                  "criterion": "min_macro_f1_gain",
+                  "observed": -0.7777777777777778
+                },
+                {
+                  "criterion": "max_other_recall_drop",
+                  "class": "Ethanol",
+                  "observed": 1.0
+                },
+                {
+                  "criterion": "max_other_recall_drop",
+                  "class": "Ammonia",
+                  "observed": 1.0
+                },
+                {
+                  "criterion": "acetaldehyde_f1_must_improve",
+                  "class": "Acetaldehyde"
+                },
+                {
+                  "criterion": "min_acetaldehyde_precision",
+                  "class": "Acetaldehyde",
+                  "observed": 0.0
+                },
+                {
+                  "criterion": "max_other_recall_drop",
+                  "class": "Toluene",
+                  "observed": 1.0
+                }
+              ]
+            }
+          }
+        },
+        "eligible": false,
+        "reason": "guardrails_failed",
+        "resources": {
+          "cpu_seconds": 0.0,
+          "wall_seconds": 0.0003768000169657171,
+          "llm_calls": 0,
+          "llm_tokens": 0,
+          "prediction_calls": 2
+        },
+        "agent_summary": {
+          "decision": "keep",
+          "reason": "guardrails_failed",
+          "evidence": "independent_released",
+          "candidate": "a_4b86cdb0741f4a63",
+          "delta_macro_f1": -0.7777777777777778,
+          "failed_checks": [
+            {
+              "criterion": "min_macro_f1_gain"
+            },
+            {
+              "criterion": "max_other_recall_drop",
+              "class": "Ethanol"
+            },
+            {
+              "criterion": "max_other_recall_drop",
+              "class": "Ammonia"
+            },
+            {
+              "criterion": "acetaldehyde_f1_must_improve",
+              "class": "Acetaldehyde"
+            },
+            {
+              "criterion": "min_acetaldehyde_precision",
+              "class": "Acetaldehyde"
+            },
+            {
+              "criterion": "max_other_recall_drop",
+              "class": "Toluene"
+            }
+          ],
+          "evidence_scope": "mock"
+        },
+        "metric_protocol": {
+          "main": "macro_f1",
+          "secondary": "accuracy",
+          "macro_classes": "observed_true_or_predicted",
+          "policy_is_official_score": false
+        }
+      },
+      "activation": {
+        "status": "kept",
+        "reason": "guardrails_failed",
+        "active_model_id": "a_a968563b36464d93",
+        "revision": 1
+      }
+    }
+  ],
+  "rollback": {
+    "status": "rolled_back",
+    "active_model_id": "stable",
+    "revision": 2
+  },
+  "active_after_reopen": "stable",
+  "revision_after_reopen": 2
+}

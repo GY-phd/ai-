@@ -1,0 +1,22 @@
+{
+  "version": "1.0.0",
+  "build_date": "2026-11-14",
+  "scope": "Task A only; local Python and JSONL protocol, not official SDK",
+  "source_delivery_sha256": "sha256:9331793613009dbe9e44e9097b9dad425b0d4770c16fe7eb3aff1bbd5fac9908",
+  "runtime_tested": {
+    "python": "3.13.9",
+    "numpy": "2.2.6",
+    "os": "Windows-11-10.0.26200-SP0"
+  },
+  "tests": {
+    "engine": 16,
+    "original_research": 11,
+    "original_baseline": 9,
+    "all_passed": true
+  },
+  "llm_calls": 0,
+  "llm_tokens": 0,
+  "independent_generalization_verified": false,
+  "default_model": "stable",
+  "artifact_checksums": "FILE_MANIFEST.json"
+}

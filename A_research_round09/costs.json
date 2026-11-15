@@ -1,0 +1,89 @@
+{
+  "environment": {
+    "python": "3.13.9",
+    "numpy": "2.2.6",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel"
+  },
+  "models": {
+    "stable": {
+      "fit_cpu_seconds": 0.03125,
+      "fit_wall_seconds": 0.07332529999985127,
+      "inference": {
+        "model_array_bytes": 105872,
+        "1": {
+          "cpu_ms": 0.0,
+          "wall_ms": 0.021899999992456287
+        },
+        "445": {
+          "cpu_ms": 0.9375,
+          "wall_ms": 0.6687319999764441
+        },
+        "predict_tracemalloc_peak_bytes": 978048
+      }
+    },
+    "raw_support": {
+      "fit_cpu_seconds": 0.03125,
+      "fit_wall_seconds": 0.05976260000170441,
+      "inference": {
+        "model_array_bytes": 125008,
+        "1": {
+          "cpu_ms": 0.0,
+          "wall_ms": 0.19483200005197432
+        },
+        "445": {
+          "cpu_ms": 4.0625,
+          "wall_ms": 4.4881639999948675
+        },
+        "predict_tracemalloc_peak_bytes": 1354880
+      }
+    },
+    "frozen_A": {
+      "fit_cpu_seconds": 0.0,
+      "fit_wall_seconds": 0.006488300001365133,
+      "inference": {
+        "model_array_bytes": 9520,
+        "1": {
+          "cpu_ms": 0.0,
+          "wall_ms": 0.0495260000025155
+        },
+        "445": {
+          "cpu_ms": 1.875,
+          "wall_ms": 2.2651899999618763
+        },
+        "predict_tracemalloc_peak_bytes": 1254536
+      }
+    },
+    "C_replay_anchor_12": {
+      "fit_cpu_seconds": 0.0,
+      "fit_wall_seconds": 0.004193400000076508,
+      "update_100_repeat_mean": {
+        "cpu_ms": 1.71875,
+        "wall_ms": 2.290562999987742
+      },
+      "inference": {
+        "model_array_bytes": 9520,
+        "1": {
+          "cpu_ms": 0.0,
+          "wall_ms": 0.04891200005658902
+        },
+        "445": {
+          "cpu_ms": 2.1875,
+          "wall_ms": 2.388541999971494
+        },
+        "predict_tracemalloc_peak_bytes": 1254536
+      }
+    }
+  },
+  "replay_rows": 170,
+  "replay_input_bytes": 175440,
+  "process_peak_working_set_bytes": 53293056,
+  "llm_calls": 0,
+  "llm_tokens": 0,
+  "notes": [
+    "preloaded model latency excludes files/SQLite",
+    "raw_support fit excludes its shared stable parent",
+    "single-call CPU may round to zero; repeated measurements reduce timer quantization",
+    "repeat 100 times for timing only, always from the same parent"
+  ]
+}

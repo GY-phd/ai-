@@ -1,0 +1,75 @@
+{
+  "format": "a.portable-bundle.v1",
+  "active_variant": "stable",
+  "variants": [
+    "stable",
+    "fusion",
+    "witness_veto",
+    "raw_support",
+    "projected_support"
+  ],
+  "classes": [
+    "Ethanol",
+    "Ethylene",
+    "Ammonia",
+    "Acetaldehyde",
+    "Acetone",
+    "Toluene"
+  ],
+  "incumbent": "models/stable.npz",
+  "fusion": "models/fusion.npz",
+  "routing_state": "models/routing.npz",
+  "training_receipts": {
+    "train_sha256": "sha256:c724014feb2c968d144e167f4997d2ad2125df3825abf4306c9c87c8f08de6c0",
+    "candidate_sha256": "sha256:dc2ebc7bccb80e437256dca19ac49af4f6950d6a8ed6678fba5371d899be8fef",
+    "parent_checkpoint_sha256": "sha256:2c2050b0b0d738b633e9edd1e0bd869a1a89d1254f8e02013125068ad6638ed5"
+  },
+  "source_sha256": {
+    "advance.py": "sha256:cf75d51ad503039b27758fac18df40b3fc8fc21864a89b0fb8fef37cf913d95d",
+    "experiment.py": "sha256:98027243fd6d39415c063d2da95a107f8c91c4597323d3d4b567bc49073c1821",
+    "rescue.py": "sha256:406aafe6b2d655dc1048a3fd7a3e4dc0bc9edb9cb899e4b5763bf384c706b4a6",
+    "rollout.py": "sha256:86e52a3105fc93019b3beec8d6042149ff40b10859e082f0cdbe24307a863d53",
+    "decision.py": "sha256:29278f1ef0917262842850916b9d6efeba34ac9440e8b96938326ffbc5680933",
+    "routing.py": "sha256:7b217dbe0937bb1ff76c42b3e093e1eee1bfa780572a3d85f4de80bdaef44173",
+    "bundle_predict.py": "sha256:e266b78e551adbf76f5a431187bd38089461ffb321172a42e7bd0c3994c9b245",
+    "bundle_review.py": "sha256:d351eea9b815af46003164bce5c3d426b4191c68f7e9656d507de84c8f1b31e9",
+    "export_bundle.py": "sha256:f7ad09b808b4a8244bc013e4d601f521abacd478b3bbed0f6f78d25d68fbde9f"
+  },
+  "agent_summary": {
+    "decision": "keep",
+    "active_model": "stable",
+    "evidence": "source_holdout",
+    "source_checks": {
+      "raw_support": {
+        "passed": false,
+        "failed_checks": [
+          "challenge_floor_at_least_stable",
+          "reverse_month_false_ac_at_most_witness"
+        ]
+      },
+      "projected_support": {
+        "passed": false,
+        "failed_checks": [
+          "challenge_floor_at_least_stable"
+        ]
+      }
+    },
+    "independent_generalization_verified": false,
+    "llm_calls": 0
+  },
+  "files": {
+    "__init__.py": "sha256:d0c48ab920607188f1c6fd0a4664101dd9a50fc38fe1bce3ce6dca9336f6ee45",
+    "baselines/__init__.py": "sha256:3363d6112a78e5b4de3508da13e543708fc6a9019c65f3c8bcecb5178a321d7a",
+    "baselines/data.py": "sha256:6099e312829ac3aaf48209ec1f618532c4a8552fedf73f09cf31c8876261db65",
+    "baselines/model.py": "sha256:325026d80747eb36f39c8df1be02b640ae21b3cd082827c66aacbdf273dd61c5",
+    "baselines/predict.py": "sha256:80e6787cd862dfefd85cd6bfcd73b5577dd90e202dd3d5bb9f18a52761807452",
+    "decision.py": "sha256:29278f1ef0917262842850916b9d6efeba34ac9440e8b96938326ffbc5680933",
+    "feature_ops.py": "sha256:298ad2cb5e1d1f6ea214347487f4ee768bea34122e31728651430a8e8e50f7b1",
+    "models/fusion.npz": "sha256:dc2ebc7bccb80e437256dca19ac49af4f6950d6a8ed6678fba5371d899be8fef",
+    "models/routing.npz": "sha256:bb5f95e68ee587411660d162f5c02be0aad42b311799558e3a8c7fe5468a0e50",
+    "models/stable.npz": "sha256:2c2050b0b0d738b633e9edd1e0bd869a1a89d1254f8e02013125068ad6638ed5",
+    "predict.py": "sha256:93bd65d15c2b8088ba080ac5e65ce81d1e7de8350e05963534d23583cccd097a",
+    "review.py": "sha256:d16decf041afc94456b96df9fc8e6e29760caac797d51e34a8337450d8965138",
+    "rollout.py": "sha256:86e52a3105fc93019b3beec8d6042149ff40b10859e082f0cdbe24307a863d53"
+  }
+}

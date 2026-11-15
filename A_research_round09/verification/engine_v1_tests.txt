@@ -1,0 +1,21 @@
+test_checkpoint_corruption_blocks_activation (test_engine.EngineTest.test_checkpoint_corruption_blocks_activation) ... ok
+test_development_fingerprints_block_relabelled_training (test_engine.EngineTest.test_development_fingerprints_block_relabelled_training) ... ok
+test_evaluate_rejects_training_row_reuse_with_new_ids (test_engine.EngineTest.test_evaluate_rejects_training_row_reuse_with_new_ids) ... ok
+test_evaluation_rows_never_regain_independence (test_engine.EngineTest.test_evaluation_rows_never_regain_independence) ... ok
+test_failed_activation_does_not_commit_active_pointer (test_engine.EngineTest.test_failed_activation_does_not_commit_active_pointer) ... ok
+test_failed_training_retains_exposure_and_active_model (test_engine.EngineTest.test_failed_training_retains_exposure_and_active_model) ... ok
+test_fusion_refit_creates_a_new_checkpoint_without_activation (test_engine.EngineTest.test_fusion_refit_creates_a_new_checkpoint_without_activation) ... ok
+test_jsonl_errors_do_not_stop_subsequent_requests (test_engine.EngineTest.test_jsonl_errors_do_not_stop_subsequent_requests) ... ok
+test_prediction_and_diagnosis_are_read_only (test_engine.EngineTest.test_prediction_and_diagnosis_are_read_only) ... ok
+test_real_and_mock_stores_are_isolated (test_engine.EngineTest.test_real_and_mock_stores_are_isolated) ... ok
+test_seed_predictions_preserve_all_five_vendor_variants (test_engine.EngineTest.test_seed_predictions_preserve_all_five_vendor_variants) ... ok
+test_three_stage_mock (test_engine.EngineTest.test_three_stage_mock) ... ok
+test_train_requires_released_labels_of_matching_kind_and_purpose (test_engine.EngineTest.test_train_requires_released_labels_of_matching_kind_and_purpose) ... ok
+test_training_after_evaluation_invalidates_pending_activation (test_engine.EngineTest.test_training_after_evaluation_invalidates_pending_activation) ... ok
+test_unattested_evaluation_keeps_current_model (test_engine.EngineTest.test_unattested_evaluation_keeps_current_model) ... ok
+test_version_lifecycle_rejects_stale_requests_and_reopens (test_engine.EngineTest.test_version_lifecycle_rejects_stale_requests_and_reopens) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 6.189s
+
+OK

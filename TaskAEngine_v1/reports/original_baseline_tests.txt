@@ -1,0 +1,14 @@
+test_checkpoint_bytes_are_reproducible_and_weights_are_cpu_arrays (test_baselines.CPUBaselineTests.test_checkpoint_bytes_are_reproducible_and_weights_are_cpu_arrays) ... ok
+test_classification_labels_and_b_provenance_are_explicit (test_baselines.CPUBaselineTests.test_classification_labels_and_b_provenance_are_explicit) ... ok
+test_object_checkpoint_payload_is_never_unpickled (test_baselines.CPUBaselineTests.test_object_checkpoint_payload_is_never_unpickled) ... ok
+test_only_public_inputs_are_read_and_resume_receipt_binds_parent (test_baselines.CPUBaselineTests.test_only_public_inputs_are_read_and_resume_receipt_binds_parent) ... ok
+test_overlapping_sample_ids_are_not_allowed (test_baselines.CPUBaselineTests.test_overlapping_sample_ids_are_not_allowed) ... ok
+test_prediction_checks_feature_schema_and_has_no_label_input (test_baselines.CPUBaselineTests.test_prediction_checks_feature_schema_and_has_no_label_input) ... ok
+test_resume_preserves_adam_and_matches_continuous_training (test_baselines.CPUBaselineTests.test_resume_preserves_adam_and_matches_continuous_training) ... ok
+test_resume_rejects_claimed_architecture_or_seed_change_before_training (test_baselines.CPUBaselineTests.test_resume_rejects_claimed_architecture_or_seed_change_before_training) ... ok
+test_validation_cannot_change_baseline_standardization (test_baselines.CPUBaselineTests.test_validation_cannot_change_baseline_standardization) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.697s
+
+OK

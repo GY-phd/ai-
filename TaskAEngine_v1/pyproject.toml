@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "task-a-engine"
+version = "1.0.0"
+description = "Deterministic Task A gas recognition and local model lifecycle engine"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.26.4,<3"]
+
+[project.scripts]
+task-a-engine = "task_a_engine.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["task_a_engine*"]
+
+[tool.setuptools.package-data]
+task_a_engine = ["seed_provenance.json", "vendor/manifest.json", "vendor/models/*.npz"]

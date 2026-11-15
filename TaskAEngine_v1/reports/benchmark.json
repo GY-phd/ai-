@@ -1,0 +1,112 @@
+{
+  "scope": "engineering_cost_only",
+  "rows": 445,
+  "labels_used_for_inference": false,
+  "competition_score": null,
+  "independent_generalization_verified": false,
+  "inference": [
+    {
+      "model_id": "stable",
+      "batch_rows": 445,
+      "repetitions": 50,
+      "compute_cpu_ms_per_batch": 1.25,
+      "compute_wall_ms_per_batch": 0.7457959954626858,
+      "api_cpu_ms_per_batch": 15.625,
+      "api_wall_ms_per_batch": 16.0833959991578,
+      "llm_calls": 0,
+      "llm_tokens": 0
+    },
+    {
+      "model_id": "fusion",
+      "batch_rows": 445,
+      "repetitions": 50,
+      "compute_cpu_ms_per_batch": 2.5,
+      "compute_wall_ms_per_batch": 2.644881997257471,
+      "api_cpu_ms_per_batch": 19.6875,
+      "api_wall_ms_per_batch": 20.078937999205664,
+      "llm_calls": 0,
+      "llm_tokens": 0
+    },
+    {
+      "model_id": "witness_veto",
+      "batch_rows": 445,
+      "repetitions": 50,
+      "compute_cpu_ms_per_batch": 4.375,
+      "compute_wall_ms_per_batch": 4.273421999532729,
+      "api_cpu_ms_per_batch": 34.6875,
+      "api_wall_ms_per_batch": 35.48417399986647,
+      "llm_calls": 0,
+      "llm_tokens": 0
+    },
+    {
+      "model_id": "raw_support",
+      "batch_rows": 445,
+      "repetitions": 50,
+      "compute_cpu_ms_per_batch": 8.75,
+      "compute_wall_ms_per_batch": 8.314198001753539,
+      "api_cpu_ms_per_batch": 59.6875,
+      "api_wall_ms_per_batch": 63.35902199964039,
+      "llm_calls": 0,
+      "llm_tokens": 0
+    },
+    {
+      "model_id": "projected_support",
+      "batch_rows": 445,
+      "repetitions": 50,
+      "compute_cpu_ms_per_batch": 9.6875,
+      "compute_wall_ms_per_batch": 10.124209999339655,
+      "api_cpu_ms_per_batch": 58.4375,
+      "api_wall_ms_per_batch": 70.83359000040218,
+      "llm_calls": 0,
+      "llm_tokens": 0
+    }
+  ],
+  "training": [
+    {
+      "status": "trained",
+      "model_id": "a_445d82ca22d34173",
+      "parent_id": "stable",
+      "sha256": "sha256:6e1a4b68ae4d83b32f28f3ee25f51d902b3b137ec780d8cce1c0e86c5d079879",
+      "active_model_id": "stable",
+      "training_rows": 445,
+      "method": "mlp_continue",
+      "resources": {
+        "cpu_seconds": 0.078125,
+        "wall_seconds": 0.1041875000228174,
+        "llm_calls": 0,
+        "llm_tokens": 0
+      },
+      "training_summary": {
+        "initial_steps": 160,
+        "final_steps": 180,
+        "last_loss": 0.09037959400172552
+      },
+      "api_cpu_seconds": 0.28125,
+      "api_wall_seconds": 0.38851210003485903
+    },
+    {
+      "status": "trained",
+      "model_id": "a_fbf25a27227b43df",
+      "parent_id": "stable",
+      "sha256": "sha256:5520770266b74e2507f8eeb6b3d1443a2bedac7c4c2547297b0ff8fcff641f4d",
+      "active_model_id": "stable",
+      "training_rows": 445,
+      "method": "fusion_refit",
+      "resources": {
+        "cpu_seconds": 0.046875,
+        "wall_seconds": 0.05364769999869168,
+        "llm_calls": 0,
+        "llm_tokens": 0
+      },
+      "training_summary": {
+        "feature": "kinetics",
+        "auxiliary_weight": 0.5,
+        "fit": "balanced_ridge"
+      },
+      "api_cpu_seconds": 0.21875,
+      "api_wall_seconds": 0.24988459999440238
+    }
+  ],
+  "active_model_id": "stable",
+  "timing_note": "warm batch inference; compute excludes parsing, checkpoint load/hash, SQLite and serialization; API includes these except input-file read; training API includes input-file read"
+}

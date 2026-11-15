@@ -1,0 +1,303 @@
+{
+  "scope": "synthetic_mock_only",
+  "bootstrap": {
+    "status": "trained",
+    "model_id": "anchor_1d423c3f5303490b",
+    "parent_id": "stable",
+    "sha256": "sha256:da80276f680b090250b191a64901bdf3f875516cd11e2eb506b8cfccd70fecce",
+    "active_model_id": "stable",
+    "method": "structured_bootstrap",
+    "training_rows": 48,
+    "class_counts": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ],
+    "missing_calibration_classes": [],
+    "resources": {
+      "cpu_seconds": 0.046875,
+      "wall_seconds": 0.056874500001868,
+      "llm_calls": 0,
+      "llm_tokens": 0
+    }
+  },
+  "stages": [
+    {
+      "stage": 1,
+      "calibration_counts": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "diagnosis": {
+        "rows": 18,
+        "mean_shift_l2": 67.39248933542366,
+        "predicted_counts": {
+          "Ethanol": 18,
+          "Ethylene": 0,
+          "Ammonia": 0,
+          "Acetaldehyde": 0,
+          "Acetone": 0,
+          "Toluene": 0
+        },
+        "labels_used": false
+      },
+      "proposed_methods": [
+        "no_update",
+        "mlp_continue",
+        "fusion_refit",
+        "C_replay_anchor"
+      ],
+      "training": {
+        "status": "trained",
+        "model_id": "anchor_38672e9b111f45e8",
+        "parent_id": "anchor_1d423c3f5303490b",
+        "sha256": "sha256:524a12bdd477e34356d8de11ccdd632c88d92b150c646df348e01982ec8b94a3",
+        "active_model_id": "stable",
+        "method": "C_replay_anchor",
+        "training_rows": 12,
+        "class_counts": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "missing_calibration_classes": [],
+        "resources": {
+          "cpu_seconds": 0.03125,
+          "wall_seconds": 0.03512530000080005,
+          "llm_calls": 0,
+          "llm_tokens": 0
+        }
+      },
+      "prediction_resources": {
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.00030979999792180024,
+        "llm_calls": 0,
+        "llm_tokens": 0,
+        "prediction_calls": 1
+      },
+      "prediction_end_to_end": {
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.007939300001453375
+      },
+      "evaluation_resources": {
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.0004699000019172672,
+        "llm_calls": 0,
+        "llm_tokens": 0,
+        "prediction_calls": 2
+      },
+      "agent_summary": {
+        "decision": "keep",
+        "reason": "recipe_independent_real_six_class_evaluation_required",
+        "evidence": "public_development",
+        "candidate": "anchor_38672e9b111f45e8",
+        "delta_macro_f1": 0.24682539682539684,
+        "failed_checks": [
+          {
+            "criterion": "max_other_recall_drop",
+            "class": "Ethanol"
+          }
+        ],
+        "evidence_scope": "mock"
+      },
+      "activation": {
+        "status": "kept",
+        "active_model_id": "stable",
+        "revision": 0,
+        "reason": "recipe_independent_real_six_class_evaluation_required"
+      }
+    },
+    {
+      "stage": 2,
+      "calibration_counts": [
+        3,
+        3,
+        2,
+        0,
+        2,
+        2
+      ],
+      "diagnosis": {
+        "rows": 18,
+        "mean_shift_l2": 65.13552435977789,
+        "predicted_counts": {
+          "Ethanol": 18,
+          "Ethylene": 0,
+          "Ammonia": 0,
+          "Acetaldehyde": 0,
+          "Acetone": 0,
+          "Toluene": 0
+        },
+        "labels_used": false
+      },
+      "proposed_methods": [
+        "no_update",
+        "mlp_continue",
+        "fusion_refit",
+        "C_replay_anchor"
+      ],
+      "training": {
+        "status": "trained",
+        "model_id": "anchor_621a95f577b0420d",
+        "parent_id": "anchor_38672e9b111f45e8",
+        "sha256": "sha256:872903bc090042f7c815a4f3a54fe0dc35d7c08fa0514481431d64a7cef8fdef",
+        "active_model_id": "stable",
+        "method": "C_replay_anchor",
+        "training_rows": 12,
+        "class_counts": [
+          3,
+          3,
+          2,
+          0,
+          2,
+          2
+        ],
+        "missing_calibration_classes": [
+          3
+        ],
+        "resources": {
+          "cpu_seconds": 0.015625,
+          "wall_seconds": 0.03551340000194614,
+          "llm_calls": 0,
+          "llm_tokens": 0
+        }
+      },
+      "prediction_resources": {
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.0002447000006213784,
+        "llm_calls": 0,
+        "llm_tokens": 0,
+        "prediction_calls": 1
+      },
+      "prediction_end_to_end": {
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.008330600001499988
+      },
+      "evaluation_resources": {
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.000416300001234049,
+        "llm_calls": 0,
+        "llm_tokens": 0,
+        "prediction_calls": 2
+      },
+      "agent_summary": {
+        "decision": "keep",
+        "reason": "recipe_independent_real_six_class_evaluation_required",
+        "evidence": "public_development",
+        "candidate": "anchor_621a95f577b0420d",
+        "delta_macro_f1": 0.09523809523809523,
+        "failed_checks": [
+          {
+            "criterion": "max_other_recall_drop",
+            "class": "Ethanol"
+          },
+          {
+            "criterion": "acetaldehyde_f1_must_improve",
+            "class": "Acetaldehyde"
+          },
+          {
+            "criterion": "min_acetaldehyde_precision",
+            "class": "Acetaldehyde"
+          }
+        ],
+        "evidence_scope": "mock"
+      },
+      "activation": {
+        "status": "kept",
+        "active_model_id": "stable",
+        "revision": 0,
+        "reason": "recipe_independent_real_six_class_evaluation_required"
+      }
+    },
+    {
+      "stage": 3,
+      "calibration_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "diagnosis": {
+        "rows": 18,
+        "mean_shift_l2": 64.58147364905373,
+        "predicted_counts": {
+          "Ethanol": 18,
+          "Ethylene": 0,
+          "Ammonia": 0,
+          "Acetaldehyde": 0,
+          "Acetone": 0,
+          "Toluene": 0
+        },
+        "labels_used": false
+      },
+      "proposed_methods": [
+        "no_update"
+      ],
+      "training": {
+        "status": "kept",
+        "active_model_id": "stable",
+        "reason": "no_update_requested"
+      },
+      "prediction_resources": {
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.00031459999809158035,
+        "llm_calls": 0,
+        "llm_tokens": 0,
+        "prediction_calls": 1
+      },
+      "prediction_end_to_end": {
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.006078300000808667
+      },
+      "evaluation_resources": {
+        "cpu_seconds": 0.0,
+        "wall_seconds": 0.0004365999993751757,
+        "llm_calls": 0,
+        "llm_tokens": 0,
+        "prediction_calls": 2
+      },
+      "agent_summary": {
+        "decision": "keep",
+        "reason": "recipe_independent_real_six_class_evaluation_required",
+        "evidence": "public_development",
+        "candidate": "anchor_621a95f577b0420d",
+        "delta_macro_f1": 0.3468253968253968,
+        "failed_checks": [
+          {
+            "criterion": "max_other_recall_drop",
+            "class": "Ethanol"
+          }
+        ],
+        "evidence_scope": "mock"
+      },
+      "activation": {
+        "status": "kept",
+        "active_model_id": "stable",
+        "revision": 0,
+        "reason": "recipe_independent_real_six_class_evaluation_required"
+      }
+    }
+  ],
+  "rollback": {
+    "status": "kept",
+    "reason": "no_previous_activation",
+    "active_model_id": "stable",
+    "revision": 0
+  },
+  "final_active_model": "stable",
+  "independent_generalization_verified": false,
+  "llm_calls": 0,
+  "llm_tokens": 0
+}
