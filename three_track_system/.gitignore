@@ -1,0 +1,117 @@
+# ===================================================================
+# 智训引擎 (赛题 9) — Git 忽略规则
+#
+# 三条硬约束:
+#   1. **模型权重绝不进仓库** (赛题明令: 严禁将模型权重打包进提交包)
+#   2. **实验产物不进仓库** (artifacts/ 可能几百 MB, 且含权重)
+#   3. **本地环境不进仓库** (.venv / 缓存 / IDE 配置)
+# ===================================================================
+
+# ---- 1. 模型权重 (双重保险: 显式后缀 + 显式目录) ----
+*.pkl
+*.pickle
+*.joblib
+*.pt
+*.pth
+*.onnx
+*.bin
+*.safetensors
+*.h5
+*.hdf5
+*.ckpt
+*.npz
+*.npy
+*.pmml
+*.pkl.gz
+models/
+checkpoints/
+*.model
+
+# ---- 2. 实验产物与运行日志 ----
+# ``artifacts/`` and ``runs/`` are the **shipped evidence**: the run
+# reports, the ledgers, the comparison tables and the figures that the
+# README's numbers come from.  They are text and PNG only - the packager
+# refuses any weight suffix - so they travel with the repository.
+# ``art/`` is scratch and never ships.
+art/
+logs/
+outputs/
+wandb/
+mlruns/
+swanlog/
+*.log
+!docs/**/*.log
+
+# The experiment folders under artifacts/ carry trained weights, which
+# the competition forbids in the submission.  The text beside them -
+# the run summaries, the ledgers, the comparison tables - is the
+# evidence, and it travels; the weights stay behind.
+artifacts/**/models/
+artifacts/**/*.pkl
+artifacts/**/*.npz
+artifacts/**/*.npy
+artifacts/**/*.bin
+artifacts/**/*.pt
+artifacts/**/*.pth
+artifacts/**/*.joblib
+artifacts/**/*.onnx
+artifacts/**/*.h5
+artifacts/**/*.safetensors
+
+# ---- 3. 打包输出 ----
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# ---- 4. 本地环境 ----
+.venv/
+venv/
+env/
+.env
+.env.*
+
+# ---- 5. 数据 (赛题数据不外传; 官方数据由赛题组提供) ----
+data/
+datasets/
+*.csv
+*.parquet
+*.feather
+!tests/**/*.csv
+!docs/**/*.csv
+
+# ---- 6. 缓存 ----
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.coverage
+htmlcov/
+.tox/
+
+# ---- 7. IDE / 编辑器 ----
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ---- 8. 赛题原始 PDF (含赛事信息, 不随代码开源) ----
+*.pdf
+
+# ---- 9. 凭据 (SwanLab API Key 等) ----
+*.key
+secrets.*
+credentials.*
+.netrc
+
+# ---- 10. 临时文件 ----
+tmp/
+temp/
+*.tmp
+*.bak

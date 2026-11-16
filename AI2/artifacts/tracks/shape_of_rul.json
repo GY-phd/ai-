@@ -1,0 +1,23 @@
+{
+  "Bearing1_4": {
+    "two_stage_rmse": 61.05216374472334,
+    "affine_rmse": 932.5980925563778,
+    "winner": "two-stage"
+  },
+  "Bearing2_4": {
+    "two_stage_rmse": 18.5940864895249,
+    "affine_rmse": 838.5872473596374,
+    "winner": "two-stage"
+  },
+  "Bearing3_4": {
+    "two_stage_rmse": 745.9441361518179,
+    "affine_rmse": 464.84229528997224,
+    "winner": "affine"
+  },
+  "overall": {
+    "two_stage_rmse": 708.774551261455,
+    "affine_rmse": 525.1293821126604,
+    "affine_a": 2919.373229959407,
+    "affine_b": -597.2635165344984
+  }
+}

@@ -45,18 +45,45 @@ TEXT_EXTENSIONS = {".json", ".jsonl", ".md", ".txt", ".csv"}
 SKIP_DIRS = {
     "__pycache__", ".git", ".pytest_cache", ".mypy_cache", ".ruff_cache",
     "art", "art_probe", "art_probe2", "art_probe3", "art_probe4", "art_probe5",
-    "dist", "runs", "data", "swanlog", "logs",
+    "dist", "data", "swanlog", "logs",
     "models", "site-packages", ".venv", "venv", "build", ".idea",
-}
-# Files that never belong in the repository.
+    "checkpoints", "registry",
+}# Files that never belong in the repository.
 SKIP_FILES = {"checkpoint.npz", "history.jsonl"}
+# ``evo`` is the earlier single-task implementation, now a **sub-component**
+# of the three-track system at the repository root.  Its tests live in
+# ``tests/`` and import it by module path, so the package has to travel with
+# the repository - but only its source: the folders below it also hold
+# LightGBM checkpoints from the old sweeps, and those are weights.
+CODE_ONLY_DIRS = ("evo",)
 
 TOP_FILES = (
     "README.md", "LICENSE", "requirements.txt", "run_all.ps1", "run_harness.ps1",
     "run_harness.sh", ".gitignore", ".gitattributes", "Dockerfile", ".dockerignore",
+    "智训引擎-系统总思路.md", "基岩智序-完整调试过程.md",
 )
-CODE_DIRS = ("harness", "rulkit", "tools", "research", "tests", ".github")
+# The three-track closed loop (``tracks``), the run reports it wrote
+# (``runs``), and the generated tables and figures (``artifacts``) all
+# travel: they are the evidence that the numbers in the README are real
+# and that they can be reproduced from the code that ships beside them.
+# ``figureuse`` is the presentation set - the same figures, regenerated
+# from the same artifacts, with the labels the slides use.
+CODE_DIRS = ("harness", "rulkit", "tracks", "tools", "research", "tests",
+             ".github", "runs", "figureuse")
 DOC_DIRS = ("docs",)
+# ``artifacts`` is **not** copied wholesale: the working folder also holds the
+# early single-task sweep (246 MB of LightGBM checkpoints under ``sweep/``,
+# ``es2_*``, ``rul_tune15/`` and friends), none of which belongs to the
+# three-track evidence chain.  Only the generated tables, the verification
+# result and the figures are published - the same set the sync tool copies
+# into ``AI2``.
+ARTIFACT_FILES = (
+    "comparison.json", "comparison_table.csv", "comparison_table.md",
+    "fusion_ablation.json", "online_curve.json", "ppt.md",
+    "rmse_verification.json", "rmse_verification.md", "rul_benchmark.json",
+    "rul_comparison.json", "run_summary.json", "scenarios.json",
+)
+ARTIFACT_GLOBS = ("figures/*.png", "tracks/*.json", "official/*.json")
 MAX_TOTAL_BYTES = 4 * 1024 * 1024
 
 PUSH_TEMPLATE = """# 上传到 GitHub
@@ -153,6 +180,38 @@ def collect() -> list:
         if not base.is_dir():
             continue
         for path in sorted(base.rglob("*")):
+            if not path.is_file():
+                continue
+            relative = path.relative_to(ROOT)
+            if _skip(relative):
+                continue
+            files.append((path, relative))
+    # ``evo``: source only.  Its checkpoint folders are weights and are
+    # excluded by both the suffix rule and ``SKIP_DIRS``.
+    for directory in CODE_ONLY_DIRS:
+        base = ROOT / directory
+        if not base.is_dir():
+            continue
+        for path in sorted(base.rglob("*")):
+            if not path.is_file():
+                continue
+            relative = path.relative_to(ROOT)
+            if _skip(relative):
+                continue
+            if path.suffix.lower() in WEIGHT_SUFFIXES:
+                continue
+            if path.suffix.lower() not in {".py", ".yaml", ".yml", ".toml",
+                                           ".json", ".txt", ".md", ".cfg"}:
+                continue
+            files.append((path, relative))
+    # The generated artefacts: a fixed list, never the whole folder.
+    artifacts = ROOT / "artifacts"
+    for name in ARTIFACT_FILES:
+        path = artifacts / name
+        if path.is_file():
+            files.append((path, Path("artifacts") / name))
+    for pattern in ARTIFACT_GLOBS:
+        for path in sorted(artifacts.glob(pattern)):
             if not path.is_file():
                 continue
             relative = path.relative_to(ROOT)

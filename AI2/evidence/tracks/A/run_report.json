@@ -1,0 +1,588 @@
+{
+  "profile": "A",
+  "package": "cpu-a-guide-20261110-v1",
+  "created_at": "2026-11-16T18:48:57",
+  "stream_meta": {
+    "profile": "A",
+    "mode": "within_batch_stream",
+    "initial_units": [
+      "batch1"
+    ],
+    "stream_units": [
+      "batch1"
+    ],
+    "judge_units": [
+      "validation-slice"
+    ],
+    "validation_units": [
+      "batch2"
+    ],
+    "initial_rows": 265,
+    "stream_rows": 180,
+    "judge_rows": 310,
+    "validation_rows": 934,
+    "unit_leakage": false,
+    "validation_used_for_training": false,
+    "judge_used_for_training": false,
+    "note": "profile A's public training set is one batch.  The stream is a class-stratified 40% of that batch.  The gate's judge set is a class-stratified 25% of the validation batch - held back from training and from the final score - so the gate judges on the deployment distribution rather than the training one."
+  },
+  "initial_score": {
+    "acc": 0.8758029978586723,
+    "f1": 0.722385210472495,
+    "macro_f1": 0.722385210472495,
+    "accuracy": 0.8758029978586723,
+    "precision": 0.6786197340164183,
+    "recall": 0.8077945568420127,
+    "auc": 0.5,
+    "n_classes": 6.0,
+    "score": 0.7684105466883482,
+    "0": 0.6762177650429799,
+    "1": 0.9333333333333333,
+    "2": 1.0,
+    "3": 0.0,
+    "4": 0.9974874371859297,
+    "5": 0.7272727272727273
+  },
+  "final_score": {
+    "acc": 0.9903640256959315,
+    "f1": 0.970745067841578,
+    "macro_f1": 0.970745067841578,
+    "accuracy": 0.9903640256959315,
+    "precision": 0.9578603007615851,
+    "recall": 0.9874006632556515,
+    "auc": 0.5,
+    "n_classes": 6.0,
+    "score": 0.976630755197884,
+    "0": 0.9714285714285714,
+    "1": 0.9900990099009901,
+    "2": 1.0,
+    "3": 0.9753086419753086,
+    "4": 0.998745294855709,
+    "5": 0.8888888888888888
+  },
+  "final_refit": {
+    "tag": "final",
+    "rows": 755,
+    "seconds": 0.12,
+    "parameter_count": 4326,
+    "overrides": {
+      "hidden": 32,
+      "epochs": 50
+    },
+    "recipe": {
+      "hidden": 32,
+      "epochs": 50
+    },
+    "training_units": [
+      "batch1",
+      "batch2"
+    ]
+  },
+  "cycles": 4,
+  "promotions": 0,
+  "per_unit_validation": {},
+  "ledger": [
+    {
+      "cycle": 0,
+      "stage": "decide",
+      "action": "adapt",
+      "drift": {
+        "mean_abs_shift": 0.1449,
+        "level": "ok"
+      },
+      "candidate": {
+        "tag": "batch000",
+        "rows": 310,
+        "seconds": 0.0,
+        "parameter_count": 2166,
+        "overrides": {
+          "hidden": 16,
+          "epochs": 20
+        },
+        "score": {
+          "acc": 0.8354838709677419,
+          "f1": 0.598105906727867,
+          "macro_f1": 0.598105906727867,
+          "accuracy": 0.8354838709677419,
+          "precision": 0.585998260998261,
+          "recall": 0.7542450160075475,
+          "auc": 0.5,
+          "n_classes": 6.0,
+          "score": 0.6693192959998294,
+          "0": 0.6271186440677966,
+          "1": 0.9440993788819876,
+          "2": 0.8444444444444444,
+          "3": 0.0,
+          "4": 0.972972972972973,
+          "5": 0.2
+        }
+      },
+      "champion_score_on_same_slice": {
+        "acc": 0.867741935483871,
+        "f1": 0.6700962930431529,
+        "macro_f1": 0.6700962930431529,
+        "accuracy": 0.867741935483871,
+        "precision": 0.6296753550468466,
+        "recall": 0.786583752946869,
+        "auc": 0.5,
+        "n_classes": 6.0,
+        "score": 0.7293899857753683,
+        "0": 0.6608695652173913,
+        "1": 0.9506172839506173,
+        "2": 0.9166666666666666,
+        "3": 0.0,
+        "4": 0.9924242424242424,
+        "5": 0.5
+      },
+      "gain": -0.07199,
+      "decision": "reject",
+      "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+      "hypothesis": "capacity-is-overfitting",
+      "claim": "The champion has more capacity than 445-7032 rows can support, so it memorises the units it was trained on and loses the ability to generalise to a new unit.",
+      "change": "Shrink the hidden layer and shorten the schedule: the capacity sweep's smallest configuration.",
+      "falsifier": "If the champion's *training* score is not near-perfect while its held-out score is much worse, the problem is not capacity but the target distribution itself.",
+      "expected_effect": "Training score stays high; held-out RMSE falls by 10-40%.",
+      "cost": 0.2
+    },
+    {
+      "cycle": 1,
+      "stage": "decide",
+      "action": "adapt",
+      "drift": {
+        "mean_abs_shift": 0.3044,
+        "level": "warn"
+      },
+      "candidate": {
+        "tag": "batch001",
+        "rows": 355,
+        "seconds": 0.08,
+        "parameter_count": 4326,
+        "overrides": {
+          "hidden": 32,
+          "epochs": 50,
+          "class_weighting": "balanced"
+        },
+        "score": {
+          "acc": 0.8612903225806452,
+          "f1": 0.6798287216276889,
+          "macro_f1": 0.6798287216276889,
+          "accuracy": 0.8612903225806452,
+          "precision": 0.6347901545269966,
+          "recall": 0.8016201980119266,
+          "auc": 0.5,
+          "n_classes": 6.0,
+          "score": 0.7342672019135758,
+          "0": 0.6782608695652174,
+          "1": 0.9433962264150944,
+          "2": 0.9803921568627451,
+          "3": 0.0,
+          "4": 0.9769230769230769,
+          "5": 0.5
+        }
+      },
+      "champion_score_on_same_slice": {
+        "acc": 0.8774193548387097,
+        "f1": 0.6836675186348389,
+        "macro_f1": 0.6836675186348389,
+        "accuracy": 0.8774193548387097,
+        "precision": 0.6341277677968711,
+        "recall": 0.8065837529468691,
+        "auc": 0.5,
+        "n_classes": 6.0,
+        "score": 0.7417930694960001,
+        "0": 0.6785714285714286,
+        "1": 0.9506172839506173,
+        "2": 0.9803921568627451,
+        "3": 0.0,
+        "4": 0.9924242424242424,
+        "5": 0.5
+      },
+      "gain": -0.003839,
+      "decision": "reject",
+      "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+      "hypothesis": "rare-class-is-underweighted",
+      "claim": "The training mix is not the deployment mix, and a class that is common in training but rare in deployment dominates the Macro-F1 loss.",
+      "change": "Weight the training loss so that every class contributes the same total mass.",
+      "falsifier": "If the rare class's per-class F1 does not rise, the weighting did not reach it.",
+      "expected_effect": "Macro-F1 rises; the rare class's F1 rises the most.",
+      "cost": 0.2
+    },
+    {
+      "cycle": 2,
+      "stage": "decide",
+      "action": "adapt",
+      "drift": {
+        "mean_abs_shift": 0.3017,
+        "level": "warn"
+      },
+      "candidate": {
+        "tag": "batch002",
+        "rows": 400,
+        "seconds": 0.08,
+        "parameter_count": 4326,
+        "overrides": {
+          "hidden": 32,
+          "epochs": 50,
+          "normalisation": "train_scale"
+        },
+        "score": {
+          "acc": 0.8806451612903226,
+          "f1": 0.6866006041905144,
+          "macro_f1": 0.6866006041905144,
+          "accuracy": 0.8806451612903226,
+          "precision": 0.6372863247863249,
+          "recall": 0.8106487935972755,
+          "auc": 0.5,
+          "n_classes": 6.0,
+          "score": 0.7448139713204568,
+          "0": 0.6902654867256637,
+          "1": 0.9565217391304348,
+          "2": 0.9803921568627451,
+          "3": 0.0,
+          "4": 0.9924242424242424,
+          "5": 0.5
+        }
+      },
+      "champion_score_on_same_slice": {
+        "acc": 0.8806451612903226,
+        "f1": 0.6866006041905144,
+        "macro_f1": 0.6866006041905144,
+        "accuracy": 0.8806451612903226,
+        "precision": 0.6372863247863249,
+        "recall": 0.8106487935972755,
+        "auc": 0.5,
+        "n_classes": 6.0,
+        "score": 0.7448139713204568,
+        "0": 0.6902654867256637,
+        "1": 0.9565217391304348,
+        "2": 0.9803921568627451,
+        "3": 0.0,
+        "4": 0.9924242424242424,
+        "5": 0.5
+      },
+      "gain": 0.0,
+      "decision": "reject",
+      "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+      "hypothesis": "drift-is-a-scale-shift",
+      "claim": "The stream differs from the training set by a per-feature scale, not by a change in the decision boundary.",
+      "change": "Normalise the stream rows by the training set's own per-feature scale before predicting.",
+      "falsifier": "If the standardised feature shift is small, there is no scale shift to remove and the normalisation can only add noise.",
+      "expected_effect": "RMSE falls on the drifted batches.",
+      "cost": 0.1
+    },
+    {
+      "cycle": 3,
+      "stage": "decide",
+      "action": "adapt",
+      "drift": {
+        "mean_abs_shift": 0.5234,
+        "level": "warn"
+      },
+      "candidate": {
+        "tag": "batch003",
+        "rows": 445,
+        "seconds": 0.08,
+        "parameter_count": 4326,
+        "overrides": {
+          "hidden": 32,
+          "epochs": 50
+        },
+        "score": {
+          "acc": 0.8806451612903226,
+          "f1": 0.6866006041905144,
+          "macro_f1": 0.6866006041905144,
+          "accuracy": 0.8806451612903226,
+          "precision": 0.6372863247863249,
+          "recall": 0.8106487935972755,
+          "auc": 0.5,
+          "n_classes": 6.0,
+          "score": 0.7448139713204568,
+          "0": 0.6902654867256637,
+          "1": 0.9565217391304348,
+          "2": 0.9803921568627451,
+          "3": 0.0,
+          "4": 0.9924242424242424,
+          "5": 0.5
+        }
+      },
+      "champion_score_on_same_slice": {
+        "acc": 0.8806451612903226,
+        "f1": 0.6866006041905144,
+        "macro_f1": 0.6866006041905144,
+        "accuracy": 0.8806451612903226,
+        "precision": 0.6372863247863249,
+        "recall": 0.8106487935972755,
+        "auc": 0.5,
+        "n_classes": 6.0,
+        "score": 0.7448139713204568,
+        "0": 0.6902654867256637,
+        "1": 0.9565217391304348,
+        "2": 0.9803921568627451,
+        "3": 0.0,
+        "4": 0.9924242424242424,
+        "5": 0.5
+      },
+      "gain": 0.0,
+      "decision": "reject",
+      "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+      "hypothesis": "more-data-helps",
+      "claim": "The model is data-limited rather than capacity-limited.",
+      "change": "Keep the architecture and retrain on every row seen so far, including the stream.",
+      "falsifier": "If the held-out score does not improve as rows are added, the model is not data-limited.",
+      "expected_effect": "The score improves monotonically with the row count.",
+      "cost": 0.5
+    }
+  ],
+  "hypothesis_chain": [
+    {
+      "cycle": 0,
+      "stage": "decide",
+      "action": "adapt",
+      "drift": {
+        "mean_abs_shift": 0.1449,
+        "level": "ok"
+      },
+      "candidate": {
+        "tag": "batch000",
+        "rows": 310,
+        "seconds": 0.0,
+        "parameter_count": 2166,
+        "overrides": {
+          "hidden": 16,
+          "epochs": 20
+        },
+        "score": {
+          "acc": 0.8354838709677419,
+          "f1": 0.598105906727867,
+          "macro_f1": 0.598105906727867,
+          "accuracy": 0.8354838709677419,
+          "precision": 0.585998260998261,
+          "recall": 0.7542450160075475,
+          "auc": 0.5,
+          "n_classes": 6.0,
+          "score": 0.6693192959998294,
+          "0": 0.6271186440677966,
+          "1": 0.9440993788819876,
+          "2": 0.8444444444444444,
+          "3": 0.0,
+          "4": 0.972972972972973,
+          "5": 0.2
+        }
+      },
+      "champion_score_on_same_slice": {
+        "acc": 0.867741935483871,
+        "f1": 0.6700962930431529,
+        "macro_f1": 0.6700962930431529,
+        "accuracy": 0.867741935483871,
+        "precision": 0.6296753550468466,
+        "recall": 0.786583752946869,
+        "auc": 0.5,
+        "n_classes": 6.0,
+        "score": 0.7293899857753683,
+        "0": 0.6608695652173913,
+        "1": 0.9506172839506173,
+        "2": 0.9166666666666666,
+        "3": 0.0,
+        "4": 0.9924242424242424,
+        "5": 0.5
+      },
+      "gain": -0.07199,
+      "decision": "reject",
+      "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+      "hypothesis": "capacity-is-overfitting",
+      "claim": "The champion has more capacity than 445-7032 rows can support, so it memorises the units it was trained on and loses the ability to generalise to a new unit.",
+      "change": "Shrink the hidden layer and shorten the schedule: the capacity sweep's smallest configuration.",
+      "falsifier": "If the champion's *training* score is not near-perfect while its held-out score is much worse, the problem is not capacity but the target distribution itself.",
+      "expected_effect": "Training score stays high; held-out RMSE falls by 10-40%.",
+      "cost": 0.2
+    },
+    {
+      "cycle": 1,
+      "stage": "decide",
+      "action": "adapt",
+      "drift": {
+        "mean_abs_shift": 0.3044,
+        "level": "warn"
+      },
+      "candidate": {
+        "tag": "batch001",
+        "rows": 355,
+        "seconds": 0.08,
+        "parameter_count": 4326,
+        "overrides": {
+          "hidden": 32,
+          "epochs": 50,
+          "class_weighting": "balanced"
+        },
+        "score": {
+          "acc": 0.8612903225806452,
+          "f1": 0.6798287216276889,
+          "macro_f1": 0.6798287216276889,
+          "accuracy": 0.8612903225806452,
+          "precision": 0.6347901545269966,
+          "recall": 0.8016201980119266,
+          "auc": 0.5,
+          "n_classes": 6.0,
+          "score": 0.7342672019135758,
+          "0": 0.6782608695652174,
+          "1": 0.9433962264150944,
+          "2": 0.9803921568627451,
+          "3": 0.0,
+          "4": 0.9769230769230769,
+          "5": 0.5
+        }
+      },
+      "champion_score_on_same_slice": {
+        "acc": 0.8774193548387097,
+        "f1": 0.6836675186348389,
+        "macro_f1": 0.6836675186348389,
+        "accuracy": 0.8774193548387097,
+        "precision": 0.6341277677968711,
+        "recall": 0.8065837529468691,
+        "auc": 0.5,
+        "n_classes": 6.0,
+        "score": 0.7417930694960001,
+        "0": 0.6785714285714286,
+        "1": 0.9506172839506173,
+        "2": 0.9803921568627451,
+        "3": 0.0,
+        "4": 0.9924242424242424,
+        "5": 0.5
+      },
+      "gain": -0.003839,
+      "decision": "reject",
+      "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+      "hypothesis": "rare-class-is-underweighted",
+      "claim": "The training mix is not the deployment mix, and a class that is common in training but rare in deployment dominates the Macro-F1 loss.",
+      "change": "Weight the training loss so that every class contributes the same total mass.",
+      "falsifier": "If the rare class's per-class F1 does not rise, the weighting did not reach it.",
+      "expected_effect": "Macro-F1 rises; the rare class's F1 rises the most.",
+      "cost": 0.2
+    },
+    {
+      "cycle": 2,
+      "stage": "decide",
+      "action": "adapt",
+      "drift": {
+        "mean_abs_shift": 0.3017,
+        "level": "warn"
+      },
+      "candidate": {
+        "tag": "batch002",
+        "rows": 400,
+        "seconds": 0.08,
+        "parameter_count": 4326,
+        "overrides": {
+          "hidden": 32,
+          "epochs": 50,
+          "normalisation": "train_scale"
+        },
+        "score": {
+          "acc": 0.8806451612903226,
+          "f1": 0.6866006041905144,
+          "macro_f1": 0.6866006041905144,
+          "accuracy": 0.8806451612903226,
+          "precision": 0.6372863247863249,
+          "recall": 0.8106487935972755,
+          "auc": 0.5,
+          "n_classes": 6.0,
+          "score": 0.7448139713204568,
+          "0": 0.6902654867256637,
+          "1": 0.9565217391304348,
+          "2": 0.9803921568627451,
+          "3": 0.0,
+          "4": 0.9924242424242424,
+          "5": 0.5
+        }
+      },
+      "champion_score_on_same_slice": {
+        "acc": 0.8806451612903226,
+        "f1": 0.6866006041905144,
+        "macro_f1": 0.6866006041905144,
+        "accuracy": 0.8806451612903226,
+        "precision": 0.6372863247863249,
+        "recall": 0.8106487935972755,
+        "auc": 0.5,
+        "n_classes": 6.0,
+        "score": 0.7448139713204568,
+        "0": 0.6902654867256637,
+        "1": 0.9565217391304348,
+        "2": 0.9803921568627451,
+        "3": 0.0,
+        "4": 0.9924242424242424,
+        "5": 0.5
+      },
+      "gain": 0.0,
+      "decision": "reject",
+      "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+      "hypothesis": "drift-is-a-scale-shift",
+      "claim": "The stream differs from the training set by a per-feature scale, not by a change in the decision boundary.",
+      "change": "Normalise the stream rows by the training set's own per-feature scale before predicting.",
+      "falsifier": "If the standardised feature shift is small, there is no scale shift to remove and the normalisation can only add noise.",
+      "expected_effect": "RMSE falls on the drifted batches.",
+      "cost": 0.1
+    },
+    {
+      "cycle": 3,
+      "stage": "decide",
+      "action": "adapt",
+      "drift": {
+        "mean_abs_shift": 0.5234,
+        "level": "warn"
+      },
+      "candidate": {
+        "tag": "batch003",
+        "rows": 445,
+        "seconds": 0.08,
+        "parameter_count": 4326,
+        "overrides": {
+          "hidden": 32,
+          "epochs": 50
+        },
+        "score": {
+          "acc": 0.8806451612903226,
+          "f1": 0.6866006041905144,
+          "macro_f1": 0.6866006041905144,
+          "accuracy": 0.8806451612903226,
+          "precision": 0.6372863247863249,
+          "recall": 0.8106487935972755,
+          "auc": 0.5,
+          "n_classes": 6.0,
+          "score": 0.7448139713204568,
+          "0": 0.6902654867256637,
+          "1": 0.9565217391304348,
+          "2": 0.9803921568627451,
+          "3": 0.0,
+          "4": 0.9924242424242424,
+          "5": 0.5
+        }
+      },
+      "champion_score_on_same_slice": {
+        "acc": 0.8806451612903226,
+        "f1": 0.6866006041905144,
+        "macro_f1": 0.6866006041905144,
+        "accuracy": 0.8806451612903226,
+        "precision": 0.6372863247863249,
+        "recall": 0.8106487935972755,
+        "auc": 0.5,
+        "n_classes": 6.0,
+        "score": 0.7448139713204568,
+        "0": 0.6902654867256637,
+        "1": 0.9565217391304348,
+        "2": 0.9803921568627451,
+        "3": 0.0,
+        "4": 0.9924242424242424,
+        "5": 0.5
+      },
+      "gain": 0.0,
+      "decision": "reject",
+      "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+      "hypothesis": "more-data-helps",
+      "claim": "The model is data-limited rather than capacity-limited.",
+      "change": "Keep the architecture and retrain on every row seen so far, including the stream.",
+      "falsifier": "If the held-out score does not improve as rows are added, the model is not data-limited.",
+      "expected_effect": "The score improves monotonically with the row count.",
+      "cost": 0.5
+    }
+  ]
+}

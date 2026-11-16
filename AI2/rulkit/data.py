@@ -30,6 +30,21 @@ def json_value(raw):
     return json.loads(raw, object_pairs_hook=unique_object, parse_constant=reject)
 
 
+def _group_vector(dataset):
+    """The bearing grouping of a dataset, as a plain list.
+
+    ``read_dataset`` returns the grouping under ``groups``; some callers
+    provide it under ``bearing``.  ``groups`` may be a numpy array, so it
+    must not be tested for truthiness.
+    """
+    groups = dataset.get("bearing")
+    if groups is None:
+        groups = dataset.get("groups")
+    if groups is None:
+        return None
+    return list(groups)
+
+
 def read_dataset(path, expected_paths=None):
     """Read a labelled JSONL file for the regression (RUL, minutes) task."""
     path = Path(path)

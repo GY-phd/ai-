@@ -1,0 +1,223 @@
+{
+  "run_name": "harness-b",
+  "created_at": "2026-11-15T23:39:58+0800",
+  "planner": {
+    "planner": "policy",
+    "reason": "no endpoint configured",
+    "fallback": true
+  },
+  "llm_model_id": "Qwen3.8-27B",
+  "llm_tokens_used": 0,
+  "llm_calls": 0,
+  "baseline": {
+    "rmse": 681.1598326043113,
+    "mae": 563.1058414514887
+  },
+  "final": {
+    "rmse": 283.53860198174226,
+    "mae": 218.24826147989253,
+    "per_bearing": {
+      "xjtu_Bearing1_4": {
+        "rmse": 272.76960142867665,
+        "mae": 220.29563482810548,
+        "rows": 122
+      },
+      "xjtu_Bearing2_4": {
+        "rmse": 256.5255283331351,
+        "mae": 206.42028091575776,
+        "rows": 42
+      },
+      "xjtu_Bearing3_4": {
+        "rmse": 285.09825454828274,
+        "mae": 218.41129490247448,
+        "rows": 1515
+      }
+    },
+    "parameter_count": 3457,
+    "checkpoint_sha256": "sha256:a2d0be36529f67a00d534fe97f040863495f32663c5ff92eb64bf32532f25163"
+  },
+  "improvement_pct": 58.37,
+  "budget": {
+    "experiments_left": 1,
+    "train_seconds_left": 825,
+    "tokens_left": 20000,
+    "wall_seconds_left": 2321,
+    "experiments_used": 5,
+    "train_seconds_used": 74.88,
+    "tokens_used": 0
+  },
+  "cycles": 9,
+  "hypothesis_chain": {
+    "iterations": 9,
+    "complete_records": 9,
+    "promoted": 2,
+    "rejected": 1,
+    "do_nothing": 6,
+    "best_gain_pct": 55.785,
+    "total_gain_pct": 58.918,
+    "missing_stage_records": []
+  },
+  "decisions": [
+    {
+      "cycle": 1,
+      "action": "hpo",
+      "decision": "promote",
+      "hypothesis": "the static baseline was never adapted; train and measure a candidate before judging drift",
+      "cost_seconds": 52.88,
+      "gate": {
+        "decision": "promote",
+        "reason": "RMSE improved by 55.78% with no bearing regression above 20.0% of the global RMSE",
+        "gain_pct": 55.785,
+        "checks": {
+          "gain_pct": 55.785,
+          "min_gain_pct": 1.0,
+          "improved": true,
+          "worst_local_regression_pct_of_global": 2.13,
+          "worst_bearing": "xjtu_Bearing1_4",
+          "worst_bearing_delta_minutes": 14.5,
+          "no_local_regression": true,
+          "finite": true,
+          "budget_left": true,
+          "safety_ok": true
+        }
+      }
+    },
+    {
+      "cycle": 2,
+      "action": "do_nothing",
+      "decision": "skip",
+      "hypothesis": "no actionable evidence; keeping the champion is the cheapest correct action",
+      "cost_seconds": 0.0,
+      "gate": {
+        "decision": "skip",
+        "reason": "no model change"
+      }
+    },
+    {
+      "cycle": 3,
+      "action": "hpo",
+      "decision": "promote",
+      "hypothesis": "relation changed; a fresh candidate trained on public data is the only real fix",
+      "cost_seconds": 21.91,
+      "gate": {
+        "decision": "promote",
+        "reason": "RMSE improved by 5.86% with no bearing regression above 20.0% of the global RMSE",
+        "gain_pct": 5.856,
+        "checks": {
+          "gain_pct": 5.856,
+          "min_gain_pct": 1.0,
+          "improved": true,
+          "worst_local_regression_pct_of_global": 5.41,
+          "worst_bearing": "xjtu_Bearing1_4",
+          "worst_bearing_delta_minutes": 16.3,
+          "no_local_regression": true,
+          "finite": true,
+          "budget_left": true,
+          "safety_ok": true
+        }
+      }
+    },
+    {
+      "cycle": 4,
+      "action": "retrain_head",
+      "decision": "reject",
+      "hypothesis": "search space exhausted; falling back to the cheap head refit",
+      "cost_seconds": 0.09,
+      "gate": {
+        "decision": "reject",
+        "reason": "gain -2.72% is below the 1.0% promotion threshold",
+        "gain_pct": -2.723,
+        "checks": {
+          "gain_pct": -2.723,
+          "min_gain_pct": 1.0,
+          "improved": false,
+          "worst_local_regression_pct_of_global": 7.05,
+          "worst_bearing": "xjtu_Bearing2_4",
+          "worst_bearing_delta_minutes": 20.0,
+          "no_local_regression": true,
+          "finite": true,
+          "budget_left": true,
+          "safety_ok": true
+        }
+      }
+    },
+    {
+      "cycle": 5,
+      "action": "do_nothing",
+      "decision": "skip",
+      "hypothesis": "no actionable evidence; keeping the champion is the cheapest correct action",
+      "cost_seconds": 0.0,
+      "gate": {
+        "decision": "skip",
+        "reason": "no model change"
+      }
+    },
+    {
+      "cycle": 6,
+      "action": "do_nothing",
+      "decision": "skip",
+      "hypothesis": "no actionable evidence; keeping the champion is the cheapest correct action",
+      "cost_seconds": 0.0,
+      "gate": {
+        "decision": "skip",
+        "reason": "no model change"
+      }
+    },
+    {
+      "cycle": 7,
+      "action": "do_nothing",
+      "decision": "skip",
+      "hypothesis": "no actionable evidence; keeping the champion is the cheapest correct action",
+      "cost_seconds": 0.0,
+      "gate": {
+        "decision": "skip",
+        "reason": "no model change"
+      }
+    },
+    {
+      "cycle": 8,
+      "action": "do_nothing",
+      "decision": "skip",
+      "hypothesis": "no actionable evidence; keeping the champion is the cheapest correct action",
+      "cost_seconds": 0.0,
+      "gate": {
+        "decision": "skip",
+        "reason": "no model change"
+      }
+    },
+    {
+      "cycle": 9,
+      "action": "do_nothing",
+      "decision": "skip",
+      "hypothesis": "no actionable evidence; keeping the champion is the cheapest correct action",
+      "cost_seconds": 0.0,
+      "gate": {
+        "decision": "skip",
+        "reason": "no model change"
+      }
+    }
+  ],
+  "champion_history": [
+    {
+      "cycle": 0,
+      "source": "platform_baseline",
+      "created_at": "2026-11-15T23:38:42+0800",
+      "checkpoint_sha256": "sha256:c7d819fcee9d25459c583b5ffdb35593d4a47b524ed152d0226bf81a283314b4",
+      "rmse": 681.1598326043113
+    },
+    {
+      "cycle": 1,
+      "source": "hpo",
+      "created_at": "2026-11-15T23:39:35+0800",
+      "checkpoint_sha256": "sha256:560abcf1c03084d74a0177da37625230e46e300b3e0990207f039afaf4bdf96a",
+      "rmse": 301.17524461687503
+    },
+    {
+      "cycle": 3,
+      "source": "hpo",
+      "created_at": "2026-11-15T23:39:57+0800",
+      "checkpoint_sha256": "sha256:a2d0be36529f67a00d534fe97f040863495f32663c5ff92eb64bf32532f25163",
+      "rmse": 283.53860198174226
+    }
+  ]
+}

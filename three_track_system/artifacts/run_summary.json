@@ -1,0 +1,1868 @@
+{
+  "iterations": 23,
+  "drifts_detected": 16,
+  "updates_triggered": 16,
+  "updates_approved": 15,
+  "rollbacks": 0,
+  "halted": false,
+  "total_gpu_seconds": 13.846,
+  "total_labels": 2000,
+  "total_tokens": 0,
+  "baseline_score": 0.61584,
+  "final_score": 0.81069,
+  "best_score": 0.90488,
+  "baseline_tail_score": 0.42407,
+  "tail_score": 0.77401,
+  "efficiency": 0.0036187121,
+  "records": [
+    {
+      "index": 1,
+      "window": [
+        0,
+        500
+      ],
+      "drift": {
+        "triggered": false,
+        "severity": "none",
+        "overall_psi": 0.01725,
+        "max_psi": 0.03585,
+        "top_features": [
+          [
+            "f18",
+            0.03585
+          ],
+          [
+            "f12",
+            0.02507
+          ],
+          [
+            "f11",
+            0.02338
+          ],
+          [
+            "f3",
+            0.02253
+          ],
+          [
+            "f9",
+            0.02201
+          ]
+        ],
+        "drifted_features": [],
+        "ks_hits": [],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.128,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 0.0
+        }
+      },
+      "attribution": {
+        "drift_type": "unknown",
+        "culprit_features": [],
+        "rationale": "证据不足, 建议继续观察一个窗口后再决策。",
+        "evidence": {
+          "max_psi": 0.035852,
+          "overall_psi": 0.017252,
+          "baseline_error": 0.128,
+          "recent_error": 0.128,
+          "error_increase": 0.0
+        }
+      },
+      "decision": {
+        "action": "monitor",
+        "target_model": "lgbm",
+        "reasoning": "PSI 0.036 < 触发阈值 0.1, 继续监控",
+        "expected_gain": 0.0,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "policy"
+      },
+      "approved": false,
+      "version": null,
+      "gain": 0.0,
+      "cost_gpu_seconds": 0.0,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 2,
+      "window": [
+        250,
+        750
+      ],
+      "drift": {
+        "triggered": false,
+        "severity": "none",
+        "overall_psi": 0.02372,
+        "max_psi": 0.03753,
+        "top_features": [
+          [
+            "f5",
+            0.03753
+          ],
+          [
+            "f13",
+            0.0344
+          ],
+          [
+            "f6",
+            0.03411
+          ],
+          [
+            "f2",
+            0.03294
+          ],
+          [
+            "f19",
+            0.03277
+          ]
+        ],
+        "drifted_features": [],
+        "ks_hits": [],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.096,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 0.0
+        }
+      },
+      "attribution": {
+        "drift_type": "unknown",
+        "culprit_features": [],
+        "rationale": "证据不足, 建议继续观察一个窗口后再决策。",
+        "evidence": {
+          "max_psi": 0.037528,
+          "overall_psi": 0.02372,
+          "baseline_error": 0.128,
+          "recent_error": 0.096,
+          "error_increase": -0.032
+        }
+      },
+      "decision": {
+        "action": "monitor",
+        "target_model": "lgbm",
+        "reasoning": "PSI 0.038 < 触发阈值 0.1, 继续监控",
+        "expected_gain": 0.0,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "policy"
+      },
+      "approved": false,
+      "version": null,
+      "gain": 0.0,
+      "cost_gpu_seconds": 0.0,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 3,
+      "window": [
+        500,
+        1000
+      ],
+      "drift": {
+        "triggered": false,
+        "severity": "none",
+        "overall_psi": 0.02271,
+        "max_psi": 0.05887,
+        "top_features": [
+          [
+            "f8",
+            0.05887
+          ],
+          [
+            "f18",
+            0.04203
+          ],
+          [
+            "f19",
+            0.03719
+          ],
+          [
+            "f2",
+            0.03172
+          ],
+          [
+            "f5",
+            0.02899
+          ]
+        ],
+        "drifted_features": [],
+        "ks_hits": [],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.098,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 0.0
+        }
+      },
+      "attribution": {
+        "drift_type": "unknown",
+        "culprit_features": [],
+        "rationale": "证据不足, 建议继续观察一个窗口后再决策。",
+        "evidence": {
+          "max_psi": 0.058874,
+          "overall_psi": 0.022707,
+          "baseline_error": 0.128,
+          "recent_error": 0.098,
+          "error_increase": -0.03
+        }
+      },
+      "decision": {
+        "action": "monitor",
+        "target_model": "lgbm",
+        "reasoning": "PSI 0.059 < 触发阈值 0.1, 继续监控",
+        "expected_gain": 0.0,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "policy"
+      },
+      "approved": false,
+      "version": null,
+      "gain": 0.0,
+      "cost_gpu_seconds": 0.0,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 4,
+      "window": [
+        750,
+        1250
+      ],
+      "drift": {
+        "triggered": false,
+        "severity": "none",
+        "overall_psi": 0.02118,
+        "max_psi": 0.04542,
+        "top_features": [
+          [
+            "f8",
+            0.04542
+          ],
+          [
+            "f4",
+            0.03544
+          ],
+          [
+            "f2",
+            0.03017
+          ],
+          [
+            "f9",
+            0.03014
+          ],
+          [
+            "f15",
+            0.02834
+          ]
+        ],
+        "drifted_features": [],
+        "ks_hits": [],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.132,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 0.0
+        }
+      },
+      "attribution": {
+        "drift_type": "unknown",
+        "culprit_features": [],
+        "rationale": "证据不足, 建议继续观察一个窗口后再决策。",
+        "evidence": {
+          "max_psi": 0.045418,
+          "overall_psi": 0.021178,
+          "baseline_error": 0.128,
+          "recent_error": 0.132,
+          "error_increase": 0.004
+        }
+      },
+      "decision": {
+        "action": "monitor",
+        "target_model": "lgbm",
+        "reasoning": "PSI 0.045 < 触发阈值 0.1, 继续监控",
+        "expected_gain": 0.0,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "policy"
+      },
+      "approved": false,
+      "version": null,
+      "gain": 0.0,
+      "cost_gpu_seconds": 0.0,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 5,
+      "window": [
+        1000,
+        1500
+      ],
+      "drift": {
+        "triggered": false,
+        "severity": "none",
+        "overall_psi": 0.0204,
+        "max_psi": 0.05542,
+        "top_features": [
+          [
+            "f6",
+            0.05542
+          ],
+          [
+            "f9",
+            0.03957
+          ],
+          [
+            "f11",
+            0.02917
+          ],
+          [
+            "f1",
+            0.02499
+          ],
+          [
+            "f3",
+            0.02447
+          ]
+        ],
+        "drifted_features": [],
+        "ks_hits": [],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.148,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 0.0
+        }
+      },
+      "attribution": {
+        "drift_type": "unknown",
+        "culprit_features": [],
+        "rationale": "证据不足, 建议继续观察一个窗口后再决策。",
+        "evidence": {
+          "max_psi": 0.055416,
+          "overall_psi": 0.020402,
+          "baseline_error": 0.128,
+          "recent_error": 0.148,
+          "error_increase": 0.02
+        }
+      },
+      "decision": {
+        "action": "monitor",
+        "target_model": "lgbm",
+        "reasoning": "PSI 0.055 < 触发阈值 0.1, 继续监控",
+        "expected_gain": 0.0,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "policy"
+      },
+      "approved": false,
+      "version": null,
+      "gain": 0.0,
+      "cost_gpu_seconds": 0.0,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 6,
+      "window": [
+        1250,
+        1750
+      ],
+      "drift": {
+        "triggered": false,
+        "severity": "none",
+        "overall_psi": 0.02875,
+        "max_psi": 0.06848,
+        "top_features": [
+          [
+            "f0",
+            0.06848
+          ],
+          [
+            "f6",
+            0.05229
+          ],
+          [
+            "f2",
+            0.05208
+          ],
+          [
+            "f5",
+            0.04677
+          ],
+          [
+            "f1",
+            0.0411
+          ]
+        ],
+        "drifted_features": [],
+        "ks_hits": [],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.128,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 0.0
+        }
+      },
+      "attribution": {
+        "drift_type": "unknown",
+        "culprit_features": [],
+        "rationale": "证据不足, 建议继续观察一个窗口后再决策。",
+        "evidence": {
+          "max_psi": 0.068475,
+          "overall_psi": 0.028751,
+          "baseline_error": 0.128,
+          "recent_error": 0.128,
+          "error_increase": 0.0
+        }
+      },
+      "decision": {
+        "action": "monitor",
+        "target_model": "lgbm",
+        "reasoning": "PSI 0.068 < 触发阈值 0.1, 继续监控",
+        "expected_gain": 0.0,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "policy"
+      },
+      "approved": false,
+      "version": null,
+      "gain": 0.0,
+      "cost_gpu_seconds": 0.0,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 7,
+      "window": [
+        1500,
+        2000
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "warn",
+        "overall_psi": 0.03824,
+        "max_psi": 0.11506,
+        "top_features": [
+          [
+            "f4",
+            0.11506
+          ],
+          [
+            "f5",
+            0.10864
+          ],
+          [
+            "f0",
+            0.07371
+          ],
+          [
+            "f6",
+            0.05011
+          ],
+          [
+            "f3",
+            0.04312
+          ]
+        ],
+        "drifted_features": [
+          "f4",
+          "f5"
+        ],
+        "ks_hits": [
+          "f4",
+          "f5"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.136,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 2.0
+        }
+      },
+      "attribution": {
+        "drift_type": "covariate_weak",
+        "culprit_features": [
+          "f4",
+          "f5"
+        ],
+        "rationale": "输入分布出现轻度偏移 (max PSI=0.115), 误差 0.128→0.136 尚未显著恶化, 建议持续观察, 暂不更新。",
+        "evidence": {
+          "max_psi": 0.115056,
+          "overall_psi": 0.038238,
+          "baseline_error": 0.128,
+          "recent_error": 0.136,
+          "error_increase": 0.008
+        }
+      },
+      "decision": {
+        "action": "monitor",
+        "target_model": "lgbm",
+        "reasoning": "轻度分布偏移, 误差未恶化, 观察一个窗口避免无谓更新成本。",
+        "expected_gain": 0.0,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": false,
+      "version": null,
+      "gain": 0.0,
+      "cost_gpu_seconds": 0.0,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 8,
+      "window": [
+        1750,
+        2250
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "warn",
+        "overall_psi": 0.04412,
+        "max_psi": 0.23034,
+        "top_features": [
+          [
+            "f4",
+            0.23034
+          ],
+          [
+            "f5",
+            0.19337
+          ],
+          [
+            "f6",
+            0.06315
+          ],
+          [
+            "f3",
+            0.05845
+          ],
+          [
+            "f10",
+            0.04029
+          ]
+        ],
+        "drifted_features": [
+          "f4",
+          "f5"
+        ],
+        "ks_hits": [
+          "f4",
+          "f5"
+        ],
+        "concept_drift": true,
+        "label_coverage": 1.0,
+        "error_rate": 0.18,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 2.0
+        }
+      },
+      "attribution": {
+        "drift_type": "concept",
+        "culprit_features": [
+          "f4",
+          "f5"
+        ],
+        "rationale": "误差从 0.128 升至 0.180, 而分布偏移有限 (max PSI=0.230), 判定为概念漂移 (输入-输出关系改变), 建议以最新标签重训。",
+        "evidence": {
+          "max_psi": 0.230344,
+          "overall_psi": 0.04412,
+          "baseline_error": 0.128,
+          "recent_error": 0.18,
+          "error_increase": 0.052
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "概念漂移且标签充足, 重训以更新输入-输出关系。",
+        "expected_gain": 0.052,
+        "risk_level": "medium",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0002_iter008_lgbm",
+      "gain": 0.180537,
+      "cost_gpu_seconds": 0.2281,
+      "cost_labels": 500,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 9,
+      "window": [
+        2000,
+        2500
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "warn",
+        "overall_psi": 0.03016,
+        "max_psi": 0.17564,
+        "top_features": [
+          [
+            "f3",
+            0.17564
+          ],
+          [
+            "f7",
+            0.05747
+          ],
+          [
+            "f10",
+            0.03547
+          ],
+          [
+            "f2",
+            0.03184
+          ],
+          [
+            "f14",
+            0.02951
+          ]
+        ],
+        "drifted_features": [
+          "f3"
+        ],
+        "ks_hits": [
+          "f3"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.154,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 1.0
+        }
+      },
+      "attribution": {
+        "drift_type": "concept",
+        "culprit_features": [
+          "f3"
+        ],
+        "rationale": "误差从 0.000 升至 0.154, 而分布偏移有限 (max PSI=0.176), 判定为概念漂移 (输入-输出关系改变), 建议以最新标签重训。",
+        "evidence": {
+          "max_psi": 0.175637,
+          "overall_psi": 0.030161,
+          "baseline_error": 0.0,
+          "recent_error": 0.154,
+          "error_increase": 0.154
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "概念漂移且标签充足, 重训以更新输入-输出关系。",
+        "expected_gain": 0.154,
+        "risk_level": "medium",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0003_iter009_lgbm",
+      "gain": 0.154286,
+      "cost_gpu_seconds": 1.058,
+      "cost_labels": 500,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 10,
+      "window": [
+        2250,
+        2750
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "warn",
+        "overall_psi": 0.03586,
+        "max_psi": 0.20484,
+        "top_features": [
+          [
+            "f6",
+            0.20484
+          ],
+          [
+            "f2",
+            0.05873
+          ],
+          [
+            "f5",
+            0.05536
+          ],
+          [
+            "f8",
+            0.05346
+          ],
+          [
+            "f9",
+            0.05316
+          ]
+        ],
+        "drifted_features": [
+          "f6"
+        ],
+        "ks_hits": [
+          "f6"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.156,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 1.0
+        }
+      },
+      "attribution": {
+        "drift_type": "concept",
+        "culprit_features": [
+          "f6"
+        ],
+        "rationale": "误差从 0.000 升至 0.156, 而分布偏移有限 (max PSI=0.205), 判定为概念漂移 (输入-输出关系改变), 建议以最新标签重训。",
+        "evidence": {
+          "max_psi": 0.204838,
+          "overall_psi": 0.035857,
+          "baseline_error": 0.0,
+          "recent_error": 0.156,
+          "error_increase": 0.156
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "概念漂移且标签充足, 重训以更新输入-输出关系。",
+        "expected_gain": 0.156,
+        "risk_level": "medium",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0004_iter010_lgbm",
+      "gain": 0.156593,
+      "cost_gpu_seconds": 0.3716,
+      "cost_labels": 500,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 11,
+      "window": [
+        2500,
+        3000
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "warn",
+        "overall_psi": 0.0477,
+        "max_psi": 0.16777,
+        "top_features": [
+          [
+            "f9",
+            0.16777
+          ],
+          [
+            "f6",
+            0.16403
+          ],
+          [
+            "f2",
+            0.11128
+          ],
+          [
+            "f7",
+            0.10644
+          ],
+          [
+            "f1",
+            0.09051
+          ]
+        ],
+        "drifted_features": [
+          "f9",
+          "f6",
+          "f2",
+          "f7"
+        ],
+        "ks_hits": [
+          "f2",
+          "f6",
+          "f7",
+          "f9"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.206,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 4.0
+        }
+      },
+      "attribution": {
+        "drift_type": "concept",
+        "culprit_features": [
+          "f9",
+          "f6",
+          "f2",
+          "f7"
+        ],
+        "rationale": "误差从 0.000 升至 0.206, 而分布偏移有限 (max PSI=0.168), 判定为概念漂移 (输入-输出关系改变), 建议以最新标签重训。",
+        "evidence": {
+          "max_psi": 0.167769,
+          "overall_psi": 0.047699,
+          "baseline_error": 0.0,
+          "recent_error": 0.206,
+          "error_increase": 0.206
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "概念漂移且标签充足, 重训以更新输入-输出关系。",
+        "expected_gain": 0.206,
+        "risk_level": "medium",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0005_iter011_lgbm",
+      "gain": 0.201813,
+      "cost_gpu_seconds": 0.9334,
+      "cost_labels": 500,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 12,
+      "window": [
+        2750,
+        3250
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "warn",
+        "overall_psi": 0.05463,
+        "max_psi": 0.17207,
+        "top_features": [
+          [
+            "f1",
+            0.17207
+          ],
+          [
+            "f7",
+            0.16217
+          ],
+          [
+            "f6",
+            0.12279
+          ],
+          [
+            "f8",
+            0.11214
+          ],
+          [
+            "f3",
+            0.10356
+          ]
+        ],
+        "drifted_features": [
+          "f1",
+          "f7",
+          "f6",
+          "f8",
+          "f3"
+        ],
+        "ks_hits": [
+          "f1",
+          "f3",
+          "f6",
+          "f7",
+          "f8"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.26,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 5.0
+        }
+      },
+      "attribution": {
+        "drift_type": "concept",
+        "culprit_features": [
+          "f1",
+          "f7",
+          "f6",
+          "f8",
+          "f3"
+        ],
+        "rationale": "误差从 0.000 升至 0.260, 而分布偏移有限 (max PSI=0.172), 判定为概念漂移 (输入-输出关系改变), 建议以最新标签重训。",
+        "evidence": {
+          "max_psi": 0.172066,
+          "overall_psi": 0.054633,
+          "baseline_error": 0.0,
+          "recent_error": 0.26,
+          "error_increase": 0.26
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "概念漂移且标签充足, 重训以更新输入-输出关系。",
+        "expected_gain": 0.26,
+        "risk_level": "medium",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0006_iter012_lgbm",
+      "gain": 0.22929,
+      "cost_gpu_seconds": 0.9857,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 13,
+      "window": [
+        3000,
+        3500
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "warn",
+        "overall_psi": 0.06244,
+        "max_psi": 0.2307,
+        "top_features": [
+          [
+            "f9",
+            0.2307
+          ],
+          [
+            "f1",
+            0.21812
+          ],
+          [
+            "f6",
+            0.15957
+          ],
+          [
+            "f7",
+            0.09765
+          ],
+          [
+            "f4",
+            0.08099
+          ]
+        ],
+        "drifted_features": [
+          "f9",
+          "f1",
+          "f6"
+        ],
+        "ks_hits": [
+          "f1",
+          "f6",
+          "f9"
+        ],
+        "concept_drift": true,
+        "label_coverage": 1.0,
+        "error_rate": 0.24,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 3.0
+        }
+      },
+      "attribution": {
+        "drift_type": "concept",
+        "culprit_features": [
+          "f9",
+          "f1",
+          "f6"
+        ],
+        "rationale": "误差从 0.006 升至 0.240, 而分布偏移有限 (max PSI=0.231), 判定为概念漂移 (输入-输出关系改变), 建议以最新标签重训。",
+        "evidence": {
+          "max_psi": 0.230701,
+          "overall_psi": 0.062436,
+          "baseline_error": 0.006,
+          "recent_error": 0.24,
+          "error_increase": 0.234
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "概念漂移且标签充足, 重训以更新输入-输出关系。",
+        "expected_gain": 0.234,
+        "risk_level": "medium",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0007_iter013_lgbm",
+      "gain": 0.224663,
+      "cost_gpu_seconds": 0.3685,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 14,
+      "window": [
+        3250,
+        3750
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "warn",
+        "overall_psi": 0.05574,
+        "max_psi": 0.24231,
+        "top_features": [
+          [
+            "f9",
+            0.24231
+          ],
+          [
+            "f7",
+            0.20177
+          ],
+          [
+            "f2",
+            0.19207
+          ],
+          [
+            "f8",
+            0.061
+          ],
+          [
+            "f1",
+            0.05046
+          ]
+        ],
+        "drifted_features": [
+          "f9",
+          "f7",
+          "f2"
+        ],
+        "ks_hits": [
+          "f2",
+          "f7",
+          "f9"
+        ],
+        "concept_drift": true,
+        "label_coverage": 1.0,
+        "error_rate": 0.27,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 3.0
+        }
+      },
+      "attribution": {
+        "drift_type": "concept",
+        "culprit_features": [
+          "f9",
+          "f7",
+          "f2"
+        ],
+        "rationale": "误差从 0.014 升至 0.270, 而分布偏移有限 (max PSI=0.242), 判定为概念漂移 (输入-输出关系改变), 建议以最新标签重训。",
+        "evidence": {
+          "max_psi": 0.242308,
+          "overall_psi": 0.055739,
+          "baseline_error": 0.014,
+          "recent_error": 0.27,
+          "error_increase": 0.256
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "概念漂移且标签充足, 重训以更新输入-输出关系。",
+        "expected_gain": 0.256,
+        "risk_level": "medium",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0008_iter014_lgbm",
+      "gain": 0.276262,
+      "cost_gpu_seconds": 1.4112,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 15,
+      "window": [
+        3500,
+        4000
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "warn",
+        "overall_psi": 0.04658,
+        "max_psi": 0.14197,
+        "top_features": [
+          [
+            "f18",
+            0.14197
+          ],
+          [
+            "f15",
+            0.11997
+          ],
+          [
+            "f8",
+            0.1085
+          ],
+          [
+            "f1",
+            0.10571
+          ],
+          [
+            "f0",
+            0.08622
+          ]
+        ],
+        "drifted_features": [
+          "f18",
+          "f15",
+          "f8",
+          "f1"
+        ],
+        "ks_hits": [
+          "f1",
+          "f8",
+          "f15",
+          "f18"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.244,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 4.0
+        }
+      },
+      "attribution": {
+        "drift_type": "concept",
+        "culprit_features": [
+          "f18",
+          "f15",
+          "f8",
+          "f1"
+        ],
+        "rationale": "误差从 0.000 升至 0.244, 而分布偏移有限 (max PSI=0.142), 判定为概念漂移 (输入-输出关系改变), 建议以最新标签重训。",
+        "evidence": {
+          "max_psi": 0.141966,
+          "overall_psi": 0.04658,
+          "baseline_error": 0.0,
+          "recent_error": 0.244,
+          "error_increase": 0.244
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "概念漂移且标签充足, 重训以更新输入-输出关系。",
+        "expected_gain": 0.244,
+        "risk_level": "medium",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0009_iter015_lgbm",
+      "gain": 0.241447,
+      "cost_gpu_seconds": 1.7027,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 16,
+      "window": [
+        3750,
+        4250
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "warn",
+        "overall_psi": 0.03332,
+        "max_psi": 0.11341,
+        "top_features": [
+          [
+            "f2",
+            0.11341
+          ],
+          [
+            "f1",
+            0.07631
+          ],
+          [
+            "f4",
+            0.04198
+          ],
+          [
+            "f3",
+            0.04159
+          ],
+          [
+            "f17",
+            0.03868
+          ]
+        ],
+        "drifted_features": [
+          "f2"
+        ],
+        "ks_hits": [
+          "f2"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.218,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 1.0
+        }
+      },
+      "attribution": {
+        "drift_type": "concept",
+        "culprit_features": [
+          "f2"
+        ],
+        "rationale": "误差从 0.000 升至 0.218, 而分布偏移有限 (max PSI=0.113), 判定为概念漂移 (输入-输出关系改变), 建议以最新标签重训。",
+        "evidence": {
+          "max_psi": 0.113408,
+          "overall_psi": 0.033315,
+          "baseline_error": 0.0,
+          "recent_error": 0.218,
+          "error_increase": 0.218
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "概念漂移且标签充足, 重训以更新输入-输出关系。",
+        "expected_gain": 0.218,
+        "risk_level": "medium",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0010_iter016_lgbm",
+      "gain": 0.213664,
+      "cost_gpu_seconds": 1.9696,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 17,
+      "window": [
+        4000,
+        4500
+      ],
+      "drift": {
+        "triggered": false,
+        "severity": "none",
+        "overall_psi": 0.03179,
+        "max_psi": 0.09561,
+        "top_features": [
+          [
+            "f11",
+            0.09561
+          ],
+          [
+            "f2",
+            0.06121
+          ],
+          [
+            "f0",
+            0.0522
+          ],
+          [
+            "f17",
+            0.0453
+          ],
+          [
+            "f9",
+            0.03855
+          ]
+        ],
+        "drifted_features": [],
+        "ks_hits": [],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.214,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 0.0
+        }
+      },
+      "attribution": {
+        "drift_type": "concept",
+        "culprit_features": [],
+        "rationale": "误差从 0.000 升至 0.214, 而分布偏移有限 (max PSI=0.096), 判定为概念漂移 (输入-输出关系改变), 建议以最新标签重训。",
+        "evidence": {
+          "max_psi": 0.095615,
+          "overall_psi": 0.031786,
+          "baseline_error": 0.0,
+          "recent_error": 0.214,
+          "error_increase": 0.214
+        }
+      },
+      "decision": {
+        "action": "monitor",
+        "target_model": "lgbm",
+        "reasoning": "PSI 0.096 < 触发阈值 0.1, 继续监控",
+        "expected_gain": 0.0,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "policy"
+      },
+      "approved": false,
+      "version": null,
+      "gain": 0.0,
+      "cost_gpu_seconds": 0.0,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 18,
+      "window": [
+        4250,
+        4750
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "alarm",
+        "overall_psi": 0.10946,
+        "max_psi": 0.30167,
+        "top_features": [
+          [
+            "f2",
+            0.30167
+          ],
+          [
+            "f3",
+            0.26551
+          ],
+          [
+            "f10",
+            0.23282
+          ],
+          [
+            "f9",
+            0.16093
+          ],
+          [
+            "f15",
+            0.15625
+          ]
+        ],
+        "drifted_features": [
+          "f2",
+          "f3",
+          "f10",
+          "f9",
+          "f15",
+          "f1",
+          "f19",
+          "f17",
+          "f8"
+        ],
+        "ks_hits": [
+          "f1",
+          "f2",
+          "f3",
+          "f8",
+          "f9",
+          "f10",
+          "f15",
+          "f17",
+          "f19"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.444,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 9.0
+        }
+      },
+      "attribution": {
+        "drift_type": "mixed",
+        "culprit_features": [
+          "f2",
+          "f3",
+          "f10",
+          "f9",
+          "f15"
+        ],
+        "rationale": "同时出现分布偏移 (max PSI=0.302) 与误差上升 (0.000→0.444), 判定为混合漂移, 建议重训 + 增量样本加权。",
+        "evidence": {
+          "max_psi": 0.301673,
+          "overall_psi": 0.109458,
+          "baseline_error": 0.0,
+          "recent_error": 0.444,
+          "error_increase": 0.444
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "mixed 漂移, 重训以适配新分布。",
+        "expected_gain": 0.444,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0011_iter018_lgbm",
+      "gain": 0.433425,
+      "cost_gpu_seconds": 0.6306,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 19,
+      "window": [
+        4500,
+        5000
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "alarm",
+        "overall_psi": 0.06507,
+        "max_psi": 0.44033,
+        "top_features": [
+          [
+            "f15",
+            0.44033
+          ],
+          [
+            "f7",
+            0.13621
+          ],
+          [
+            "f18",
+            0.09965
+          ],
+          [
+            "f11",
+            0.08892
+          ],
+          [
+            "f13",
+            0.08736
+          ]
+        ],
+        "drifted_features": [
+          "f15",
+          "f7"
+        ],
+        "ks_hits": [
+          "f7",
+          "f15"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.196,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 2.0
+        }
+      },
+      "attribution": {
+        "drift_type": "mixed",
+        "culprit_features": [
+          "f15",
+          "f7"
+        ],
+        "rationale": "同时出现分布偏移 (max PSI=0.440) 与误差上升 (0.000→0.196), 判定为混合漂移, 建议重训 + 增量样本加权。",
+        "evidence": {
+          "max_psi": 0.440335,
+          "overall_psi": 0.065066,
+          "baseline_error": 0.0,
+          "recent_error": 0.196,
+          "error_increase": 0.196
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "mixed 漂移, 重训以适配新分布。",
+        "expected_gain": 0.196,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0012_iter019_lgbm",
+      "gain": 0.20083,
+      "cost_gpu_seconds": 0.6452,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 20,
+      "window": [
+        4750,
+        5250
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "warn",
+        "overall_psi": 0.04787,
+        "max_psi": 0.15804,
+        "top_features": [
+          [
+            "f10",
+            0.15804
+          ],
+          [
+            "f15",
+            0.14896
+          ],
+          [
+            "f9",
+            0.10642
+          ],
+          [
+            "f7",
+            0.07621
+          ],
+          [
+            "f11",
+            0.06314
+          ]
+        ],
+        "drifted_features": [
+          "f10",
+          "f15",
+          "f9"
+        ],
+        "ks_hits": [
+          "f9",
+          "f10",
+          "f15"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.224,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 3.0
+        }
+      },
+      "attribution": {
+        "drift_type": "concept",
+        "culprit_features": [
+          "f10",
+          "f15",
+          "f9"
+        ],
+        "rationale": "误差从 0.000 升至 0.224, 而分布偏移有限 (max PSI=0.158), 判定为概念漂移 (输入-输出关系改变), 建议以最新标签重训。",
+        "evidence": {
+          "max_psi": 0.158038,
+          "overall_psi": 0.047866,
+          "baseline_error": 0.0,
+          "recent_error": 0.224,
+          "error_increase": 0.224
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "概念漂移且标签充足, 重训以更新输入-输出关系。",
+        "expected_gain": 0.224,
+        "risk_level": "medium",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0013_iter020_lgbm",
+      "gain": 0.222291,
+      "cost_gpu_seconds": 0.6294,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 21,
+      "window": [
+        5000,
+        5500
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "warn",
+        "overall_psi": 0.05145,
+        "max_psi": 0.14958,
+        "top_features": [
+          [
+            "f13",
+            0.14958
+          ],
+          [
+            "f15",
+            0.13195
+          ],
+          [
+            "f7",
+            0.10141
+          ],
+          [
+            "f8",
+            0.08188
+          ],
+          [
+            "f14",
+            0.07517
+          ]
+        ],
+        "drifted_features": [
+          "f13",
+          "f15",
+          "f7"
+        ],
+        "ks_hits": [
+          "f7",
+          "f13",
+          "f15"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.204,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 3.0
+        }
+      },
+      "attribution": {
+        "drift_type": "concept",
+        "culprit_features": [
+          "f13",
+          "f15",
+          "f7"
+        ],
+        "rationale": "误差从 0.000 升至 0.204, 而分布偏移有限 (max PSI=0.150), 判定为概念漂移 (输入-输出关系改变), 建议以最新标签重训。",
+        "evidence": {
+          "max_psi": 0.149575,
+          "overall_psi": 0.051455,
+          "baseline_error": 0.0,
+          "recent_error": 0.204,
+          "error_increase": 0.204
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "概念漂移且标签充足, 重训以更新输入-输出关系。",
+        "expected_gain": 0.204,
+        "risk_level": "medium",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0014_iter021_lgbm",
+      "gain": 0.20123,
+      "cost_gpu_seconds": 1.6274,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 22,
+      "window": [
+        5250,
+        5750
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "warn",
+        "overall_psi": 0.04567,
+        "max_psi": 0.14015,
+        "top_features": [
+          [
+            "f15",
+            0.14015
+          ],
+          [
+            "f5",
+            0.12816
+          ],
+          [
+            "f18",
+            0.07545
+          ],
+          [
+            "f12",
+            0.06083
+          ],
+          [
+            "f13",
+            0.05775
+          ]
+        ],
+        "drifted_features": [
+          "f15",
+          "f5"
+        ],
+        "ks_hits": [
+          "f5",
+          "f15"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.18,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 2.0
+        }
+      },
+      "attribution": {
+        "drift_type": "concept",
+        "culprit_features": [
+          "f15",
+          "f5"
+        ],
+        "rationale": "误差从 0.000 升至 0.180, 而分布偏移有限 (max PSI=0.140), 判定为概念漂移 (输入-输出关系改变), 建议以最新标签重训。",
+        "evidence": {
+          "max_psi": 0.140154,
+          "overall_psi": 0.045666,
+          "baseline_error": 0.0,
+          "recent_error": 0.18,
+          "error_increase": 0.18
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "概念漂移且标签充足, 重训以更新输入-输出关系。",
+        "expected_gain": 0.18,
+        "risk_level": "medium",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0015_iter022_lgbm",
+      "gain": 0.177365,
+      "cost_gpu_seconds": 0.6624,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 23,
+      "window": [
+        5500,
+        6000
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "alarm",
+        "overall_psi": 0.07097,
+        "max_psi": 0.30617,
+        "top_features": [
+          [
+            "f10",
+            0.30617
+          ],
+          [
+            "f18",
+            0.21116
+          ],
+          [
+            "f13",
+            0.15451
+          ],
+          [
+            "f8",
+            0.12192
+          ],
+          [
+            "f15",
+            0.10352
+          ]
+        ],
+        "drifted_features": [
+          "f10",
+          "f18",
+          "f13",
+          "f8",
+          "f15"
+        ],
+        "ks_hits": [
+          "f8",
+          "f10",
+          "f13",
+          "f18"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 0.146,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 5.0
+        }
+      },
+      "attribution": {
+        "drift_type": "mixed",
+        "culprit_features": [
+          "f10",
+          "f18",
+          "f13",
+          "f8",
+          "f15"
+        ],
+        "rationale": "同时出现分布偏移 (max PSI=0.306) 与误差上升 (0.000→0.146), 判定为混合漂移, 建议重训 + 增量样本加权。",
+        "evidence": {
+          "max_psi": 0.306171,
+          "overall_psi": 0.070966,
+          "baseline_error": 0.0,
+          "recent_error": 0.146,
+          "error_increase": 0.146
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "mixed 漂移, 重训以适配新分布。",
+        "expected_gain": 0.146,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "rules_fallback"
+      },
+      "approved": true,
+      "version": "v0016_iter023_lgbm",
+      "gain": 0.143705,
+      "cost_gpu_seconds": 0.6227,
+      "cost_labels": 0,
+      "cost_tokens": 0,
+      "rolled_back": false
+    }
+  ]
+}

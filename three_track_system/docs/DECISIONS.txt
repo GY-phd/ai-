@@ -1,0 +1,27 @@
+run      : harness-b
+planner  : policy (model=Qwen3.8-27B, tokens=0)
+baseline : RMSE 681.16 / MAE 563.11
+final    : RMSE 283.54 / MAE 218.25 (params 3457)
+gain     : 58.37%   cycles=9   experiments=5/6   train=75s
+
+  # batch diagnosis   action             decision    cand   champ   cost  reason
+--------------------------------------------------------------------------------
+  1     0 cold_start  hpo                promote    301.2   301.2     53  RMSE improved by 55.78% with no bearing regression above 20.
+  2     1 none        do_nothing         skip       301.2   301.2      0  no model change
+  3     2 concept     hpo                promote    283.5   283.5     22  RMSE improved by 5.86% with no bearing regression above 20.0
+  4     3 concept     retrain_head       reject     291.3   283.5      0  gain -2.72% is below the 1.0% promotion threshold
+  5     4 none        do_nothing         skip       283.5   283.5      0  no model change
+  6     5 none        do_nothing         skip       283.5   283.5      0  no model change
+  7     6 none        do_nothing         skip       283.5   283.5      0  no model change
+  8     7 none        do_nothing         skip       283.5   283.5      0  no model change
+  9     8 none        do_nothing         skip       283.5   283.5      0  no model change
+
+champion chain:
+  cycle 0  platform_baseline  rmse=681.16  sha256:c7d819fcee9d254...
+  cycle 1  hpo                rmse=301.18  sha256:560abcf1c03084d...
+  cycle 3  hpo                rmse=283.54  sha256:a2d0be36529f67a...
+
+per bearing (final):
+  xjtu_Bearing1_4        rows=  122  rmse=   272.8  mae=   220.3
+  xjtu_Bearing2_4        rows=   42  rmse=   256.5  mae=   206.4
+  xjtu_Bearing3_4        rows= 1515  rmse=   285.1  mae=   218.4

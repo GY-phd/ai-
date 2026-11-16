@@ -1,0 +1,120 @@
+{
+  "profiles": {
+    "A": {
+      "package": "cpu-a-guide-20261110-v1",
+      "initial_score": {
+        "acc": 0.8758029978586723,
+        "f1": 0.722385210472495,
+        "macro_f1": 0.722385210472495,
+        "accuracy": 0.8758029978586723,
+        "precision": 0.6786197340164183,
+        "recall": 0.8077945568420127,
+        "auc": 0.5,
+        "n_classes": 6.0,
+        "score": 0.7684105466883482,
+        "0": 0.6762177650429799,
+        "1": 0.9333333333333333,
+        "2": 1.0,
+        "3": 0.0,
+        "4": 0.9974874371859297,
+        "5": 0.7272727272727273
+      },
+      "final_score": {
+        "acc": 0.9903640256959315,
+        "f1": 0.970745067841578,
+        "macro_f1": 0.970745067841578,
+        "accuracy": 0.9903640256959315,
+        "precision": 0.9578603007615851,
+        "recall": 0.9874006632556515,
+        "auc": 0.5,
+        "n_classes": 6.0,
+        "score": 0.976630755197884,
+        "0": 0.9714285714285714,
+        "1": 0.9900990099009901,
+        "2": 1.0,
+        "3": 0.9753086419753086,
+        "4": 0.998745294855709,
+        "5": 0.8888888888888888
+      },
+      "promotions": 0,
+      "recipe": {
+        "hidden": 32,
+        "epochs": 50
+      }
+    },
+    "B": {
+      "package": "cpu-b-rul-20261110-v1",
+      "initial_score": {
+        "rmse": 639.4006822323491,
+        "mae": 497.43871645476577,
+        "r2": -0.8863485093466918,
+        "bias": 143.40348961974496,
+        "max_abs_error": 1511.3384238689882,
+        "score": -639.4006822323491
+      },
+      "final_score": {
+        "rmse": 636.6707239522342,
+        "mae": 491.64988539363475,
+        "r2": -0.870275147197954,
+        "bias": 86.09223006861741,
+        "max_abs_error": 1511.8281268391179,
+        "score": -636.6707239522342
+      },
+      "promotions": 1,
+      "recipe": {
+        "hidden": 64,
+        "epochs": 200,
+        "normalisation": "slope",
+        "target": "life_fraction",
+        "floor": 0.02,
+        "cap": 3000.0,
+        "rate_limit": 0.25,
+        "feature_transform": "eng34",
+        "activation": "tanh",
+        "seed": 42,
+        "fraction_basis": "target"
+      }
+    },
+    "C": {
+      "package": "cpu-c-guide-20261110-v1",
+      "initial_score": {
+        "rmse": 50.7706108374771,
+        "mae": 35.94461891768763,
+        "r2": 0.5906342470807977,
+        "bias": -1.2595650170834758,
+        "max_abs_error": 253.06515437628926,
+        "score": -50.7706108374771,
+        "nasa_asym_score": 40093.67267648965,
+        "nasa_asym_score_mean": 1.7394972743498482,
+        "over_predict_rate": 0.5575079179140093,
+        "over_predict_mae": 31.10722985817218,
+        "under_predict_mae": 42.03937815043333
+      },
+      "final_score": {
+        "rmse": 44.49286641708608,
+        "mae": 31.565186000246594,
+        "r2": 0.685610884728681,
+        "bias": 1.4319715792339487,
+        "max_abs_error": 205.50688287737023,
+        "score": -44.49286641708608,
+        "nasa_asym_score": 35982.36313478409,
+        "nasa_asym_score_mean": 1.5611246967236796,
+        "over_predict_rate": 0.5725194151590091,
+        "over_predict_mae": 28.817500949130306,
+        "under_predict_mae": 35.245126316346315
+      },
+      "promotions": 1,
+      "recipe": {
+        "hidden": 128,
+        "epochs": 200,
+        "target": "cycles",
+        "extra_features": "elapsed",
+        "fraction_basis": "target"
+      }
+    }
+  },
+  "closed_loop_entrypoint": "python -m tracks.run --all --workspace runs",
+  "report_entrypoint": "python -m tracks.report --workspace runs --out artifacts",
+  "verification_entrypoint": "python -m research.tracks.rmse_verification --out artifacts",
+  "figures_entrypoint": "python -m research.tracks.make_figures --out figureuse"
+}

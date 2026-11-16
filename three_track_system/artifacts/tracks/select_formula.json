@@ -1,0 +1,94 @@
+{
+  "rule": "affine",
+  "affine_a": 2919.373229959407,
+  "affine_b": -597.2635165344984,
+  "training_rmse": {
+    "two_stage": 954.8305407978511,
+    "affine": 731.0773244449156
+  },
+  "leave_one_out": [
+    {
+      "bearing": "Bearing1_1",
+      "two_stage_rmse": 59.06277512770692,
+      "affine_rmse": 898.7758095052552,
+      "winner": "two-stage",
+      "estimated_lifetime": 65.65243828202706,
+      "rows_so_far": 123.0,
+      "fraction_spread": 0.08795776384909827,
+      "length": 123
+    },
+    {
+      "bearing": "Bearing1_2",
+      "two_stage_rmse": 77.8003396124591,
+      "affine_rmse": 733.295681258383,
+      "winner": "two-stage",
+      "estimated_lifetime": 52.068566493292266,
+      "rows_so_far": 161.0,
+      "fraction_spread": 0.12988346753480198,
+      "length": 161
+    },
+    {
+      "bearing": "Bearing1_3",
+      "two_stage_rmse": 73.57885475967385,
+      "affine_rmse": 884.859691513867,
+      "winner": "two-stage",
+      "estimated_lifetime": 80.83700359758217,
+      "rows_so_far": 158.0,
+      "fraction_spread": 0.09167934489239828,
+      "length": 158
+    },
+    {
+      "bearing": "Bearing2_3",
+      "two_stage_rmse": 249.07531081860466,
+      "affine_rmse": 693.1666283646682,
+      "winner": "two-stage",
+      "estimated_lifetime": 228.3432369758197,
+      "rows_so_far": 533.0,
+      "fraction_spread": 0.10616641656953772,
+      "length": 533
+    },
+    {
+      "bearing": "Bearing3_2",
+      "two_stage_rmse": 1195.521152478653,
+      "affine_rmse": 1276.27274449661,
+      "winner": "two-stage",
+      "estimated_lifetime": 1279.5857794070412,
+      "rows_so_far": 2496.0,
+      "fraction_spread": 0.08888049733762113,
+      "length": 2496
+    },
+    {
+      "bearing": "Bearing3_3",
+      "two_stage_rmse": 179.85164695333225,
+      "affine_rmse": 887.6178571398981,
+      "winner": "two-stage",
+      "estimated_lifetime": 202.90221959203672,
+      "rows_so_far": 371.0,
+      "fraction_spread": 0.07228080171741828,
+      "length": 371
+    }
+  ],
+  "per_bearing": {
+    "Bearing1_4": {
+      "two_stage_rmse": 61.05216374472334,
+      "affine_rmse": 932.5980925563778,
+      "rule_rmse": 932.5980925563778
+    },
+    "Bearing2_4": {
+      "two_stage_rmse": 18.5940864895249,
+      "affine_rmse": 838.5872473596374,
+      "rule_rmse": 838.5872473596374
+    },
+    "Bearing3_4": {
+      "two_stage_rmse": 745.9441361518179,
+      "affine_rmse": 464.84229528997224,
+      "rule_rmse": 464.84229528997224
+    }
+  },
+  "overall": {
+    "two_stage_rmse": 708.774551261455,
+    "affine_rmse": 525.1293821126604,
+    "rule_rmse": 525.1293821126604,
+    "baseline_rmse": 681.16
+  }
+}

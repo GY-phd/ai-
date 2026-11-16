@@ -26,10 +26,23 @@ REQUIRED = ("README.md", "LICENSE", "requirements.txt", "MANIFEST.json")
 def main() -> int:
     """Check the folder and report."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dir", default="dist/github")
+    parser.add_argument(
+        "--dir",
+        default=None,
+        help="the folder to check.  Defaults to the folder this script lives in "
+             "when that folder is itself a prepared repository (i.e. it has a "
+             "MANIFEST.json), and to dist/github otherwise.",
+    )
     args = parser.parse_args()
 
-    root = Path(args.dir).resolve()
+    if args.dir:
+        root = Path(args.dir).resolve()
+    else:
+        # The script ships inside the package it is checking, so prefer its own
+        # folder.  When it is run from the source tree instead, fall back to
+        # the conventional output path.
+        here = Path(__file__).resolve().parent.parent
+        root = here if (here / "MANIFEST.json").is_file() else here / "dist" / "github"
     if not root.is_dir():
         raise SystemExit(f"not a directory: {root}")
 

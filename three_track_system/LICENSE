@@ -1,0 +1,40 @@
+MIT License
+
+Copyright (c) 2026 智训引擎 (Zhixun Engine) Team
+北京大学 AI 竞赛 — 赛题 9「智训引擎」参赛作品
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+附加说明 (与 MIT License 不冲突, 仅作项目声明):
+
+本仓库为北京大学 AI 竞赛赛题 9「智训引擎 — 工业制造场景下的模型训练与
+超参数优化」的参赛实现。
+
+- 本仓库**不包含任何模型权重文件**。赛题明确要求"严禁将模型权重打包进
+  提交包", 故仓库与提交包均以"可复现代码"的形式交付: 评测方在给定
+  环境下重新训练即可得到同等模型。
+- 赛题组提供的官方数据集 (UCI Gas Sensor / XJTU-SY Bearing / NASA C-MAPSS)
+  **不随本仓库分发**, 版权归赛题组所有。
+- 实验记录统一托管于公开的 SwanLab 项目 <https://swanlab.cn/@GY-NJph/zxyq11>,
+  以满足赛题"实验记录必须公开可查"的要求。
+- 第三方依赖 (numpy / scikit-learn / LightGBM / pandas / swanlab 等) 各自
+  遵循其原始许可证, 可通过 `pyproject.toml` 与 `scripts/build_submission.py`
+  生成的清单核对。

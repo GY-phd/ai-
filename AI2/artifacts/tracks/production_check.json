@@ -1,0 +1,57 @@
+{
+  "research_rmse_mean": 382.607,
+  "research_rmse_median": 180.826,
+  "research_rmse_worst": 1267.04,
+  "production_rmse_mean": 382.607,
+  "production_rmse_median": 180.826,
+  "production_rmse_worst": 1267.04,
+  "max_abs_delta_minutes": 0.0,
+  "agree": true,
+  "folds": [
+    {
+      "bearing": "xjtu_Bearing1_1",
+      "research_rmse": 59.495,
+      "production_rmse": 59.495
+    },
+    {
+      "bearing": "xjtu_Bearing1_2",
+      "research_rmse": 79.555,
+      "production_rmse": 79.555
+    },
+    {
+      "bearing": "xjtu_Bearing1_3",
+      "research_rmse": 75.506,
+      "production_rmse": 75.506
+    },
+    {
+      "bearing": "xjtu_Bearing2_1",
+      "research_rmse": 241.98,
+      "production_rmse": 241.98
+    },
+    {
+      "bearing": "xjtu_Bearing2_2",
+      "research_rmse": 78.634,
+      "production_rmse": 78.634
+    },
+    {
+      "bearing": "xjtu_Bearing2_3",
+      "research_rmse": 251.134,
+      "production_rmse": 251.134
+    },
+    {
+      "bearing": "xjtu_Bearing3_1",
+      "research_rmse": 1267.04,
+      "production_rmse": 1267.04
+    },
+    {
+      "bearing": "xjtu_Bearing3_2",
+      "research_rmse": 1209.298,
+      "production_rmse": 1209.298
+    },
+    {
+      "bearing": "xjtu_Bearing3_3",
+      "research_rmse": 180.826,
+      "production_rmse": 180.826
+    }
+  ]
+}

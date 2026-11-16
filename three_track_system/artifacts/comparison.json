@@ -1,0 +1,374 @@
+{
+  "summary": {
+    "E0_static": {
+      "baseline_score": {
+        "mean": 0.614594,
+        "std": 0.0429883242753192
+      },
+      "final_score": {
+        "mean": 0.614594,
+        "std": 0.0429883242753192
+      },
+      "tail_score": {
+        "mean": 0.522124,
+        "std": 0.06846124643913518
+      },
+      "baseline_tail_score": {
+        "mean": 0.522124,
+        "std": 0.06846124643913518
+      },
+      "total_gpu_seconds": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "total_labels": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "efficiency": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "updates_approved": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "per_seed": {
+        "11": {
+          "tail_score": 0.43357,
+          "baseline_tail_score": 0.43357,
+          "efficiency": 0.0,
+          "updates_approved": 0,
+          "total_gpu_seconds": 0.0,
+          "total_labels": 0
+        },
+        "22": {
+          "tail_score": 0.46992,
+          "baseline_tail_score": 0.46992,
+          "efficiency": 0.0,
+          "updates_approved": 0,
+          "total_gpu_seconds": 0.0,
+          "total_labels": 0
+        },
+        "33": {
+          "tail_score": 0.6331,
+          "baseline_tail_score": 0.6331,
+          "efficiency": 0.0,
+          "updates_approved": 0,
+          "total_gpu_seconds": 0.0,
+          "total_labels": 0
+        },
+        "44": {
+          "tail_score": 0.54438,
+          "baseline_tail_score": 0.54438,
+          "efficiency": 0.0,
+          "updates_approved": 0,
+          "total_gpu_seconds": 0.0,
+          "total_labels": 0
+        },
+        "55": {
+          "tail_score": 0.52965,
+          "baseline_tail_score": 0.52965,
+          "efficiency": 0.0,
+          "updates_approved": 0,
+          "total_gpu_seconds": 0.0,
+          "total_labels": 0
+        }
+      }
+    },
+    "E1_periodic": {
+      "baseline_score": {
+        "mean": 0.614594,
+        "std": 0.0429883242753192
+      },
+      "final_score": {
+        "mean": 0.636456,
+        "std": 0.03662797761274844
+      },
+      "tail_score": {
+        "mean": 0.5673260000000001,
+        "std": 0.05523379965202464
+      },
+      "baseline_tail_score": {
+        "mean": 0.522124,
+        "std": 0.06846124643913518
+      },
+      "total_gpu_seconds": {
+        "mean": 8.3328,
+        "std": 3.4143690134488978
+      },
+      "total_labels": {
+        "mean": 2000.0,
+        "std": 0.0
+      },
+      "efficiency": {
+        "mean": 0.00045133152000000006,
+        "std": 0.0001729419655350939
+      },
+      "updates_approved": {
+        "mean": 1.6,
+        "std": 0.4898979485566356
+      },
+      "per_seed": {
+        "11": {
+          "tail_score": 0.50882,
+          "baseline_tail_score": 0.43357,
+          "efficiency": 0.0007306084,
+          "updates_approved": 2,
+          "total_gpu_seconds": 6.105,
+          "total_labels": 2000
+        },
+        "22": {
+          "tail_score": 0.52998,
+          "baseline_tail_score": 0.46992,
+          "efficiency": 0.0004942392,
+          "updates_approved": 1,
+          "total_gpu_seconds": 15.12,
+          "total_labels": 2000
+        },
+        "33": {
+          "tail_score": 0.66467,
+          "baseline_tail_score": 0.6331,
+          "efficiency": 0.0002744066,
+          "updates_approved": 2,
+          "total_gpu_seconds": 6.416,
+          "total_labels": 2000
+        },
+        "44": {
+          "tail_score": 0.58848,
+          "baseline_tail_score": 0.54438,
+          "efficiency": 0.0004967173,
+          "updates_approved": 1,
+          "total_gpu_seconds": 7.229,
+          "total_labels": 2000
+        },
+        "55": {
+          "tail_score": 0.54468,
+          "baseline_tail_score": 0.52965,
+          "efficiency": 0.0002606861,
+          "updates_approved": 2,
+          "total_gpu_seconds": 6.794,
+          "total_labels": 2000
+        }
+      }
+    },
+    "E2_no_bandit": {
+      "baseline_score": {
+        "mean": 0.614594,
+        "std": 0.0429883242753192
+      },
+      "final_score": {
+        "mean": 0.63457,
+        "std": 0.03837106618273724
+      },
+      "tail_score": {
+        "mean": 0.5655560000000001,
+        "std": 0.0565288339168605
+      },
+      "baseline_tail_score": {
+        "mean": 0.522124,
+        "std": 0.06846124643913518
+      },
+      "total_gpu_seconds": {
+        "mean": 9.227599999999999,
+        "std": 3.276089168505644
+      },
+      "total_labels": {
+        "mean": 2000.0,
+        "std": 0.0
+      },
+      "efficiency": {
+        "mean": 0.00040081734000000003,
+        "std": 0.00014028487833880887
+      },
+      "updates_approved": {
+        "mean": 1.6,
+        "std": 0.4898979485566356
+      },
+      "per_seed": {
+        "11": {
+          "tail_score": 0.50882,
+          "baseline_tail_score": 0.43357,
+          "efficiency": 0.0006356378,
+          "updates_approved": 2,
+          "total_gpu_seconds": 12.994,
+          "total_labels": 2000
+        },
+        "22": {
+          "tail_score": 0.52113,
+          "baseline_tail_score": 0.46992,
+          "efficiency": 0.000395841,
+          "updates_approved": 1,
+          "total_gpu_seconds": 5.003,
+          "total_labels": 2000
+        },
+        "33": {
+          "tail_score": 0.66467,
+          "baseline_tail_score": 0.6331,
+          "efficiency": 0.000279072,
+          "updates_approved": 2,
+          "total_gpu_seconds": 5.64,
+          "total_labels": 2000
+        },
+        "44": {
+          "tail_score": 0.58848,
+          "baseline_tail_score": 0.54438,
+          "efficiency": 0.000452997,
+          "updates_approved": 1,
+          "total_gpu_seconds": 11.787,
+          "total_labels": 2000
+        },
+        "55": {
+          "tail_score": 0.54468,
+          "baseline_tail_score": 0.52965,
+          "efficiency": 0.0002405389,
+          "updates_approved": 2,
+          "total_gpu_seconds": 10.714,
+          "total_labels": 2000
+        }
+      }
+    },
+    "E3_full": {
+      "baseline_score": {
+        "mean": 0.614594,
+        "std": 0.0429883242753192
+      },
+      "final_score": {
+        "mean": 0.640402,
+        "std": 0.03864529332273207
+      },
+      "tail_score": {
+        "mean": 0.582986,
+        "std": 0.05749975533860993
+      },
+      "baseline_tail_score": {
+        "mean": 0.522124,
+        "std": 0.06846124643913518
+      },
+      "total_gpu_seconds": {
+        "mean": 7.644,
+        "std": 1.5176613588017585
+      },
+      "total_labels": {
+        "mean": 2000.0,
+        "std": 0.0
+      },
+      "efficiency": {
+        "mean": 0.00053575442,
+        "std": 0.000286493869147969
+      },
+      "updates_approved": {
+        "mean": 2.0,
+        "std": 0.6324555320336759
+      },
+      "per_seed": {
+        "11": {
+          "tail_score": 0.54463,
+          "baseline_tail_score": 0.43357,
+          "efficiency": 0.0009148813,
+          "updates_approved": 3,
+          "total_gpu_seconds": 10.433,
+          "total_labels": 2000
+        },
+        "22": {
+          "tail_score": 0.52113,
+          "baseline_tail_score": 0.46992,
+          "efficiency": 0.0003890374,
+          "updates_approved": 1,
+          "total_gpu_seconds": 5.79,
+          "total_labels": 2000
+        },
+        "33": {
+          "tail_score": 0.66154,
+          "baseline_tail_score": 0.6331,
+          "efficiency": 0.0002693648,
+          "updates_approved": 2,
+          "total_gpu_seconds": 7.389,
+          "total_labels": 2000
+        },
+        "44": {
+          "tail_score": 0.64295,
+          "baseline_tail_score": 0.54438,
+          "efficiency": 0.0008473541,
+          "updates_approved": 2,
+          "total_gpu_seconds": 7.351,
+          "total_labels": 2000
+        },
+        "55": {
+          "tail_score": 0.54468,
+          "baseline_tail_score": 0.52965,
+          "efficiency": 0.0002581345,
+          "updates_approved": 2,
+          "total_gpu_seconds": 7.257,
+          "total_labels": 2000
+        }
+      }
+    }
+  },
+  "significance": {
+    "tail_score:E3_full_vs_E0_static": {
+      "mean_diff": 0.06086200000000001,
+      "std_diff": 0.04238706135131329,
+      "wins": 5,
+      "n": 5,
+      "t_pvalue": 0.03256763613845664,
+      "wilcoxon_pvalue": 0.03125
+    },
+    "tail_score:E3_full_vs_E1_periodic": {
+      "mean_diff": 0.015659999999999986,
+      "std_diff": 0.027889417347804157,
+      "wins": 2,
+      "n": 5,
+      "t_pvalue": 0.27761692382390735,
+      "wilcoxon_pvalue": 0.3125
+    },
+    "tail_score:E3_full_vs_E2_no_bandit": {
+      "mean_diff": 0.01742999999999999,
+      "std_diff": 0.026173027146281707,
+      "wins": 2,
+      "n": 5,
+      "t_pvalue": 0.2106924661890333,
+      "wilcoxon_pvalue": 0.25
+    },
+    "tail_score:E2_no_bandit_vs_E0_static": {
+      "mean_diff": 0.043432000000000026,
+      "std_diff": 0.022476150026194415,
+      "wins": 5,
+      "n": 5,
+      "t_pvalue": 0.012438705149957211,
+      "wilcoxon_pvalue": 0.03125
+    },
+    "efficiency:E3_full_vs_E0_static": {
+      "mean_diff": 0.00053575442,
+      "std_diff": 0.0003203098832758942,
+      "wins": 5,
+      "n": 5,
+      "t_pvalue": 0.020119740077123475,
+      "wilcoxon_pvalue": 0.03125
+    },
+    "efficiency:E3_full_vs_E1_periodic": {
+      "mean_diff": 8.442289999999997e-05,
+      "std_diff": 0.00018191061410734115,
+      "wins": 2,
+      "n": 5,
+      "t_pvalue": 0.3580036980609283,
+      "wilcoxon_pvalue": 0.40625
+    },
+    "efficiency:E3_full_vs_E2_no_bandit": {
+      "mean_diff": 0.00013493707999999996,
+      "std_diff": 0.00018901355815270762,
+      "wins": 3,
+      "n": 5,
+      "t_pvalue": 0.18564952223490544,
+      "wilcoxon_pvalue": 0.15625
+    },
+    "efficiency:E2_no_bandit_vs_E0_static": {
+      "mean_diff": 0.00040081734000000003,
+      "std_diff": 0.0001568432620904322,
+      "wins": 5,
+      "n": 5,
+      "t_pvalue": 0.004639207137611568,
+      "wilcoxon_pvalue": 0.03125
+    }
+  }
+}

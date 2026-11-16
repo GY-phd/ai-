@@ -67,18 +67,59 @@ def _batches(stream, batch_size):
         yield start, stop
 
 
+def _stream_groups(stream):
+    """The bearing each stream row belongs to.
+
+    ``read_dataset`` returns the grouping under ``groups``; the stream
+    builder may also provide it as ``bearing``.  The two-stage model needs
+    the grouping to know which rows belong to the same machine, so it is
+    resolved once here and reused.
+    """
+    groups = stream.get("bearing")
+    if groups is None:
+        groups = stream.get("groups")
+    if groups is None:
+        return np.full(len(stream["ids"]), "stream", dtype=object)
+    return np.asarray(groups, dtype=object)
+
+
 class Harness:
     def __init__(self, config):
         self.cfg = config
         self.workspace = Path(config["workspace"])
         self.workspace.mkdir(parents=True, exist_ok=True)
-        self.train = read_dataset(config["data"]["train"])
-        self.validation = read_dataset(config["data"]["validation"], self.train["paths"])
-        self.stream = read_dataset(config["stream"]["path"], self.train["paths"])
+
+        # The evaluation stream is built by holding out whole bearings from
+        # the public training set.  The public validation bearings are kept
+        # completely out of the loop: they are scored once at the end as an
+        # independent check, so the reported number is never the number the
+        # gate optimised against.
+        self.stream_audit = {}
+        if str(config["data"].get("stream_mode", "")) == "bearing_holdout":
+            from .stream import build as build_stream
+            initial, stream, validation, meta = build_stream(
+                Path(config["data"]["data_root"]), int(config["data"].get("stream_bearings", 3)))
+            self.train = initial
+            self.stream = stream
+            self.validation = validation
+            self.stream_audit = meta
+            print(f"[stream] initial bearings: {', '.join(meta['initial_bearings'])} ({meta['initial_rows']} rows)")
+            print(f"[stream] evaluation stream: {', '.join(meta['stream_bearings'])} ({meta['stream_rows']} rows)")
+            print(f"[stream] validation held out of the loop: {', '.join(meta['validation_bearings'])}")
+        else:
+            self.train = read_dataset(config["data"]["train"])
+            self.validation = read_dataset(config["data"]["validation"], self.train["paths"])
+            self.stream = read_dataset(config["stream"]["path"], self.train["paths"])
+
         self.budget = Budget(config["budget"])
         self.ledger = Ledger(self.workspace)
         self.chain = HypothesisChain(self.workspace)
         self.runner = ExperimentRunner(config, self.train, self.validation, self.workspace)
+        # The runner is given the *whole* evaluation stream up front, so it
+        # can precompute the bearing grouping and the elapsed-snapshot
+        # counts that the two-stage inference path needs.  The runner still
+        # only ever *trains* on the rows the orchestrator has handed it.
+        self.runner.set_stream(self.stream)
         self.logger = SwanLabLogger(self.workspace, config["run_name"], config)
         self.monitor = DriftMonitor(self.train["x"], self.train["paths"], config["detector"])
         skills = _load_skills(Path(__file__).resolve().parent)
@@ -88,6 +129,28 @@ class Harness:
         self.reference_perf = None
         self.cycles = 0
         self.previous_champion = None
+        # Rows of the stream the runner may train on, and the start of the
+        # slice it judges candidates on.  Kept here because the split has to
+        # advance even on cycles where nothing is trained.
+        self.stream_cursor = 0
+        self.judge_start = 0
+
+    def _advance_stream_split(self, start: int):
+        """Set the boundary between the training slice and the judged slice.
+
+        The candidate may train on ``stream[:judge_start]`` and is judged
+        on ``stream[judge_start:]``.  The boundary therefore has to sit
+        strictly between the two, which is what makes the comparison
+        out-of-sample.
+
+        When cycle *n* processes rows ``[start, stop)`` the boundary is set
+        to ``start``: the candidate trains on everything the harness has
+        already reacted to, and is judged on the batch that is currently
+        in front of it plus everything after it.  The two slices never
+        overlap, at any cycle.
+        """
+        self.judge_start = max(self.judge_start, start)
+        self.runner.judge_start = self.judge_start
 
     # ------------------------------------------------------------------ setup
     def bootstrap(self):
@@ -153,7 +216,21 @@ class Harness:
         for batch_index, (start, stop) in enumerate(_batches(self.stream, batch_size)):
             x = self.stream["x"][start:stop]
             y = self.stream["y"][start:stop] if cfg_stream["has_labels"] else None
-            predicted = Model.load(champion["checkpoint"]).predict(x)
+            # The runner keeps the consumed rows so that a later candidate
+            # can be trained on them.  Without this the loop never changes
+            # the model, and "self-evolution" is only a name.
+            self.runner.observe_stream(
+                x, y, _stream_groups(self.stream)[start:stop])
+            self.stream_cursor = stop
+            # Predict through the runner, because the runner knows the
+            # checkpoint's target unit.  A two-stage checkpoint predicts a
+            # life fraction; the runner converts it back to minutes with
+            # the bearing's own history.  Loading the checkpoint directly
+            # here would compare a fraction against minutes and report a
+            # meaningless drift.
+            champion_model = Model.load(champion["checkpoint"])
+            predicted = self.runner.predict_rul(
+                champion_model, x, self.runner.stream_view(start, stop))
             batch_metric = metrics(predicted, y) if y is not None else {"rmse": float("nan"), "mae": float("nan")}
             signal = self.monitor.detect(x, expected=y, predicted=predicted)
             perf_ok = self.reference_perf is None or batch_metric["rmse"] <= self.reference_perf["rmse"] * (
@@ -207,7 +284,11 @@ class Harness:
                   f"planner={plan.get('_meta', {}).get('planner')}")
 
             cost = 0.0
-            if plan["action"] in ("retrain_head", "hpo", "recalibrate_inputs", "rollback"):
+            # Hold the current batch back from the candidate's training set:
+            # the candidate trains on the *earlier* stream rows and is judged
+            # on the rows that follow.
+            self._advance_stream_split(start)
+            if plan["action"] in ("retrain_head", "hpo", "recalibrate_inputs", "rollback", "adapt"):
                 left = self.budget.state()["experiments_left"]
                 if left <= 0:
                     plan = {**plan, "action": "do_nothing",
@@ -229,7 +310,14 @@ class Harness:
                 gate = {"decision": "skip", "reason": result.get("notes", "no candidate produced")}
                 candidate = champion
             else:
-                gate_obj = gate_evaluate(champion["metrics"], result["metrics"], self.cfg["gate"], self.budget.state())
+                # The gate compares the candidate with the champion **on the
+                # same judge slice**.  The champion's stored score was
+                # measured on an earlier slice, so it is re-measured here;
+                # otherwise the gate would compare two different row sets
+                # and the arithmetic would be meaningless.
+                incumbent = self.runner._judge_metrics(champion["checkpoint"])
+                champion = {**champion, "metrics": incumbent}
+                gate_obj = gate_evaluate(incumbent, result["metrics"], self.cfg["gate"], self.budget.state())
                 gate = gate_obj.to_dict()
                 decision = gate_obj.decision
                 candidate = champion
@@ -303,12 +391,18 @@ class Harness:
 
     # ----------------------------------------------------------------- report
     def _report(self, champion):
-        final = evaluate_checkpoint(champion["checkpoint"], self.validation)
+        # The final score uses the runner's prediction path, because a
+        # two-stage checkpoint predicts a life fraction and the report must
+        # show minutes.  ``evaluate_checkpoint`` reads the raw output.
+        final = self.runner.final_metrics(champion["checkpoint"])
         baseline = evaluate_checkpoint(self.cfg["data"]["baseline_checkpoint"], self.validation)
         report = {
             "run_name": self.cfg["run_name"], "created_at": now_iso(),
             "planner": self.planner_status, "llm_model_id": self.cfg["llm"]["model_id"],
             "llm_tokens_used": self.budget.tokens, "llm_calls": self.qwen.calls,
+            # The stream audit travels with the report: it is the evidence
+            # that the evaluation respected the "whole bearings" rule.
+            "stream_audit": self.stream_audit,
             "baseline": {"rmse": baseline["rmse"], "mae": baseline["mae"]},
             "final": {"rmse": final["rmse"], "mae": final["mae"],
                       "per_bearing": {k: {"rmse": v["rmse"], "mae": v["mae"], "rows": v["rows"]}

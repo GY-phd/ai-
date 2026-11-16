@@ -24,13 +24,15 @@ class LLMInvalid(ValueError):
     pass
 
 
-ALLOWED_ACTIONS = ("do_nothing", "recalibrate_inputs", "retrain_head", "hpo", "rollback")
+ALLOWED_ACTIONS = ("do_nothing", "recalibrate_inputs", "retrain_head", "hpo", "rollback", "adapt")
 RISKS = ("low", "medium", "high")
 
 SYSTEM_PROMPT = (
     "You are the decision layer of an industrial model self-evolution harness. "
     "You receive a drift diagnosis card, the remaining budget, the deployed model's record and the last decisions. "
-    "Choose exactly one action from: do_nothing, recalibrate_inputs, retrain_head, hpo, rollback. "
+    "Choose exactly one action from: do_nothing, recalibrate_inputs, retrain_head, adapt, hpo, rollback. "
+    "'adapt' retrains the candidate on the initial data plus the stream observed so far, which is the "
+    "action that actually lets the deployed model follow a drifting population. "
     "Spending a training budget must be justified by the evidence; doing nothing is often the correct, "
     "defensible engineering decision. Reply with a single JSON object and nothing else."
 )

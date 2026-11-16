@@ -3,7 +3,10 @@
   "data": {
     "train": "data/public/train.jsonl",
     "validation": "data/public/validation.jsonl",
-    "baseline_checkpoint": "data/checkpoint.npz"
+    "baseline_checkpoint": "data/checkpoint.npz",
+    "data_root": "D:/GY/cpu/cpu-b-rul-20261110-v1",
+    "stream_bearings": 3,
+    "stream_mode": "bearing_holdout"
   },
   "stream": {
     "path": "data/public/validation.jsonl",
@@ -41,12 +44,21 @@
     "max_local_regression_pct_of_global": 20.0
   },
   "train": {
+    "architecture": "two_stage",
     "hidden": 96,
     "epochs": 400,
     "learning_rate": 0.003,
     "weight_decay": 0.01,
     "batch_size": 128,
     "feature_transform": "eng34",
+    "activation": "tanh",
+    "target_scaling": false,
+    "stream_policy": "concatenate",
+    "normalisation": "slope",
+    "floor": 0.02,
+    "cap": 3000.0,
+    "rate_limit": 0.25,
+    "max_rul_minutes": 3000.0,
     "transfer_epochs": 80,
     "seed": 42
   },
