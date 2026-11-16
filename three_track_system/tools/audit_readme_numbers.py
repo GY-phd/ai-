@@ -37,6 +37,10 @@ ALLOWED_WITHOUT_ARTIFACT = {
     # Historical regression incident quoted in the debug log: the value is
     # part of the narrative, not a number this build produced.
     "704.813",
+    # Historical hypothesis deltas from the first (single-task) ledger, also
+    # quoted in the debug log's rejected-hypothesis table.
+    "104.47",
+    "827.33",
 }
 
 

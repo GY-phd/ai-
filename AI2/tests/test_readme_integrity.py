@@ -40,6 +40,12 @@ ALLOWED_WITHOUT_ARTIFACT = {
     # current value is in runs/B/run_report.json - and the incident is
     # described in prose, so no live artefact carries it.
     "704.813",
+    # Historical hypothesis deltas from the **first** (single-task) ledger.
+    # The debug log quotes the rejected-hypothesis table of that older run;
+    # the surviving artefacts are the three-track ones, so these deltas have
+    # no live artefact behind them.
+    "104.47",
+    "827.33",
 }
 
 

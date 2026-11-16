@@ -1,7 +1,7 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 3316635,
+  "total_bytes": 3317102,
   "file_count": 175,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "files": {
@@ -194,8 +194,8 @@
       "sha256": "2ec92b8624b0ee8cf1255f040ec9fc466d3d582657938a3ea7e6c74224a1b6b0"
     },
     "tools/audit_readme_numbers.py": {
-      "bytes": 5483,
-      "sha256": "e7927649db5c169abddd6a2811d115794833be22169bf840f1defb201a7dc562"
+      "bytes": 5651,
+      "sha256": "78f8e6993477af03998c6bf6f426db50141477ae9b7038d304fd16f40a64f880"
     },
     "tools/build_github_repo.py": {
       "bytes": 14918,
@@ -314,8 +314,8 @@
       "sha256": "c9c13b7234c8ee4b9a21060884660b42f4c9c82dd5336763065904fde802dfb9"
     },
     "tests/test_readme_integrity.py": {
-      "bytes": 8254,
-      "sha256": "337d48febe7a226d5a41d7a53b371f185af510140264c8822464232ec60a4ff2"
+      "bytes": 8553,
+      "sha256": "8ec8d07cd87b2b490698bd75501b4f7f3d20d70b3cbb01e525baf11e28012e5d"
     },
     "tests/test_three_track_results.py": {
       "bytes": 13046,
