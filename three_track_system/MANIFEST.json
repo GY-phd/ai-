@@ -1,7 +1,7 @@
 {
   "name": "zhixun-engine-three-track",
   "contains_model_weights": false,
-  "total_bytes": 3626576,
+  "total_bytes": 3626729,
   "file_count": 204,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "files": {
@@ -194,8 +194,8 @@
       "sha256": "2ec92b8624b0ee8cf1255f040ec9fc466d3d582657938a3ea7e6c74224a1b6b0"
     },
     "tools/audit_readme_numbers.py": {
-      "bytes": 5183,
-      "sha256": "6081a14ce891dca8caf737eb68452c6e8d096359216bf407f4eca388d70e2e87"
+      "bytes": 5336,
+      "sha256": "8a755a116ad725ea72d74af74847a2c4fb8e448d2e223c486c159761ac96775f"
     },
     "tools/build_github_repo.py": {
       "bytes": 14918,

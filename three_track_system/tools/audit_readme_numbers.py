@@ -34,6 +34,9 @@ READMES = (ROOT / "README.md", ROOT / "AI2" / "README.md",
 ALLOWED_WITHOUT_ARTIFACT = {
     "1.38",   # repository size in MB, printed by the packager
     "0.51",   # submission package size in MB, printed by the packager
+    # Historical regression incident quoted in the debug log: the value is
+    # part of the narrative, not a number this build produced.
+    "704.813",
 }
 
 
