@@ -37,7 +37,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Byte-compile every module
-        run: python -m compileall -q harness rulkit tools tests
+        run: python -m compileall -q harness rulkit tools tests contest_baselines
 
       - name: Unit tests
         run: python -m unittest discover -s tests -t . -v
@@ -50,3 +50,37 @@ jobs:
 
       - name: Render the recorded decision table
         run: python tools/show_run.py --workspace evidence
+
+  image:
+    name: the submission image presents exactly one entry point
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # The platform's inspection of the image is what the previous
+      # submission failed on: the archive shipped four candidate entries
+      # and a package that shadowed the SDK entry point.  These checks
+      # make that defect impossible to reintroduce.
+      - name: The archive layout keeps a single, unambiguous entry point
+        run: |
+          python - <<'PY'
+          import pathlib, sys
+          sys.path.insert(0, "tools")
+          import build_docker_image as b
+
+          items = b._collect_project()
+          b._assert_single_entry(items)
+          print("OK  one entry point, no shadowing package")
+          PY
+
+      - name: The SDK entry point answers describe
+        run: python harness.py describe

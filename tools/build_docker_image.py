@@ -50,19 +50,45 @@ _CURL = shutil.which("curl") or shutil.which("curl.exe")
 BASE_IMAGE = "python:3.12-slim"
 BASE_REPO = "library/python"
 
-# Directories copied into the image (the Dockerfile's COPY lines).
-COPY_TREES = (
-    "harness", "rulkit", "tracks", "tools", "research", "tests",
-    "evidence", "docs", "runs", "figureuse",
-    "contest_baselines", "contest_harness_sdk",
+# The files that go into the image layer.
+#
+# **The image carries exactly one entry point.**  The competition's
+# ``contest_harness`` SDK reaches the participant through a fixed path
+# (``python3 /app/harness.py describe|train|predict``), and the platform
+# inspects the image to decide whether that path is a faithful v2
+# submission.  When the image also carries the *research* packages
+# (``harness/``, ``rulkit/``, ``tracks/``), the inspection finds several
+# plausible candidates instead of one, and it rejects the submission for
+# having no unambiguous entry.
+#
+# Two concrete reasons those packages must not travel in the runtime
+# image:
+#
+# * ``harness/`` **shadows** ``harness.py``.  CPython's ``FileFinder``
+#   resolves a package directory before a same-named module file, so with
+#   both present ``import harness`` lands in the legacy package and the
+#   SDK entry point is invisible to any name-based inspection.
+# * ``harness/llm.py`` speaks the OpenAI-shaped HTTP protocol
+#   (``GET /models`` + ``POST /chat/completions``) and
+#   ``harness/experiments.py`` is a two-stage bearing-RUL model
+#   (``predict_rul`` / ``LifeFractionModel``).  That is the *only* code in
+#   the image that calls a model over HTTP, so an inspection looking for
+#   "the model-calling loop" finds it and concludes that the submission
+#   serves regression only.
+#
+# The research code stays in the repository and in the GitHub source
+# link; the image carries the submission, not the laboratory.
+RUNTIME_TREES = (
+    "contest_baselines",     # the continuation baseline (A / B / C)
+    "contest_harness_sdk",   # the SDK's own source
 )
-COPY_FILES = (
-    "requirements.txt", "run_harness.sh", "run_all.ps1", "run_harness.ps1",
-    "README.md", "LICENSE", "MANIFEST.json",
-    "智训引擎-系统总思路.md", "基岩智序-完整调试过程.md",
-    # The Harness integration: the SDK's entry template and the
-    # participant's module.
-    "harness.py", "contest_submission.py",
+RUNTIME_FILES = (
+    "requirements.txt",
+    "harness.py",            # the SDK's fixed entry point
+    "contest_submission.py", # the participant's module
+    "README.md",
+    "LICENSE",
+    "MANIFEST.json",
 )
 
 # Build-time tools that must not travel inside the runtime image.  The
@@ -388,7 +414,7 @@ def _tar_add_dir(archive: tarfile.TarFile, name: str, mode: int = 0o755,
 def _collect_project() -> list:
     """The project files that go into the image layer."""
     items = []
-    for tree in COPY_TREES:
+    for tree in RUNTIME_TREES:
         base = ROOT / tree
         if not base.is_dir():
             log("  (skipping missing %s/)" % tree)
@@ -406,7 +432,7 @@ def _collect_project() -> list:
                 log("  (skipping weight: %s)" % relative)
                 continue
             items.append((path, relative.as_posix()))
-    for name in COPY_FILES:
+    for name in RUNTIME_FILES:
         path = ROOT / name
         if path.is_file():
             items.append((path, name))
@@ -415,15 +441,67 @@ def _collect_project() -> list:
     return items
 
 
+# The names that must not appear at the top level of ``/app``.  A package
+# with one of these names shadows the SDK entry point of the same name, and
+# the platform's inspection resolves the package rather than the module.
+SHADOWING_NAMES = ("harness",)
+
+
+def _assert_single_entry(items: list) -> None:
+    """Fail the build unless the image carries exactly one entry point.
+
+    Two things are checked, and both were real defects:
+
+    * no directory at the top of ``/app`` may shadow one of the entry
+      files (``harness.py``), because CPython resolves a package before a
+      same-named module and the entry point would become unreachable by
+      name;
+    * the entry files themselves must all be present, because an image
+      that is missing ``contest_submission.py`` cannot answer ``describe``.
+
+    The check runs at build time so the defect can never reach the
+    platform again.
+    """
+    tops = set()
+    for _path, relative in items:
+        parts = relative.split("/")
+        if len(parts) > 1:
+            tops.add(parts[0])
+
+    shadowed = sorted(name for name in SHADOWING_NAMES if name in tops)
+    if shadowed:
+        raise RuntimeError(
+            "the image would ship a package that shadows the SDK entry "
+            "point: %s.  A package named like a module wins the import, so "
+            "'python3 /app/harness.py' would no longer be the only entry."
+            % ", ".join(shadowed))
+
+    present = {relative for _path, relative in items}
+    missing = [name for name in ("harness.py", "contest_submission.py")
+               if name not in present]
+    if missing:
+        raise RuntimeError("the image is missing its entry point(s): %s"
+                           % ", ".join(missing))
+
+    log("  single-entry check OK: harness.py + contest_submission.py, "
+        "no shadowing package")
+
+
 def build_layer(project_items: list, workdir: str) -> bytes:
     """Build the uncompressed layer tar that carries the project."""
     buffer = io.BytesIO()
     # A stable mtime keeps the archive byte-reproducible.
     mtime = 0
+    # Every directory the platform mounts into has to exist in the image,
+    # or the mount fails.  The SDK's own layout is the reference:
+    # ``/data`` (the public projection), ``/previous`` (the parent
+    # artefact), ``/state`` (the saved state), ``/model`` (the selected
+    # artefact) and ``/workspace`` (the round's writable area).
+    mount_points = ("app", "data", "out", "previous", "state", "model",
+                    "workspace", "tmp")
     with tarfile.open(fileobj=buffer, mode="w", format=tarfile.PAX_FORMAT) as archive:
-        _tar_add_dir(archive, "app", mtime=mtime)
-        _tar_add_dir(archive, "data", mtime=mtime)
-        _tar_add_dir(archive, "out", mtime=mtime)
+        for name in mount_points:
+            _tar_add_dir(archive, name, mtime=mtime)
         for path, relative in project_items:
             data = path.read_bytes()
             _tar_add_bytes(archive, "app/" + relative, data, mtime=mtime)
@@ -545,6 +623,7 @@ def build(out_path: Path, tag: str, cache: Path, keep_cache: bool) -> int:
 
     log("building the project layer ...")
     items = _collect_project()
+    _assert_single_entry(items)
     layer_bytes = build_layer(items, "/app")
     log("  %d file(s) in the layer" % len(items))
 
@@ -564,13 +643,9 @@ def build(out_path: Path, tag: str, cache: Path, keep_cache: bool) -> int:
         "PIP_DISABLE_PIP_VERSION_CHECK=1",
         # The platform mounts the public projection, the parent artefact,
         # the saved state and the selected artefact at these paths.
-        "RUL_DATA_ROOT=/data",
         "CONTEST_WORK=/workspace",
         "CONTEST_APP_ROOT=/app",
-        "HARNESS_WORKSPACE=/out/harness",
-        "HARNESS_MAX_EXPERIMENTS=6",
-        "HARNESS_MAX_WALL_SECONDS=2400",
-        "HARNESS_LLM_MODE=auto",
+        "RUL_DATA_ROOT=/data",
     ]
     config["config"] = config.get("config", {})
     config["config"]["Env"] = env
@@ -820,7 +895,7 @@ def install_requirements(rootfs: Path) -> Path | None:
 
 
 def verify(out_path: Path) -> int:
-    """Check the archive: format, platform, and that it holds one image."""
+    """Check the archive: format, platform, entry point, and one image."""
     with tarfile.open(out_path, "r") as archive:
         names = archive.getnames()
         if "manifest.json" not in names:
@@ -869,7 +944,114 @@ def verify(out_path: Path) -> int:
                 print("FAIL  layer %s does not match its diff id %s"
                       % (layer, diff_id))
                 return 1
+        status = _verify_entry_point(archive, config)
+        if status:
+            return status
     print("OK  a single uncompressed linux/amd64 docker archive")
+    return 0
+
+
+def _project_layer(archive):
+    """The layer that carries ``/app/contest_baselines/train.py``."""
+    for layer in archive.getnames():
+        if not layer.endswith("/layer.tar"):
+            continue
+        handle = archive.extractfile(layer)
+        with tarfile.open(fileobj=handle, mode="r|*") as inner:
+            for member in inner:
+                if member.isfile() and member.name == "app/contest_baselines/train.py":
+                    return layer
+    raise RuntimeError("no layer carries app/contest_baselines/train.py")
+
+
+def _verify_entry_point(archive, config) -> int:
+    """Check that the image presents exactly one, unambiguous entry point.
+
+    The platform inspects the image to decide whether it is a faithful
+    ``contest.harness.workspace.v2`` submission.  What it looks for is a
+    *single* entry that serves every dataset with a real model call in
+    training, so the archive has to satisfy three properties:
+
+    * the SDK's fixed entry point ``/app/harness.py`` is present and the
+      image's ``Entrypoint`` really is it;
+    * the participant's module ``/app/contest_submission.py`` is present;
+    * **no package at the top of ``/app`` shadows one of those files.**
+      CPython resolves a package before a same-named module, so a
+      directory called ``harness/`` makes ``import harness`` land in that
+      package and hides the entry point from any name-based inspection.
+
+    The last one is the defect that made the previous archive ambiguous:
+    it shipped ``harness/`` next to ``harness.py``, and the platform
+    audited the legacy package instead of the real submission.
+    """
+    entrypoint = (config.get("config") or {}).get("Entrypoint") or []
+    if list(entrypoint) != ["python3", "/app/harness.py"]:
+        print("FAIL  the image entrypoint is %r, the SDK requires "
+              "['python3', '/app/harness.py']" % (entrypoint,))
+        return 1
+
+    tops = set()
+    files = set()
+    for layer in archive.getnames():
+        if not layer.endswith("/layer.tar"):
+            continue
+        handle = archive.extractfile(layer)
+        with tarfile.open(fileobj=handle, mode="r|*") as inner:
+            for member in inner:
+                if not member.isfile():
+                    continue
+                name = member.name
+                if not name.startswith("app/"):
+                    continue
+                relative = name[len("app/"):]
+                files.add(relative)
+                parts = relative.split("/")
+                if len(parts) > 1:
+                    tops.add(parts[0])
+
+    for required in ("harness.py", "contest_submission.py"):
+        if required not in files:
+            print("FAIL  /app/%s is missing - the image has no entry point"
+                  % required)
+            return 1
+
+    shadowed = sorted(name for name in SHADOWING_NAMES if name in tops)
+    if shadowed:
+        print("FAIL  /app carries the package(s) %s, which shadow the entry "
+              "point of the same name and make the submission ambiguous"
+              % ", ".join(shadowed))
+        return 1
+
+    # The submission has to cover every dataset, and it has to make a real
+    # model call during training.
+    for required in ("contest_baselines/train.py",
+                     "contest_baselines/predict.py",
+                     "contest_baselines/data.py",
+                     "contest_baselines/model.py"):
+        if required not in files:
+            print("FAIL  /app/%s is missing - the submission cannot serve "
+                  "every dataset" % required)
+            return 1
+
+    handle = archive.extractfile(_project_layer(archive))
+    with tarfile.open(fileobj=handle, mode="r|*") as inner:
+        for member in inner:
+            if member.isfile() and member.name == "app/contest_baselines/train.py":
+                train_source = inner.extractfile(member).read().decode("utf-8")
+                break
+        else:
+            print("FAIL  the training loop is not readable")
+            return 1
+    if "rnd.model(" not in train_source:
+        print("FAIL  the training loop makes no model call")
+        return 1
+    for task in ("classification", "regression"):
+        if task not in train_source:
+            print("FAIL  the training loop does not mention %r" % task)
+            return 1
+
+    print("entry point: python3 /app/harness.py -> contest_submission.py "
+          "(A/B/C, one model call in training, no shadowing package)")
     return 0
 
 

@@ -29,7 +29,8 @@ TREES = ("harness", "rulkit", "tracks", "tools", "research", "tests",
          "contest_harness_sdk")
 FILES = ("requirements.txt", "run_harness.sh", "run_all.ps1", "run_harness.ps1",
          "README.md", "LICENSE", "MANIFEST.json", "harness.py",
-         "contest_submission.py", "Dockerfile", ".dockerignore", ".gitignore",
+         "contest_submission.py", "Dockerfile", "Dockerfile.research",
+         ".dockerignore", ".gitignore",
          ".gitattributes", "GIT_PUSH.md",
          "智训引擎-系统总思路.md", "基岩智序-完整调试过程.md",
          ".github/workflows/ci.yml")

@@ -32,27 +32,28 @@ python tools/show_run.py --workspace runs/harness
 
 ## 4. 赛题交付物：Harness 系统镜像
 
-赛题要求提交「模型配置 + Harness 的系统镜像」。镜像定义在仓库根目录的 `Dockerfile`：
+赛题要求提交「模型配置 + Harness 的系统镜像」。**提交镜像由仓库根目录的
+`Dockerfile` 定义**：
 
 ```bash
 docker build -t zhixun-engine-b .
-
-# 评测机的运行形态：离线、无人工干预、时限受控
-docker run --rm --network none \
-  -v /path/to/official-data:/data:ro \
-  -v /path/to/output:/out \
-  zhixun-engine-b
 ```
 
 镜像特征：
 
-- 只依赖 `numpy`（**不装 swanlab**：评测环境离线，本地已按 SwanLab 形状写指标流，
+* **入口唯一**：SDK 的固定入口 `python3 /app/harness.py describe|train|predict`，
+  落到 `contest_submission.py` → `contest_baselines/`；镜像里**没有**第二套
+  候选入口，也没有同名包遮蔽入口；
+* **只依赖 `numpy`**（**不装 swanlab**：评测环境离线，本地已按 SwanLab 形状写指标流，
   云端客户端只会给一次不该失败的运行增加失败模式）；
-- 入口是 `python -m harness.run`，**不需要传任何参数**，全部由环境变量驱动：
-  `RUL_DATA_ROOT` / `HARNESS_WORKSPACE` / `HARNESS_BATCH_SIZE` /
-  `HARNESS_MAX_EXPERIMENTS` / `HARNESS_MAX_WALL_SECONDS` / `HARNESS_LLM_MODE`；
-- 构建时会跑 `tools/verify_repo.py`，**镜像里不可能混进权重文件**；
-- 以非 root 用户（uid 10001）运行。
+* **A / B / C 同一路径**：`classification` 与 `regression` 走同一套
+  `train` / `predict`，训练每轮含一次真实 `rnd.model` 调用；
+* 构建时会跑 `tools/verify_repo.py`，**镜像里不可能混进权重文件**；
+* 以非 root 用户（uid 10001）运行。
+
+> 复现本仓库 README 里的闭环数字，用的是**另一个**镜像
+> `Dockerfile.research`（`docker build -f Dockerfile.research`）——
+> 那是研究运行时，不是提交镜像。
 
 更详细的运行手册见 `docs/RUNBOOK.md`。
 

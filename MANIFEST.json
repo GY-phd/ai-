@@ -1,13 +1,13 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 3924627,
-  "file_count": 242,
+  "total_bytes": 3969360,
+  "file_count": 246,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "files": {
     "README.md": {
-      "bytes": 20479,
-      "sha256": "4d6ef9f6225ca02c5fc8b6603b9a0e20523021996f760f85d8c959d617e7692e"
+      "bytes": 21992,
+      "sha256": "0fea4d22608edc7531fbd5472bd6d74d2278de62bec702a9a1f951eae7c1e214"
     },
     "LICENSE": {
       "bytes": 2106,
@@ -38,8 +38,12 @@
       "sha256": "2cd65d835005a9c0edb3dca2c4679d0a1791c3504e3073d353eaf4ff0ad71256"
     },
     "Dockerfile": {
-      "bytes": 2851,
-      "sha256": "3427028a3c9426b09b8c09c416a106bc9b30365d5503df0e4054fbf71057714b"
+      "bytes": 4263,
+      "sha256": "db89a95177340f84afbe8fa6bfa64f65bd59a7e99a1eeac1cde270175efa68ea"
+    },
+    "Dockerfile.research": {
+      "bytes": 2921,
+      "sha256": "b9b340d249fa3f2ef76ad2c01a10af8e518b09cd998c9c0c07a875ed189372ba"
     },
     ".dockerignore": {
       "bytes": 807,
@@ -206,12 +210,12 @@
       "sha256": "c957458cb4adfb53f61c3d122e90cd91d7805842f90088b6f0a30812ec5234db"
     },
     "tools/build_docker_image.py": {
-      "bytes": 37589,
-      "sha256": "9989601bf3bcf15256f3f8e8dd3f9f7a7fdde9eff5469cb2443fa9e83b106156"
+      "bytes": 45524,
+      "sha256": "1417eb539f654caa82a3b5c1f4266e05f65c0a95985068b5a560bc0b7af28549"
     },
     "tools/build_github_repo.py": {
-      "bytes": 15876,
-      "sha256": "f4bd76d32cd3089ef273826522e41a9ef7c1f994b36eb92f42c19c57b1c00afe"
+      "bytes": 16790,
+      "sha256": "38e78a51e1d2ef7b6377611d9a5d4e0537187c9ddab2d4e730b2182d7ed37363"
     },
     "tools/check_pytrio_live.py": {
       "bytes": 2439,
@@ -234,8 +238,8 @@
       "sha256": "c910035e664062086635dbaf5fb1927a828b90575f2601b3211bd1d0fc3fa9a1"
     },
     "tools/refresh_manifest.py": {
-      "bytes": 4900,
-      "sha256": "6613f45fe75b2714bf64fdbf3b00cc55893adef36449885a24418f866e59394c"
+      "bytes": 4932,
+      "sha256": "8c09b00030f1651f83fe9ad728c1b58fe2edf61a317ffc93c59119fa38dffa72"
     },
     "tools/run_harness_offline.py": {
       "bytes": 10172,
@@ -260,6 +264,10 @@
     "tools/tidy_art_folder.py": {
       "bytes": 3648,
       "sha256": "6b11481393ab0f746aebf8fceedc24037ca77c91e0197b2ffcab5f0a7639f309"
+    },
+    "tools/verify_image_roundtrip.py": {
+      "bytes": 10095,
+      "sha256": "c058e6e4293404c7702f81ec786f5c3999a24ef153917279cde218b7548ed396"
     },
     "tools/verify_ledger.py": {
       "bytes": 2136,
@@ -470,8 +478,8 @@
       "sha256": "efaaa83572b8c2c355f9ee687ca68cfa880fa7ab24848f3cda1b7618e690b025"
     },
     ".github/workflows/ci.yml": {
-      "bytes": 1239,
-      "sha256": "3926b61fb3ae938c98e30b8ec2acef0107c238ae559b4d69defaa5f97022a766"
+      "bytes": 2362,
+      "sha256": "698359aa02713c13e378b1d6477303ca9284cb93b096ec6faef67a45803b8ed3"
     },
     "runs/A/run_report.json": {
       "bytes": 19280,
@@ -504,6 +512,14 @@
     "runs/harness-offline-10/run_report.json": {
       "bytes": 30006,
       "sha256": "df20471c7a4b9caeb58bb9e844c1570c6f73e32f0b6d5a4b2b81f0dd0ad3310b"
+    },
+    "runs/harness-offline-verify/ledger.jsonl": {
+      "bytes": 5681,
+      "sha256": "36280f6c561076365259cccdd08fd7feb67c61e3fd97948f2f9560c49dd58d5e"
+    },
+    "runs/harness-offline-verify/run_report.json": {
+      "bytes": 9305,
+      "sha256": "d711aa81aabe534cbac8f2bc1cd92537691cc24749d2324af8296d8b930718aa"
     },
     "runs/summary.json": {
       "bytes": 105227,
@@ -638,20 +654,20 @@
       "sha256": "b218dd2bf1230aa184b4c3b1302c2f2730688f8a97f41ddf029cda96b784290b"
     },
     "docs/平台提交表单填写指南.md": {
-      "bytes": 13782,
-      "sha256": "0218a2308ee4da618fa76e96832c4a66cd6f4c255adc4efead5f0fd7ed3ed3c4"
+      "bytes": 15567,
+      "sha256": "a3f79ad35131faa20bd8b6fd53913007e20a708c1b9770678112c85dfd593426"
     },
     "docs/数据适配说明.md": {
-      "bytes": 3937,
-      "sha256": "34e6a90c4e8a142af462f6c78c4ef881bd3208f20863b9f2fac2d33f23d50a52"
+      "bytes": 4237,
+      "sha256": "2c94a062be4d61db39ea6f1764acc9ec9eda877e0c97276d9f4548e4639db5b2"
     },
     "docs/系统运行说明.md": {
-      "bytes": 13396,
-      "sha256": "4f20494138033005501739fff1cfa191c408e6d94ad06dd371763870221be727"
+      "bytes": 14898,
+      "sha256": "8e0583bfc8df26a3ac22ba0718a026a56ec236e52bebd9758351c3efc26bb863"
     },
     "docs/训练凭证.md": {
-      "bytes": 13039,
-      "sha256": "acb3b1fb9c6a14a2dfc5616b96f57c8738455440c725011bdcc11f2df6027f3a"
+      "bytes": 13254,
+      "sha256": "8f6428845902e7c52627c6951fa167145905c6b9bf88cc8b3bd6786099c7dae2"
     },
     "docs/设计论证.md": {
       "bytes": 9703,
@@ -970,8 +986,8 @@
       "sha256": "9fd6897f47ba9425fbb2ca3a82b61cdd1c2bf925359242c0de8b47bbcb5f6375"
     },
     "GIT_PUSH.md": {
-      "bytes": 2314,
-      "sha256": "331886b4548aec7b4da127dad3cc95d1bcfb012923cf423a455f5c7e9d04e2a0"
+      "bytes": 2477,
+      "sha256": "b89c96c9e2137e241370f65673c81b3eeea908ead80c914cc3b7e774126e6af8"
     }
   }
 }

@@ -62,7 +62,12 @@ CODE_ONLY_DIRS = ("evo",)
 
 TOP_FILES = (
     "README.md", "LICENSE", "requirements.txt", "run_all.ps1", "run_harness.ps1",
-    "run_harness.sh", ".gitignore", ".gitattributes", "Dockerfile", ".dockerignore",
+    "run_harness.sh", ".gitignore", ".gitattributes",
+    # The competition image (the SDK's fixed entry point) and the research
+    # image (the local reproduction of the closed loop).  Two Dockerfiles
+    # are deliberate and they are not interchangeable: the root one is the
+    # submission, ``Dockerfile.research`` is the laboratory.
+    "Dockerfile", "Dockerfile.research", ".dockerignore",
     "智训引擎-系统总思路.md", "基岩智序-完整调试过程.md",
     # The Harness SDK integration: the SDK's entry template and the
     # participant's module.
@@ -127,27 +132,28 @@ python tools/show_run.py --workspace runs/harness
 
 ## 4. 赛题交付物：Harness 系统镜像
 
-赛题要求提交「模型配置 + Harness 的系统镜像」。镜像定义在仓库根目录的 `Dockerfile`：
+赛题要求提交「模型配置 + Harness 的系统镜像」。**提交镜像由仓库根目录的
+`Dockerfile` 定义**：
 
 ```bash
 docker build -t zhixun-engine-b .
-
-# 评测机的运行形态：离线、无人工干预、时限受控
-docker run --rm --network none \\
-  -v /path/to/official-data:/data:ro \\
-  -v /path/to/output:/out \\
-  zhixun-engine-b
 ```
 
 镜像特征：
 
-- 只依赖 `numpy`（**不装 swanlab**：评测环境离线，本地已按 SwanLab 形状写指标流，
+* **入口唯一**：SDK 的固定入口 `python3 /app/harness.py describe|train|predict`，
+  落到 `contest_submission.py` → `contest_baselines/`；镜像里**没有**第二套
+  候选入口，也没有同名包遮蔽入口；
+* **只依赖 `numpy`**（**不装 swanlab**：评测环境离线，本地已按 SwanLab 形状写指标流，
   云端客户端只会给一次不该失败的运行增加失败模式）；
-- 入口是 `python -m harness.run`，**不需要传任何参数**，全部由环境变量驱动：
-  `RUL_DATA_ROOT` / `HARNESS_WORKSPACE` / `HARNESS_BATCH_SIZE` /
-  `HARNESS_MAX_EXPERIMENTS` / `HARNESS_MAX_WALL_SECONDS` / `HARNESS_LLM_MODE`；
-- 构建时会跑 `tools/verify_repo.py`，**镜像里不可能混进权重文件**；
-- 以非 root 用户（uid 10001）运行。
+* **A / B / C 同一路径**：`classification` 与 `regression` 走同一套
+  `train` / `predict`，训练每轮含一次真实 `rnd.model` 调用；
+* 构建时会跑 `tools/verify_repo.py`，**镜像里不可能混进权重文件**；
+* 以非 root 用户（uid 10001）运行。
+
+> 复现本仓库 README 里的闭环数字，用的是**另一个**镜像
+> `Dockerfile.research`（`docker build -f Dockerfile.research`）——
+> 那是研究运行时，不是提交镜像。
 
 更详细的运行手册见 `docs/RUNBOOK.md`。
 
@@ -282,8 +288,17 @@ def _clear_directory(path: Path) -> bool:
     left in place when the OS refuses to delete it - that happens on Windows
     whenever a process still holds a handle on it, and it does not affect the
     result, because every file is rewritten afterwards.
+
+    **The version control metadata is never removed.**  The output folder
+    is usually a Git repository that has already been pushed, and deleting
+    its ``.git`` would destroy the history and the remote configuration.
+    On Windows the ``.git`` directory is also the one child that is
+    reliably locked, which used to make the build fail with "cannot clear
+    output directory".
     """
     for child in sorted(path.iterdir(), reverse=True):
+        if child.name == ".git":
+            continue
         try:
             if child.is_dir() and not child.is_symlink():
                 shutil.rmtree(child)

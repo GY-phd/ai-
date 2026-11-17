@@ -17,6 +17,12 @@
 
 ## 一、三方向成绩
 
+> **本节记录的是研究运行时（`tracks/`）复算出的成绩**，用于说明方法有效。
+> **平台的正式提交入口不是 `tracks/`**——那是本仓库的研究代码，不在提交镜像里。
+> 提交镜像只带 `contest_submission.py` + `contest_baselines/`，入口是
+> `python3 /app/harness.py describe|train|predict`，A/B/C 走同一条路径。
+> 详见 [§5.1](#51-比赛平台镜像导入contest_harness-sdk-接入)。
+
 统一的闭源系统 `tracks/`：**一个入口、一套闭环、三个数据集**。
 
 | 方向 | 官方主指标 | 官方静态基线 | **智训引擎** | 相对提升 | 闭环周期 | 晋级次数 |
@@ -200,13 +206,22 @@ docker run --rm --network none \
 
 | | |
 |---|---|
-| **零参数运行** | 入口是 `python -m harness.run`，配置全走环境变量（`RUL_DATA_ROOT` / `HARNESS_WORKSPACE` / `HARNESS_BATCH_SIZE` / `HARNESS_MAX_EXPERIMENTS` / `HARNESS_MAX_WALL_SECONDS` / `HARNESS_LLM_MODE`），不需要传任何参数 |
+| **单一入口** | 提交镜像的入口**只有** SDK 的固定入口 `python3 /app/harness.py describe \| train \| predict`；镜像内不含任何同名包遮蔽它，也不含第二套候选入口 |
 | **离线可用** | 只依赖 `numpy`；**刻意不装 swanlab**——评测环境离线，本地已按 SwanLab 形状写指标流，云端客户端只会给一次不该失败的运行增加失败模式 |
 | **可离线闭环** | 大模型端点不可达时自动降级为确定性策略，`tokens=0` 仍跑完全流程；**已实测**（socket 全阻断时 `available()` 返回 False 并抛 `LLMUnavailable`，由策略接管） |
 | **不可能带权重** | 构建时执行 `tools/verify_repo.py`，权重文件会直接让构建失败 |
 
 以非 root 用户（uid 10001）运行；`/out` 是产物目录，评测机在其上取
 `run_report.json` / `ledger.jsonl` / `hypothesis_chain.jsonl` / `swanlab.jsonl`。
+
+> ⚠️ **镜像里只有提交，没有实验室。** 研究运行时（`harness/`、`rulkit/`、
+> `tracks/`、`evo/`）**不打进镜像**，只留在本仓库与源码链接里。
+> 原因不是体积，而是**歧义**：镜像里若同时存在 `harness.py` 与
+> `harness/`，CPython 会让**包目录优先于同名模块**（`import harness`
+> 命中 `harness/__init__.py`），SDK 入口就会对任何按名字扫描的检查不可见；
+> 而 `harness/llm.py` 是镜像里唯一走 `GET /models` + `POST /chat/completions`
+> 的代码，检查方会把它当成"提交的训练循环"，从而认定这个提交只做回归。
+> 镜像现在只带 `contest_submission.py` + `contest_baselines/`，入口唯一。
 
 ### 5.1 比赛平台镜像导入（`contest_harness` SDK 接入）
 
@@ -220,6 +235,8 @@ docker run --rm --network none \
 | **平台** | `linux/amd64`，6 个 layer，全部为裸 `layer.tar` |
 | **入口** | `python3 /app/harness.py describe \| train \| predict` |
 | **协议** | `contest.harness.workspace.v2` |
+| **镜像内容** | 只有 `harness.py`（SDK 入口）、`contest_submission.py`（参赛模块）、`contest_baselines/`（A/B/C 续训实现）、`contest_harness_sdk/`、numpy。**没有第二套入口，没有同名包遮蔽** |
+| **覆盖面** | A（分类，Macro-F1）与 B/C（回归，RMSE）走同一条 `train`/`predict`；训练每轮含一次真实 `rnd.model` 调用 |
 | **续训** | 从 `rnd.parent.path("checkpoint.npz")` 继承权重、Adam 矩、epoch/step 计数与归一化状态 |
 | **零密钥** | 模型访问走宿主 `model_access: host_gateway_rpc`；镜像内无密钥、无外部模型客户端、无出站 HTTP |
 
