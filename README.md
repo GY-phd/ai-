@@ -230,8 +230,8 @@ docker run --rm --network none \
 
 | | |
 |---|---|
-| **归档** | `zhixun-engine-linux-amd64.tar`（176.6 MiB，未压缩，`dist/` 下有一份副本） |
-| **SHA256** | `9e6c1415b6f27218213a6146c25bb61d007ef981551fd55b9b8321af62dda7bc` |
+| **归档** | `zhixun-engine-linux-amd64.tar`（174.0 MiB，未压缩，`dist/` 下有一份副本） |
+| **SHA256** | `a5474acf722b014f5a4ff86f704d8a57c87d4cae1b2f0292ce0334cc56930986` |
 | **平台** | `linux/amd64`，6 个 layer，全部为裸 `layer.tar` |
 | **入口** | `python3 /app/harness.py describe \| train \| predict` |
 | **协议** | `contest.harness.workspace.v2` |

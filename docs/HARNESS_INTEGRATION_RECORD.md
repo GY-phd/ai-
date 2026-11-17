@@ -3,7 +3,13 @@
 **任务**：把 `contest_harness` SDK 接入本项目，按平台要求导出单个 Linux/amd64 的
 未压缩 Docker save tar，并在平台试运行前完成本地离线验证。
 
-**状态**：完成。镜像已构建并通过校验，离线 30 轮演练全部跑通，198 项测试通过。
+**状态**：完成。镜像已构建并通过校验，离线 30 轮演练全部跑通，124 项测试通过。
+
+> **2026-11-17 修订**：上一版镜像在平台**试运行**被拒（`failure_kind: platform`，
+> "平台尚未完成此提交的运行适配，训练未开始"）。根因是该镜像同时携带了四套
+> 候选入口，平台无法判定哪一套才是 v2 提交。整改见
+> **§3.5 镜像入口歧义（本次试运行被拒的根因）**。
+> 本文档中的哈希、镜像内容清单与环境变量**均已按新镜像更新**。
 
 ---
 
@@ -11,7 +17,7 @@
 
 | 文件 | 大小 | SHA256 |
 | --- | --- | --- |
-| `zhixun-engine-linux-amd64.tar` | 185,180,160 B (176.6 MiB) | `9e6c1415b6f27218213a6146c25bb61d007ef981551fd55b9b8321af62dda7bc` |
+| `zhixun-engine-linux-amd64.tar` | 182,456,320 B (174.0 MiB) | `a5474acf722b014f5a4ff86f704d8a57c87d4cae1b2f0292ce0334cc56930986` |
 | `dist/zhixun-engine-linux-amd64.tar` | 同上（同一文件） | 同上 |
 | `zhixun-engine-linux-amd64.tar.sha256` | 校验和旁挂文件 | — |
 
@@ -21,6 +27,7 @@
 image tags: ['zhixun-engine-b:latest']
 platform: linux/amd64
 layers: 6
+entry point: python3 /app/harness.py -> contest_submission.py (A/B/C, one model call in training, no shadowing package)
 OK  a single uncompressed linux/amd64 docker archive
 ```
 
@@ -29,6 +36,8 @@ OK  a single uncompressed linux/amd64 docker archive
 - **无模型权重**：归档内 `.npz/.npy/.pt/.pth/.bin/.safetensors/.onnx/.pkl` 等一律为零。
 - **入口**：`Entrypoint = ["python3", "/app/harness.py"]`，`Cmd = ["describe"]`。
 - **非 root**：`User = 10001:10001`，`WorkingDir = /app`。
+- **唯一入口**：`/app` 下只有 `harness.py` 与 `contest_submission.py` 两个可执行入口，
+  **没有任何包目录遮蔽它们**（详见 §3.5）。
 
 ## 2. 镜像内容
 
@@ -41,18 +50,25 @@ OK  a single uncompressed linux/amd64 docker archive
 /app/contest_baselines/strategies.py  假设库与每轮配置
 /app/contest_baselines/train.py       一轮完整闭环
 /app/contest_baselines/predict.py     单样本预测
+/app/contest_baselines/offline_host.py 本地协议宿主（离线自检用）
+/app/contest_harness_sdk/             SDK 源码
 /usr/local/lib/python3.12/site-packages/contest_harness/   SDK 1.0.2
 /usr/local/lib/python3.12/site-packages/numpy/             numpy 2.3.0
 ```
 
+镜像里**只有提交，没有实验室**：研究运行时（`harness/`、`rulkit/`、`tracks/`、
+`research/`、`evo/`）**不打进镜像**，只留在本仓库与源码链接里。原因见 §3.5。
+
 环境变量：`CONTEST_WORK=/workspace`、`CONTEST_APP_ROOT=/app`、
-`HARNESS_WORKSPACE=/out/harness`、`HARNESS_MAX_WALL_SECONDS=2400`、
-`PYTHONUTF8=1`、`PYTHONUNBUFFERED=1`。
+`RUL_DATA_ROOT=/data`、`PYTHONUTF8=1`、`PYTHONUNBUFFERED=1`。
+
+挂载点目录（平台挂载前必须存在）：`/data`、`/previous`、`/state`、`/model`、
+`/workspace`、`/out`、`/tmp`。
 
 **构建工具不进镜像**：`tools/build_docker_image.py` 带拉取 registry 的代码，
 属于开发工具，已由 `EXCLUDED_FROM_IMAGE` 排除。
 
-## 3. 本轮修复的四个真实缺陷
+## 3. 本轮修复的真实缺陷
 
 离线演练跑满 30 轮时暴露了四个会真实影响得分的问题，全部已修并加了回归测试。
 
@@ -105,6 +121,67 @@ sample = Sample(request["task"], request["inputs"], context)
 epoch 预算 `count += min(round_index - 1, 5) * 5` 在第 6 轮之后封顶，
 于是第 6–10 轮跑同一个假设、同一个预算、同一个父模型，**产出完全相同的数字**。
 重复实验不算实验。改为严格递增 `count += (round_index - 1) * 10`，上限 150。
+
+### 3.5 镜像入口歧义（本次试运行被拒的根因）
+
+**症状**：平台试运行返回 `failure_kind: platform`，原因写的是
+"平台尚未完成此提交的运行适配，训练未开始"。平台的自动分析给出了它看到的东西：
+
+> No faithful single v2 entry serves A,B,C with the required training model call.
+> … harness is the ONLY model-calling loop (GET /models + POST /chat/completions,
+> wire-compatible with model_transport) but is structurally two-stage bearing-RUL
+> (predict_rul, LifeFractionModel, rmse/mae); serving A classification or C needs
+> an algorithm rewrite. Documented python -m evo serve/predict is absent from the image.
+
+**根因**：平台审计的对象是**镜像里的代码**，而上一版镜像同时携带了四套并存的
+候选入口（`harness/`、`rulkit/`、`tracks/`、`research/`）。三个具体机制叠加：
+
+1. **包目录遮蔽同名模块。** 镜像里 `/app/harness.py`（SDK 入口）与 `/app/harness/`
+   （研究包）并存。CPython 的 `FileFinder` **先找包目录、再找同名模块**，所以
+   `import harness` 命中的是 `harness/__init__.py`。任何按名字扫描镜像的检查
+   都看不到真正的 SDK 入口。（已实测确认：同目录下 `harness/` 胜出。）
+2. **唯一走 HTTP 的模型调用循环在研究代码里。** `harness/llm.py` 是镜像内**唯一**
+   实现 `GET /models` + `POST /chat/completions` 的代码，而 `harness/experiments.py`
+   又是两段式轴承 RUL（`predict_rul` / `LifeFractionModel` / rmse / mae）。
+   平台找"会调模型的循环"时找到的就是它，于是认定提交**只做回归**，
+   "serving A classification or C needs an algorithm rewrite"。
+3. **文档把早期工具写成平台入口。** `docs/系统运行说明.md` 等文档把
+   `python -m evo serve` / `python -m evo predict` 描述为评测入口，
+   而镜像里**根本没有 `evo`**，于是又一条 "absent from the image"。
+
+**为什么真正的 v2 路径没被发现**：提交的实现（`contest_submission.py` →
+`contest_baselines/`）本身是好的——它同时支持分类与回归，训练里调
+`rnd.model(...)`，且能读父检查点续训。它只是**没有成为镜像里唯一的候选**，
+所以平台的审计结论把研究代码当成了提交。
+
+**改法**：
+
+| 改动 | 文件 |
+| --- | --- |
+| 镜像只打包提交：`contest_baselines/` + `contest_harness_sdk/` + 四个入口文件 | `tools/build_docker_image.py` |
+| 构建期断言：入口齐全，且**没有包遮蔽入口** | `_assert_single_entry()` |
+| 校验期断言：入口、`Entrypoint`、A/B/C 覆盖、训练含 `rnd.model(` | `_verify_entry_point()` |
+| 新工具：**从归档本身解出 `/app`** 再实跑 `describe` + A/B/C 的 train + predict | `tools/verify_image_roundtrip.py` |
+| 文档区分"提交入口"与"研究运行时" | `README.md`、`docs/系统运行说明.md`、`docs/数据适配说明.md`、`docs/训练凭证.md` |
+| 根 `Dockerfile` 改为**提交镜像**；原研究镜像移为 `Dockerfile.research`；删除重复的 `Dockerfile.harness` | 仓库根 |
+| CI 增加"单入口检查"与"describe"两个步骤 | `.github/workflows/ci.yml` |
+
+**验证结果**（新镜像，`a5474acf…`）：
+
+```
+extracted 25 file(s) from the archive's /app
+OK    layout: one entry point, no shadowing package, no research code
+OK    describe: {"protocol": "contest.harness.workspace.v2", "model_access": "host_gateway_rpc", "tasks": ["classification", "regression"]}
+OK    A train: candidate macro_f1 = 0.7192 (30 epochs, 0.5s) | 1 model call(s) | candidate submitted
+OK    A predict: classification -> 6 labels
+OK    B train: candidate rmse = 663.9085 (30 epochs, 2.0s) | 1 model call(s) | candidate submitted
+OK    B predict: regression -> value=588.6843
+OK    C train: candidate rmse = 51.3511 (30 epochs, 16.5s) | 1 model call(s) | candidate submitted
+OK    C predict: regression -> value=181.151
+```
+
+A 方向的父模型 macro-F1 0.7140 → 候选 0.7192；B 方向 RMSE 681.16 → 663.91；
+C 方向 RMSE 52.87 → 51.35。三个方向**同一套代码**，每轮各有一次真实模型调用。
 
 ## 4. 续训是否真的是"续训"
 
@@ -181,14 +258,17 @@ Ran 15 tests in 9.526s  OK                                 # SDK 1.0.2 自带测
 ## 8. 平台操作步骤
 
 1. 在 `https://rsi-index.115.zone/#submissions` 上传
-   `zhixun-engine-linux-amd64.tar`（176.6 MiB 的**未压缩** tar，不要打包成 zip）。
+   `zhixun-engine-linux-amd64.tar`（174.0 MiB 的**未压缩** tar，不要打包成 zip）。
+   SHA256：`a5474acf722b014f5a4ff86f704d8a57c87d4cae1b2f0292ce0334cc56930986`。
+   > **必须上传新包**：上一版（`9e6c1415…`）在试运行时被拒，根因见 §3.5。
 2. 平台会依次执行 `describe` → `train` × 10 → `predict`。
    入口声明通过**不代表**训练、预测和比赛要求都已通过。
 3. 若要本地复核：
 
 ```powershell
 python tools/build_docker_image.py --verify-only --out zhixun-engine-linux-amd64.tar
-python -m pytest tests/ -q
+python tools/verify_image_roundtrip.py --archive zhixun-engine-linux-amd64.tar
+python -m unittest discover -s tests -t . -v
 python tools/scan_for_secrets.py
 python tools/run_harness_offline.py --rounds 10 --out runs/harness-offline-10
 ```

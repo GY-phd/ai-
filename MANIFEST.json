@@ -1,13 +1,13 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 3969360,
+  "total_bytes": 3974952,
   "file_count": 246,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "files": {
     "README.md": {
       "bytes": 21992,
-      "sha256": "0fea4d22608edc7531fbd5472bd6d74d2278de62bec702a9a1f951eae7c1e214"
+      "sha256": "96f783431f7a4eca9e78b32d9cb2f0dae55bafc096549b5bd3d219a2dca1ef61"
     },
     "LICENSE": {
       "bytes": 2106,
@@ -634,8 +634,8 @@
       "sha256": "66f0a9db318d0075afb1f533414e21157b2801ec82e9c57c2bf6c41dd6f04aad"
     },
     "docs/HARNESS_INTEGRATION_RECORD.md": {
-      "bytes": 9942,
-      "sha256": "9c666f4e3c1048ba374e5c41e3cbefe2f1eae175cafac93f7a8bafba2e829db7"
+      "bytes": 15534,
+      "sha256": "e72f1c178b725a56abd75af16deb5c19b4928b3390d445d924ee26b11790f69b"
     },
     "docs/RUNBOOK.md": {
       "bytes": 7209,
