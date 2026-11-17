@@ -230,13 +230,15 @@ docker run --rm --network none \
 
 | | |
 |---|---|
-| **归档** | `zhixun-engine-linux-amd64.tar`（174.0 MiB，未压缩，`dist/` 下有一份副本） |
-| **SHA256** | `a5474acf722b014f5a4ff86f704d8a57c87d4cae1b2f0292ce0334cc56930986` |
+| **归档** | `zhixun-engine-linux-amd64.tar`（174.1 MiB，未压缩，`dist/` 下有一份副本） |
+| **SHA256** | `fd5fe06f5142420d67b49877f4c2f15d276f66ef111ff33cb11fdd70717419cf` |
 | **平台** | `linux/amd64`，6 个 layer，全部为裸 `layer.tar` |
 | **入口** | `python3 /app/harness.py describe \| train \| predict` |
 | **协议** | `contest.harness.workspace.v2` |
+| **SDK** | `contest_harness` **1.0.2**（与平台文档一致） |
 | **镜像内容** | 只有 `harness.py`（SDK 入口）、`contest_submission.py`（参赛模块）、`contest_baselines/`（A/B/C 续训实现）、`contest_harness_sdk/`、numpy。**没有第二套入口，没有同名包遮蔽** |
 | **覆盖面** | A（分类，Macro-F1）与 B/C（回归，RMSE）走同一条 `train`/`predict`；训练每轮含一次真实 `rnd.model` 调用 |
+| **模型调用** | 关闭思维链（`enable_thinking=False`）、token 预算 1024、失败重试 3 次。默认开思维链时 512 token 会被推理过程吃光、正文为空，27B 还要 288 秒，会触发平台的「模型服务暂不可用」 |
 | **续训** | 从 `rnd.parent.path("checkpoint.npz")` 继承权重、Adam 矩、epoch/step 计数与归一化状态 |
 | **零密钥** | 模型访问走宿主 `model_access: host_gateway_rpc`；镜像内无密钥、无外部模型客户端、无出站 HTTP |
 

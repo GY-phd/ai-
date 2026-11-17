@@ -17,7 +17,7 @@
 
 | 文件 | 大小 | SHA256 |
 | --- | --- | --- |
-| `zhixun-engine-linux-amd64.tar` | 182,456,320 B (174.0 MiB) | `a5474acf722b014f5a4ff86f704d8a57c87d4cae1b2f0292ce0334cc56930986` |
+| `zhixun-engine-linux-amd64.tar` | 182,517,760 B (174.1 MiB) | `fd5fe06f5142420d67b49877f4c2f15d276f66ef111ff33cb11fdd70717419cf` |
 | `dist/zhixun-engine-linux-amd64.tar` | 同上（同一文件） | 同上 |
 | `zhixun-engine-linux-amd64.tar.sha256` | 校验和旁挂文件 | — |
 
@@ -166,22 +166,76 @@ epoch 预算 `count += min(round_index - 1, 5) * 5` 在第 6 轮之后封顶，
 | 根 `Dockerfile` 改为**提交镜像**；原研究镜像移为 `Dockerfile.research`；删除重复的 `Dockerfile.harness` | 仓库根 |
 | CI 增加"单入口检查"与"describe"两个步骤 | `.github/workflows/ci.yml` |
 
-**验证结果**（新镜像，`a5474acf…`）：
+**验证结果**（新镜像，`fd5fe06f…`）：
 
 ```
-extracted 25 file(s) from the archive's /app
+extracted 39 file(s) from the archive's /app
 OK    layout: one entry point, no shadowing package, no research code
-OK    describe: {"protocol": "contest.harness.workspace.v2", "model_access": "host_gateway_rpc", "tasks": ["classification", "regression"]}
-OK    A train: candidate macro_f1 = 0.7192 (30 epochs, 0.5s) | 1 model call(s) | candidate submitted
+OK    describe: {"protocol": "contest.harness.workspace.v2", "model_access": "host_gateway_rpc", "sdk": "contest_harness", "sdk_version": "1.0.2", "tasks": ["classification", "regression"]}
+OK    A train: [contest] candidate macro_f1 = 0.7192 (30 epochs, 0.5s) | 1 model call(s) | candidate submitted
 OK    A predict: classification -> 6 labels
-OK    B train: candidate rmse = 663.9085 (30 epochs, 2.0s) | 1 model call(s) | candidate submitted
+OK    B train: [contest] candidate rmse = 663.9085 (30 epochs, 1.5s) | 1 model call(s) | candidate submitted
 OK    B predict: regression -> value=588.6843
-OK    C train: candidate rmse = 51.3511 (30 epochs, 16.5s) | 1 model call(s) | candidate submitted
+OK    C train: [contest] candidate rmse = 51.3511 (30 epochs, 14.3s) | 1 model call(s) | candidate submitted
 OK    C predict: regression -> value=181.151
 ```
 
 A 方向的父模型 macro-F1 0.7140 → 候选 0.7192；B 方向 RMSE 681.16 → 663.91；
 C 方向 RMSE 52.87 → 51.35。三个方向**同一套代码**，每轮各有一次真实模型调用。
+
+### 3.6 模型调用返回空正文（第二版试运行失败的根因）
+
+**症状**：第二版镜像（`a5474acf…`）能上传、能通过校验，但试运行报
+「**模型服务暂不可用，请稍后重试**」。
+
+**排除项**：
+
+- 不是余额问题：同一个 Key 连打 6 次 `Qwen/Qwen3.5-4B`，**全部 HTTP 200**
+  （首次 5.4 s，之后 0.2 s），`usage` 正常计费。零余额返回的是
+  HTTP 409 `insufficient_quota`，与本症状不同。
+- 不是 PyTRiO 服务不可用：同上，6/6 成功。
+- 不是超时分类：平台前端的失败分类表里没有这一条文案，
+  说明它是**后端返回的原始错误**，不是 `TIMEOUT` / `BUDGET` /
+  `CONTROL_HTTP_` 中的任何一类。
+
+**真因**：平台的模型是**推理模型**，默认开思维链。用训练循环真实发出的
+那条 prompt 实测（`max_tokens=512`，即原代码的取值）：
+
+| 模型 | 思维链 | 延迟 | `finish_reason` | `content` |
+| --- | --- | --- | --- | --- |
+| `Qwen/Qwen3.5-4B` | 开 | 3.8 s | `length` | **空** |
+| `Qwen/Qwen3.8-27B` | 开 | **288.3 s** | `length` | **空** |
+| `Qwen/Qwen3.5-4B` | 关 | 9.0 s | `stop`/`length` | 842 字符 |
+| `Qwen/Qwen3.8-27B` | 关 | 12.0 s | `stop` | 793 字符 |
+
+思维链吃掉了全部 token 预算，正文为空；27B 还要 288 秒，网关等不到就报
+「模型服务暂不可用」。**这个症状与"模型大小"的关系是反的**：27B 更慢，
+更容易触发。
+
+**改法**（`contest_baselines/train.py`）：
+
+| 改动 | 说明 |
+| --- | --- |
+| `enable_thinking=False` | 关掉思维链，正文直接返回 |
+| token 预算 512 → 1024 | `_MODEL_TOKEN_BUDGET`，给正文留够空间 |
+| 重试回退（3 次，间隔 3/6 s） | 服务偶发不可用或返回空正文时不丢弃已完成的测量 |
+
+`enable_thinking` 是官方 SDK 白名单里的合法参数
+（`contest_harness/round.py::_MODEL_OPTIONS`）；宿主不认识时，
+重试会退回不带该参数，所以不会导致调用被拒。
+
+**回归测试**（`tests/test_model_call_fallback.py`）用宿主演示替身
+制造"空正文"和"调用报错"两种故障，断言轮次仍然完成并带出模型调用号。
+
+### 3.7 SDK 版本对齐
+
+第二版镜像的 `describe` 报 `sdk_version: 1.0.1`，平台文档写的是 `1.0.2`。
+原因不在镜像里——镜像打包的 `contest_harness_sdk/` 一直是 1.0.2——而是
+**本地 `.venv` 里装的是旧的 1.0.1**，离线测试实际跑的是旧版。
+1.0.1 与 1.0.2 的 `transport.py` 有一处实质差异（流式 `finish_reason`
+的兜底值），这会让本地验证与正式运行存在偏差。
+
+已把 `.venv` 重新安装为 1.0.2，本地测试从此与镜像跑同一份代码。
 
 ## 4. 续训是否真的是"续训"
 
@@ -258,12 +312,16 @@ Ran 15 tests in 9.526s  OK                                 # SDK 1.0.2 自带测
 ## 8. 平台操作步骤
 
 1. 在 `https://rsi-index.115.zone/#submissions` 上传
-   `zhixun-engine-linux-amd64.tar`（174.0 MiB 的**未压缩** tar，不要打包成 zip）。
-   SHA256：`a5474acf722b014f5a4ff86f704d8a57c87d4cae1b2f0292ce0334cc56930986`。
-   > **必须上传新包**：上一版（`9e6c1415…`）在试运行时被拒，根因见 §3.5。
+   `zhixun-engine-linux-amd64.tar`（174.1 MiB 的**未压缩** tar，不要打包成 zip）。
+   SHA256：`fd5fe06f5142420d67b49877f4c2f15d276f66ef111ff33cb11fdd70717419cf`。
+   > **必须上传新包**：上一版（`9e6c1415…`）在试运行时被拒，根因见 §3.5；
+   > 再上一版（`a5474acf…`）能上传但试运行报「模型服务暂不可用」，根因见 §3.6。
 2. 平台会依次执行 `describe` → `train` × 10 → `predict`。
    入口声明通过**不代表**训练、预测和比赛要求都已通过。
-3. 若要本地复核：
+3. **模型选 `Qwen/Qwen3.5-4B`**（见 `docs/平台提交表单填写指南.md` §2.2）：
+   分数由工业模型决定，LLM 大小不进入任何分数项；27B 在开思维链时
+   单次调用要 288 秒，会把平台网关拖到「模型服务暂不可用」。
+4. 若要本地复核：
 
 ```powershell
 python tools/build_docker_image.py --verify-only --out zhixun-engine-linux-amd64.tar

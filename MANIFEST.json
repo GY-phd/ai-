@@ -1,13 +1,13 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 3974952,
-  "file_count": 246,
+  "total_bytes": 3993937,
+  "file_count": 252,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "files": {
     "README.md": {
-      "bytes": 21992,
-      "sha256": "96f783431f7a4eca9e78b32d9cb2f0dae55bafc096549b5bd3d219a2dca1ef61"
+      "bytes": 22316,
+      "sha256": "512790d9ebf4e2a12f5e25b672e28dd985663307ff3e157abdaad070d9c12ce9"
     },
     "LICENSE": {
       "bytes": 2106,
@@ -246,8 +246,8 @@
       "sha256": "c25855c398e4fa7311c887ffd038c78df19d4a36a6b10b19b6f7913fc44d94c4"
     },
     "tools/scan_for_secrets.py": {
-      "bytes": 4008,
-      "sha256": "e3559256cc24e06fa4d5949aa941f8d38865c0f02a5438255f2f4da63b040c5f"
+      "bytes": 4054,
+      "sha256": "93d4961502772a3cc7e2bb84ccead4af64c164d0e40f7ae1719642e6bf8705f4"
     },
     "tools/show_run.py": {
       "bytes": 2661,
@@ -449,6 +449,10 @@
       "bytes": 3725,
       "sha256": "0b7ea6ebf4c456cce8448a3676029188280590ff0a24c7eced2a4c82bc2787d4"
     },
+    "tests/test_model_call_fallback.py": {
+      "bytes": 7049,
+      "sha256": "3e92b89a5ba3ee1db60572c0525f47b44443eb441cc605be73238aba7dd0e892"
+    },
     "tests/test_policy.py": {
       "bytes": 2301,
       "sha256": "c9c13b7234c8ee4b9a21060884660b42f4c9c82dd5336763065904fde802dfb9"
@@ -498,12 +502,12 @@
       "sha256": "25a899c8408d8c33409b16e7d371be15ae3a477ea5c2c1b9d848f2b03206aa7f"
     },
     "runs/harness-offline/ledger.jsonl": {
-      "bytes": 5687,
-      "sha256": "353469757d4a604b78480a043e76e9e7984ccee4da28a0860e4529cf777e81ee"
+      "bytes": 5681,
+      "sha256": "36280f6c561076365259cccdd08fd7feb67c61e3fd97948f2f9560c49dd58d5e"
     },
     "runs/harness-offline/run_report.json": {
-      "bytes": 9311,
-      "sha256": "7cc0cfcc480f802ca94e3cc6e3ed8230be8b4ba72d1879e7fb70a02833a51d66"
+      "bytes": 9304,
+      "sha256": "1ca33bc2f5a3ab00bdc0802bca468bb3ed076949d29af48f6ad1f81d75fe694c"
     },
     "runs/harness-offline-10/ledger.jsonl": {
       "bytes": 18828,
@@ -578,8 +582,8 @@
       "sha256": "9781cb7e84332186537c2fd341accadaa6446c05c4ac35ec8d138df861093970"
     },
     "contest_baselines/train.py": {
-      "bytes": 16065,
-      "sha256": "069c02f7ae796e26e4ce4c5dee2b6a507fbdea3f8d90a6a5369a54d38d61b4bf"
+      "bytes": 18842,
+      "sha256": "93a2f1280b4f7450cd56198b9f4aa8cd0f6866baf9328d4f425ec65966335366"
     },
     "contest_harness_sdk/contest_harness/__init__.py": {
       "bytes": 605,
@@ -617,6 +621,26 @@
       "bytes": 6254,
       "sha256": "ad44a367c6b75b2b0ea067dcdd9432834cb5dd3c739d994a62ec86dcb19888f8"
     },
+    "contest_harness_sdk/contest_harness.egg-info/dependency_links.txt": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "contest_harness_sdk/contest_harness.egg-info/entry_points.txt": {
+      "bytes": 62,
+      "sha256": "d685a3519f865024e8f801908087499ccc2ff188762f82cf4b1f847d2332688f"
+    },
+    "contest_harness_sdk/contest_harness.egg-info/PKG-INFO": {
+      "bytes": 1829,
+      "sha256": "798555f6f8087dcd38302df984f3baf4a7913c8f0692ceb07dda8762590f4c35"
+    },
+    "contest_harness_sdk/contest_harness.egg-info/SOURCES.txt": {
+      "bytes": 460,
+      "sha256": "be4e519dad324179bbcdea4fd383fc8fa6f7fddccd5415c7728aaae643d47e92"
+    },
+    "contest_harness_sdk/contest_harness.egg-info/top_level.txt": {
+      "bytes": 16,
+      "sha256": "332eabad31c4a89d452f16d68541d8eeb5781d076279269d7da9ee73f0a5037d"
+    },
     "contest_harness_sdk/pyproject.toml": {
       "bytes": 413,
       "sha256": "9759ac66ce9e47cb6d6ae7ade793b132709c7ae0452d4723aedbcb9f2af1ab9f"
@@ -634,8 +658,8 @@
       "sha256": "66f0a9db318d0075afb1f533414e21157b2801ec82e9c57c2bf6c41dd6f04aad"
     },
     "docs/HARNESS_INTEGRATION_RECORD.md": {
-      "bytes": 15534,
-      "sha256": "e72f1c178b725a56abd75af16deb5c19b4928b3390d445d924ee26b11790f69b"
+      "bytes": 18726,
+      "sha256": "573f31cc864beff929b0a79622062e7981198a0e6c61263afddff604cdfd207e"
     },
     "docs/RUNBOOK.md": {
       "bytes": 7209,
@@ -654,8 +678,8 @@
       "sha256": "b218dd2bf1230aa184b4c3b1302c2f2730688f8a97f41ddf029cda96b784290b"
     },
     "docs/平台提交表单填写指南.md": {
-      "bytes": 15567,
-      "sha256": "a3f79ad35131faa20bd8b6fd53913007e20a708c1b9770678112c85dfd593426"
+      "bytes": 18809,
+      "sha256": "12e51a5e491f4742485f6a35767531b22e64410a51c558e89d9e5a2f6f1dbacd"
     },
     "docs/数据适配说明.md": {
       "bytes": 4237,

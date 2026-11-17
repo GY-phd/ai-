@@ -35,7 +35,8 @@ PATTERNS = [
 
 ROOTS = ["contest_submission.py", "harness.py", "contest_baselines", "tools",
          "tests/test_harness_integration.py", "tests/test_migration.py",
-         "tests/test_data_projection.py", "tests/test_strategies.py"]
+         "tests/test_data_projection.py", "tests/test_strategies.py",
+         "tests/test_model_call_fallback.py"]
 
 # The scanner itself mentions the very names it looks for, and the
 # build tool pulls base-image layers off a registry - which is a

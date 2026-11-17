@@ -49,6 +49,15 @@ from .metrics import is_better, primary_metric_name, primary_metric_value, score
 from .model import Model, checkpoint_digest
 from .strategies import build_plan, epoch_budget, prepare
 
+# The host's model service can be temporarily unavailable, and a gateway can
+# reject an option it does not know.  Neither is a property of this
+# submission, so the model call is retried instead of ending the round.
+_MODEL_CALL_ATTEMPTS = 3
+_MODEL_CALL_BACKOFF = 3.0
+# The reply is a review of one measurement, so it needs room to finish but
+# not the whole authorized budget.
+_MODEL_TOKEN_BUDGET = 1024
+
 
 def log(message):
     """Log to stderr.  stdout carries only the protocol JSONL."""
@@ -264,13 +273,8 @@ def run_round(rnd):
     # to be a genuine part of the decision rather than a formality: the
     # model is asked to check the reading of the measurement, and its reply
     # is recorded in the round's reason.
-    receipt = rnd.model(
-        [{"role": "user", "content": _model_brief(rnd, hypothesis, parent_primary,
-                                                   candidate_primary, adopted)}],
-        max_tokens=min(512, int(rnd.max_output_tokens)),
-        temperature=0,
-    )
-    review = (receipt.text or "").strip()
+    receipt, review = _call_model(rnd, _model_brief(rnd, hypothesis, parent_primary,
+                                                     candidate_primary, adopted))
     log("model call %s replied with %d characters" % (receipt.call_id, len(review)))
 
     # ---- the submission ---------------------------------------------------
@@ -376,3 +380,57 @@ def _model_brief(rnd, hypothesis, parent_primary, candidate_primary, adopted):
            parent_primary, candidate_primary,
            "采纳候选" if adopted else "保留父模型")
     )
+
+
+def _call_model(rnd, brief):
+    """Ask the host's model for a review, and return ``(receipt, text)``.
+
+    Two things about the call are handled here rather than left to chance.
+
+    **The reasoning trace is turned off.**  The host's models are
+    reasoning models: with the trace enabled, the whole token budget is
+    spent on the trace, the reply comes back empty, and a large model can
+    take minutes to do it - long enough for the gateway to report the
+    model service as unavailable.  Turning the trace off makes the reply
+    arrive as actual text, quickly.  A host that does not know the option
+    is asked without it, which is why the retry loop exists.
+
+    **A temporary failure is retried.**  The model service is shared, so
+    it can be momentarily unavailable.  That is not a property of this
+    submission, and ending the whole round on it would throw away a
+    completed measurement.
+
+    The call is never skipped: the round's contract is that it contains a
+    real model call, so the last attempt is allowed to raise.
+    """
+    messages = [{"role": "user", "content": brief}]
+    ceiling = int(rnd.max_output_tokens)
+    budget = min(_MODEL_TOKEN_BUDGET, ceiling)
+    attempts = (
+        # 1. The trace off: the reply arrives as text, quickly.
+        ({"max_tokens": budget, "temperature": 0, "enable_thinking": False}, False),
+        # 2. Without the option, in case the host does not know it.
+        ({"max_tokens": budget, "temperature": 0}, False),
+        # 3. Without the option and with the full authorized budget.
+        ({"max_tokens": ceiling, "temperature": 0}, False),
+    )
+    last_error = None
+    for index, (options, _) in enumerate(attempts):
+        if index:
+            time.sleep(_MODEL_CALL_BACKOFF * index)
+        try:
+            receipt = rnd.model(messages, **options)
+        except Exception as error:
+            last_error = error
+            log("model call attempt %d failed: %s: %s"
+                % (index + 1, type(error).__name__, error))
+            continue
+        text = (receipt.text or "").strip()
+        if text:
+            return receipt, text
+        # An empty reply is the reasoning-trace symptom: the budget went
+        # into the trace and nothing came back.  The next attempt asks
+        # without the trace.
+        last_error = RuntimeError("the model replied without any text")
+        log("model call attempt %d returned no text" % (index + 1))
+    raise last_error if last_error else RuntimeError("the model call failed")
