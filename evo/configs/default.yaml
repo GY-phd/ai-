@@ -1,0 +1,258 @@
+# ===================================================================
+# 智训引擎 — 工业模型自进化系统 统一配置
+# 所有路径/超参集中管理，Harness 运行时只读此文件，避免硬编码
+# ===================================================================
+
+paths:
+  # 官方数据包根目录（拿到后改成实际路径即可，无需改代码）
+  data_root: "data/official"
+  # 合成数据根目录（本地联调用，官方数据到位后可关闭）
+  synthetic_root: "data/synthetic"
+  # 模型产出目录
+  artifacts_root: "artifacts"
+  # 审计日志（append-only，防篡改）
+  audit_log: "artifacts/audit/audit.jsonl"
+  # 影子评估缓存
+  shadow_root: "artifacts/shadow"
+
+runtime:
+  # 全局随机种子，保证可复现
+  seed: 20261105
+  # 无标签时使用的漂移检测窗口大小 (必须 >= drift.min_samples_for_action)
+  window_size: 500
+  # 窗口滑动步长 (None 表示 window_size//2, 即滑窗; 等于窗口大小则退化为不重叠切分)
+  window_step: null
+  # 标签延迟步数（工业现场标签滞后到达；0 表示标签即时可用）
+  label_delay: 0
+  # 离线模式下禁止一切外部网络（受控 RSI 安全要求）
+  offline: true
+  # 模型训练线程数 —— 赛题评测环境为**四核八G Linux, 无 GPU**。
+  # 必须限制线程数, 否则 LightGBM/随机森林默认吃满全部核,
+  # 既拖慢自身也违背"资源效率"评分维度。
+  n_jobs: 4
+
+data:
+  # 官方数据适配：需要在 adapter.py 中实现官方文件名/格式
+  train_file: "train.csv"
+  valid_file: "valid.csv"
+  # 特征列；留空表示自动推断（除标签列外全部）
+  feature_cols: []
+  label_col: "label"
+  # 任务类型：binary | regression | multiclass
+  task: "binary"
+  # 赛题官方 profile (决定评分指标口径):
+  #   A = 气体 6 类分类 (UCI)  → 主指标 Macro-F1, 辅助 Accuracy/混淆矩阵
+  #   B = 轴承 RUL (XJTU-SY)    → 主指标 RMSE, 辅助 MAE
+  #                                 (官方明确: 不以严重故障漏报率评价)
+  #   C = 发动机 RUL (C-MAPSS)  → 主指标 RMSE, 辅助 MAE/NASA非对称分数
+  #   auto = 按 task 自动推断
+  profile: "auto"
+  # ---- 批次下发模式 (赛题 B 包) ----
+  # B 包按批次下发: 必须先输出当前批次模型或"不上线"判断才能取下一批。
+  batched: false
+  # 单批样本数 (目录模式下按此切分单个大文件)
+  batch_size: 500
+  # 最大批次数 (安全上限)
+  max_batches: 1000
+  # B 包评测时**总能拿到标签且不消耗配额** —— 置 true 时忽略标注配额约束。
+  batched_free_labels: true
+  # 合成数据配置（本地联调）
+  synthetic:
+    n_train: 4000
+    n_valid: 1000
+    n_stream: 6000
+    n_features: 20
+    # 漂移发生的时间点（占流比例）
+    drift_points: [0.25, 0.55, 0.8]
+    # 每种漂移的强度（0~1）
+    drift_strength: 0.35
+    # 标签噪声基准与增长率（噪声上升 → 最优超参随时间移动）
+    base_noise: 0.2
+    noise_growth: 1.6
+    # 标签翻转噪声比例（工业标注误差）。设置它可避免任务被任何超参完美拟合,
+    # 使不同超参产生可区分的表现 —— 策略层自改进的前提。
+    # 取值需足够大才能让"泛化能力"而非"拟合能力"决定得分;
+    # 过大则任务本身失去意义, 过小则各超参饱和到 1.0 无法区分。
+    label_noise: 0.12
+    random_state: 42
+
+drift:
+  # PSI 告警阈值（业界常用 0.1 / 0.25 两级）
+  psi_warn: 0.1
+  psi_alarm: 0.25
+  # KS 检验 p 值阈值
+  ks_pvalue: 0.01
+  # 单次触发更新的最少样本量，避免噪声误触发
+  min_samples_for_action: 300
+  # 分箱数（PSI 使用参考分位数分箱）
+  psi_bins: 10
+  # PSI 参考池大小 (累积多少个已上线窗口作为 known-good 参考分布)。
+  # 1 = 只用最近一个窗口 (参考分布贴近当下, PSI 灵敏)
+  # >1 = 累积多窗 (分箱样本充足, PSI 估计更稳但对局部变化不敏感)
+  reference_pool_size: 1
+
+attribution:
+  # 误差分桶数量，用于判断漂移是否集中在特定特征区间
+  n_error_bins: 5
+  # 判定"概念漂移"所需的最小标签覆盖率
+  min_label_coverage: 0.2
+
+model:
+  # 候选模型族：可由策略层动态扩展
+  candidates: ["lgbm", "logreg", "rf"]
+  # 基础模型（第一版上线）
+  base: "lgbm"
+  lgbm_params:
+    n_estimators: 300
+    learning_rate: 0.05
+    num_leaves: 31
+    subsample: 0.9
+    colsample_bytree: 0.9
+    random_state: 42
+  # 是否启用概率校准
+  calibrate: true
+  # 是否对**回归目标**做标准化 (TransformedTargetRegressor)。
+  #
+  # 默认**关闭**, 且这不是保守选择 —— 是实测结论:
+  #   赛题 B (XJTU-SY 轴承 RUL, 官方留出轴承):
+  #     目标标准化 (TransformedTargetRegressor) -> RMSE 716.03
+  #     仅输入标准化 (目标保持原始分钟数)      -> RMSE 521.07   (好 27%)
+  #
+  # 原因: RUL = (总快照数 - 当前快照) 是结构性派生量, **尺度本身携带信息**
+  # (长寿命轴承 RUL 量级是短寿命轴承的 20 倍)。目标标准化把所有轴承压到
+  # 同一 z-score 尺度, 等于抹掉"这根轴承能活多久"这一维信息, 网络再用
+  # 隐层去重建它极其困难。树模型对尺度不敏感所以没暴露问题, MLP 才显形。
+  #
+  # 树模型 (lgbm / rf / extra_trees) 不走这条路径, 不受影响。
+  target_scaling: false
+  # 早停开关 (默认关闭)。
+  # 实测: 早停是"用某个评估集判断是否还在改进", 一旦评估集与训练数据
+  # 分布不同, 就会过早截断训练并让性能明显变差 (合成流: 上线次数 15→2)。
+  # 因此默认关闭, 仅在确认评估集与训练数据同分布时显式开启。
+  early_stopping: false
+  early_stopping_rounds: 60
+
+policy:
+  # 策略层自改进参数
+  # 策略参数搜索空间（离散 bandit 臂）
+  param_space:
+    psi_trigger: [0.08, 0.1, 0.15, 0.2, 0.25]
+    min_gain: [0.002, 0.005, 0.01, 0.02]
+    retrain_window: [500, 1000, 2000, 4000]
+    lr: [0.02, 0.05, 0.1]
+    num_leaves: [15, 31, 63]
+  # 策略更新的最小间隔（步）—— 决策层 (psi_trigger) 自适应的冷却期。
+  # 取值需小于一次运行的迭代数, 否则决策层永远来不及切换阈值。
+  update_interval: 8
+  # 决策层探针的最小间隔 (步) —— 两次阈值探针之间至少隔这么多步,
+  # 防止触发频率忽高忽低导致线上性能抖动。
+  decision_probe_interval: 3
+  # 决策层切换阈值所需的最小收益差 (单位成本增益) —— 防止噪声驱动的抖动
+  decision_min_improvement: 0.002
+  # 决策层切换阈值所需的**最小样本量** (每个档位) —— 样本太少时均值差异
+  # 多半是噪声, 贸然切换会让线上行为随噪声漂移
+  decision_min_samples: 4
+  # 决策层奖励里的成本归一化尺度 (秒)。用于把"影子增益 / 成本"压缩到
+  # 可比尺度: 成本越高, 同等增益的奖励越低。
+  decision_cost_scale: 5.0
+    # 策略更新使用探索预算比例 (champion/challenger 门控)
+  # 单次策略参数允许的变更幅度 (受控：防止策略层发散)
+  max_param_shift: 1  # 以 space 下标计
+  # 探索预算: 有多少比例的更新轮次用于试探新策略 (其余沿用 champion)
+  # 依据: 对照实验显示全额探索会让超参每轮抖动, 反而不如固定超参
+  exploration_rate: 0.25
+
+budget:
+  # 硬性预算（受控 RSI）
+  max_gpu_seconds: 3600
+  max_label_quota: 2000
+  max_llm_tokens: 200000
+  # 单次迭代预算上限
+  per_iteration_gpu_seconds: 300
+  per_iteration_label_quota: 500
+  # 预算使用率超过该阈值后停止主动更新（只保留监控）
+  halt_ratio: 0.9
+
+safety:
+  # 连续失败多少次熔断
+  max_consecutive_failures: 3
+  # 性能回退超过该相对幅度则强制回滚
+  rollback_margin: 0.005
+  # 影子评估最少步数 (样本量不足则判定为"不显著", 拒绝上线)
+  # 必须 ≤ shadow_holdout, 否则影子集永远达不到下限, 候选全被拒
+  shadow_min_steps: 300
+  # 影子评估留出集大小 (流末端最后 N 条, 候选与现网模型都没见过)
+  # 候选的训练数据截止到该留出集之前 —— 这样影子集才是真正的泛化检验。
+  #
+  # 比例约束: shadow_holdout 必须 < window_size, 否则训练数据被挤空。
+  # 但训练数据实际来自**更早的历史窗口** (retrain_window 可跨窗口累积),
+  # 因此 holdout 不必占用训练预算 —— 它只影响影子集大小。
+  #
+  # 影子集大小的意义: McNemar 检验的功效随样本量增长。
+  # holdout=200 时实测 p=0.05~0.24, 正增益 (+0.03~+0.05) 也判为"不显著",
+  # 候选几乎全被拒 → 系统退化为不更新。holdout=400 时功效足够。
+  shadow_holdout: 400
+  # 显著检验的 alpha
+  alpha: 0.05
+  # 单次运行最大迭代轮数
+  max_iterations: 50
+  # 每次迭代允许的上线候选模型数
+  max_candidates_per_iter: 3
+
+experiment:
+  # SwanLab 项目与工作空间 (赛题: 记录必须**公开**, 评委需能访问)
+  project: "zxyq11"
+  workspace: "GY-NJph"
+  # 本地降级记录目录
+  local_dir: "artifacts/experiments"
+  # 记录规范要求的关键字段，runner 结束前会做合规自检
+  required_fields:
+    - config
+    - metrics
+    - tags
+    - notes
+  # Swan Lab 记录必须**公开** (赛题硬要求: 评委需能访问记录)。
+  # 置 false 仅用于本地调试 —— 合规自检会相应判定为不通过。
+  swanlab_public: true
+
+metrics:
+  # ---- 赛题官方指标的可选诊断项 ----
+  # 注意: 官方 B 包明确"不以严重故障漏报率评价本任务", 因此漏报率
+  # **只作为诊断输出**, 不进 score、不影响上线判定。
+  # severe_classes  — 显式类别集合 (如 ["failure","severe"])
+  # severe_threshold — 按数值阈值判定 (RUL 场景: 剩余寿命低于该值即严重退化)
+  # 两者都不给时, 自动用 y_true 的最大值作为"最严重"类别。
+  severe_classes: null
+  severe_threshold: null
+  # 非对称评分的误差截断 (分钟/循环) —— 不截断则少数离群点主导分数
+  asym_error_cap: null
+
+gates:
+  # 基础运行门槛 (赛题: "至少包含三次尝试迭代过程")
+  # 口径: 执行过更新尝试的轮次数 (纯监控的窗口不算"尝试")
+  min_iterations: 3
+  # 门槛保障探索: 漂移迟迟不到阈值导致尝试次数不足时, 主动做一次探索性重训。
+  # 仍走完整影子评估 (不显著则拒绝上线), 因此不可能降低最终性能。
+  gate_probe_enabled: true
+  # 探索轮所需的最小训练样本数 (不足则不做 —— 否则注定被拒并触发熔断)
+  gate_probe_min_train: 500
+
+llm:
+  # PyTRiO 训推服务（OpenAI 兼容）。离线评测环境由赛题组注入环境变量
+  base_url_env: "PYTRIO_BASE_URL"
+  api_key_env: "PYTRIO_API_KEY"
+  model_env: "PYTRIO_MODEL"
+  default_model: "Qwen3.8-27B"
+  temperature: 0.2
+  max_tokens: 1024
+  timeout: 60
+  # 本地无 LLM 时的降级策略：deterministic | rules
+  fallback: "rules"
+  # 赛题允许的模型白名单 —— "平台仅提供千问3.8 27B和千问3.5 4B两个模型可选"
+  allowed_models:
+    - "Qwen3.8-27B"
+    - "Qwen3.5-4B"
+  # 赛题路线二: 以白名单模型为基座, 经 PyTRiO 后训练得到的派生模型。
+  # 后训练模型名通常带后缀, 基座名往往仍可识别, 故一般无需配置;
+  # 只有当平台完全改写命名时才需在此显式声明。
+  derived_models: []

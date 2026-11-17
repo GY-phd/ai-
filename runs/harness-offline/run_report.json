@@ -1,0 +1,283 @@
+{
+  "format": "contest.harness-offline-report.v1",
+  "rounds_per_dataset": 3,
+  "note": "This is an offline rehearsal of the platform's loop. The model call is answered by a local stand-in, so it proves the code path and not the score.",
+  "datasets": {
+    "A": {
+      "rounds": [
+        {
+          "round": 1,
+          "exit_code": 0,
+          "hypothesis": "more-data-helps",
+          "adopted": true,
+          "validation_before": {
+            "macro_f1": 0.7140297220788709,
+            "accuracy": 0.8786173633440515,
+            "f1": 0.7140297220788709,
+            "acc": 0.8786173633440515,
+            "score": 0.763406014458425
+          },
+          "validation_after": {
+            "macro_f1": 0.7192279935410042,
+            "accuracy": 0.8737942122186495,
+            "f1": 0.7192279935410042,
+            "acc": 0.8737942122186495,
+            "score": 0.7655978591442978
+          },
+          "selected_artifact_id": "offline-artifact-1",
+          "model_call_ids": [
+            "offline-call-1"
+          ],
+          "seconds": 1.2,
+          "submitted": true
+        },
+        {
+          "round": 2,
+          "exit_code": 0,
+          "hypothesis": "the-parent-was-left-unconverged",
+          "adopted": false,
+          "validation_before": {
+            "macro_f1": 0.7140297220788709,
+            "accuracy": 0.8786173633440515,
+            "f1": 0.7140297220788709,
+            "acc": 0.8786173633440515,
+            "score": 0.763406014458425
+          },
+          "validation_after": {
+            "macro_f1": 0.6678656356012724,
+            "accuracy": 0.8416398713826366,
+            "f1": 0.6678656356012724,
+            "acc": 0.8416398713826366,
+            "score": 0.7199979063356816
+          },
+          "selected_artifact_id": "baseline-A",
+          "model_call_ids": [
+            "offline-call-1"
+          ],
+          "seconds": 1.14,
+          "submitted": false
+        },
+        {
+          "round": 3,
+          "exit_code": 0,
+          "hypothesis": "capacity-is-overfitting",
+          "adopted": true,
+          "validation_before": {
+            "macro_f1": 0.7140297220788709,
+            "accuracy": 0.8786173633440515,
+            "f1": 0.7140297220788709,
+            "acc": 0.8786173633440515,
+            "score": 0.763406014458425
+          },
+          "validation_after": {
+            "macro_f1": 0.7231143226880697,
+            "accuracy": 0.8786173633440515,
+            "f1": 0.7231143226880697,
+            "acc": 0.8786173633440515,
+            "score": 0.7697652348848643
+          },
+          "selected_artifact_id": "offline-artifact-3",
+          "model_call_ids": [
+            "offline-call-1"
+          ],
+          "seconds": 1.22,
+          "submitted": true
+        }
+      ]
+    },
+    "B": {
+      "rounds": [
+        {
+          "round": 1,
+          "exit_code": 0,
+          "hypothesis": "more-data-helps",
+          "adopted": true,
+          "validation_before": {
+            "rmse": 681.1598326043113,
+            "mae": 563.1058414514887,
+            "r2": -1.140788695194614,
+            "bias": -365.38394916105057,
+            "score": -681.1598326043113
+          },
+          "validation_after": {
+            "rmse": 663.9084520308958,
+            "mae": 564.880368400381,
+            "r2": -1.0337245802640478,
+            "bias": -312.8494913915082,
+            "score": -663.9084520308958
+          },
+          "selected_artifact_id": "offline-artifact-1",
+          "model_call_ids": [
+            "offline-call-1"
+          ],
+          "seconds": 2.45,
+          "submitted": true
+        },
+        {
+          "round": 2,
+          "exit_code": 0,
+          "hypothesis": "the-parent-was-left-unconverged",
+          "adopted": true,
+          "validation_before": {
+            "rmse": 681.1598326043113,
+            "mae": 563.1058414514887,
+            "r2": -1.140788695194614,
+            "bias": -365.38394916105057,
+            "score": -681.1598326043113
+          },
+          "validation_after": {
+            "rmse": 638.6659121426355,
+            "mae": 534.9722445937774,
+            "r2": -0.8820155891002677,
+            "bias": -322.7814349186355,
+            "score": -638.6659121426355
+          },
+          "selected_artifact_id": "offline-artifact-2",
+          "model_call_ids": [
+            "offline-call-1"
+          ],
+          "seconds": 2.42,
+          "submitted": true
+        },
+        {
+          "round": 3,
+          "exit_code": 0,
+          "hypothesis": "the-tail-is-underweighted",
+          "adopted": false,
+          "validation_before": {
+            "rmse": 681.1598326043113,
+            "mae": 563.1058414514887,
+            "r2": -1.140788695194614,
+            "bias": -365.38394916105057,
+            "score": -681.1598326043113
+          },
+          "validation_after": {
+            "rmse": 700.1122698225782,
+            "mae": 580.0350802367975,
+            "r2": -1.2615756548395392,
+            "bias": -461.5446765439087,
+            "score": -700.1122698225782
+          },
+          "selected_artifact_id": "baseline-B",
+          "model_call_ids": [
+            "offline-call-1"
+          ],
+          "seconds": 2.61,
+          "submitted": false
+        }
+      ]
+    },
+    "C": {
+      "rounds": [
+        {
+          "round": 1,
+          "exit_code": 0,
+          "hypothesis": "more-data-helps",
+          "adopted": true,
+          "validation_before": {
+            "rmse": 52.86857256611151,
+            "mae": 38.89982982666355,
+            "r2": 0.5561033171679619,
+            "bias": 1.07826596816338,
+            "score": -52.86857256611151,
+            "nasa_asym_score": 49966.18977821033,
+            "nasa_asym_score_mean": 2.167824624851852,
+            "over_predict_rate": 0.5718686277061912,
+            "over_predict_mae": 34.95391586279364,
+            "under_predict_mae": 44.170512027491405
+          },
+          "validation_after": {
+            "rmse": 51.351144976747236,
+            "mae": 37.71773246313231,
+            "r2": 0.5812189773236833,
+            "bias": 3.0951902338129047,
+            "score": -51.351144976747236,
+            "nasa_asym_score": 48361.040155580624,
+            "nasa_asym_score_mean": 2.098183875898331,
+            "over_predict_rate": 0.5975964250075925,
+            "over_predict_mae": 34.14756262675658,
+            "under_predict_mae": 43.01967524763249
+          },
+          "selected_artifact_id": "offline-artifact-1",
+          "model_call_ids": [
+            "offline-call-1"
+          ],
+          "seconds": 18.84,
+          "submitted": true
+        },
+        {
+          "round": 2,
+          "exit_code": 0,
+          "hypothesis": "the-parent-was-left-unconverged",
+          "adopted": true,
+          "validation_before": {
+            "rmse": 52.86857256611151,
+            "mae": 38.89982982666355,
+            "r2": 0.5561033171679619,
+            "bias": 1.07826596816338,
+            "score": -52.86857256611151,
+            "nasa_asym_score": 49966.18977821033,
+            "nasa_asym_score_mean": 2.167824624851852,
+            "over_predict_rate": 0.5718686277061912,
+            "over_predict_mae": 34.95391586279364,
+            "under_predict_mae": 44.170512027491405
+          },
+          "validation_after": {
+            "rmse": 51.27646123524894,
+            "mae": 37.42995538249272,
+            "r2": 0.5824362195124224,
+            "bias": 2.669233126982954,
+            "score": -51.27646123524894,
+            "nasa_asym_score": 46274.467561121004,
+            "nasa_asym_score_mean": 2.0076561916404616,
+            "over_predict_rate": 0.5865764241398759,
+            "over_predict_mae": 34.18070251312518,
+            "under_predict_mae": 42.040082236711335
+          },
+          "selected_artifact_id": "offline-artifact-2",
+          "model_call_ids": [
+            "offline-call-1"
+          ],
+          "seconds": 20.28,
+          "submitted": true
+        },
+        {
+          "round": 3,
+          "exit_code": 0,
+          "hypothesis": "the-tail-is-underweighted",
+          "adopted": false,
+          "validation_before": {
+            "rmse": 52.86857256611151,
+            "mae": 38.89982982666355,
+            "r2": 0.5561033171679619,
+            "bias": 1.07826596816338,
+            "score": -52.86857256611151,
+            "nasa_asym_score": 49966.18977821033,
+            "nasa_asym_score_mean": 2.167824624851852,
+            "over_predict_rate": 0.5718686277061912,
+            "over_predict_mae": 34.95391586279364,
+            "under_predict_mae": 44.170512027491405
+          },
+          "validation_after": {
+            "rmse": 55.418688241299186,
+            "mae": 37.69416835587932,
+            "r2": 0.5122478260310432,
+            "bias": -15.538791502232879,
+            "score": -55.418688241299186,
+            "nasa_asym_score": 35724.67283683934,
+            "nasa_asym_score_mean": 1.5499445892159893,
+            "over_predict_rate": 0.46704846197231986,
+            "over_predict_mae": 23.718498889906957,
+            "under_predict_mae": 49.94165140709981
+          },
+          "selected_artifact_id": "baseline-C",
+          "model_call_ids": [
+            "offline-call-1"
+          ],
+          "seconds": 23.59,
+          "submitted": false
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,751 @@
+{
+  "B": {
+    "profile": "B",
+    "package": "cpu-b-rul-20261110-v1",
+    "created_at": "2026-11-16T18:33:35",
+    "stream_meta": {
+      "profile": "B",
+      "mode": "unit_holdout",
+      "initial_units": [
+        "Bearing1_1",
+        "Bearing1_2",
+        "Bearing1_3",
+        "Bearing2_2",
+        "Bearing2_3",
+        "Bearing3_2"
+      ],
+      "stream_units": [
+        "Bearing3_1"
+      ],
+      "judge_units": [
+        "Bearing3_3",
+        "Bearing2_1"
+      ],
+      "validation_units": [
+        "Bearing1_4",
+        "Bearing2_4",
+        "Bearing3_4"
+      ],
+      "initial_rows": 3632,
+      "stream_rows": 2538,
+      "judge_rows": 862,
+      "validation_rows": 1679,
+      "unit_leakage": false,
+      "validation_used_for_training": false,
+      "judge_used_for_training": false,
+      "initial_target_max": 2495.0,
+      "stream_target_max": 2537.0,
+      "judge_target_max": 490.0,
+      "initial_target_median": 679.5,
+      "stream_target_median": 1268.5
+    },
+    "initial_score": {
+      "rmse": 708.482670752516,
+      "mae": 566.6323370610979,
+      "r2": -1.31597681070357,
+      "bias": -251.46326713631564,
+      "max_abs_error": 1511.0988445405635,
+      "score": -708.482670752516
+    },
+    "final_score": {
+      "rmse": 704.7862040858579,
+      "mae": 556.4370051554978,
+      "r2": -1.2918729099116484,
+      "bias": -320.7295644938974,
+      "max_abs_error": 1511.8009147845457,
+      "score": -704.7862040858579
+    },
+    "final_refit": {
+      "tag": "final",
+      "rows": 7032,
+      "seconds": 2.92,
+      "parameter_count": 2305,
+      "overrides": {
+        "hidden": 64,
+        "epochs": 200,
+        "normalisation": "slope",
+        "target": "life_fraction",
+        "floor": 0.02,
+        "cap": 3000.0,
+        "rate_limit": 0.25,
+        "feature_transform": "eng34",
+        "activation": "tanh",
+        "seed": 42,
+        "fraction_basis": "target"
+      },
+      "recipe": {
+        "hidden": 64,
+        "epochs": 200,
+        "normalisation": "slope",
+        "target": "life_fraction",
+        "floor": 0.02,
+        "cap": 3000.0,
+        "rate_limit": 0.25,
+        "feature_transform": "eng34",
+        "activation": "tanh",
+        "seed": 42,
+        "fraction_basis": "target"
+      },
+      "training_units": [
+        "Bearing1_1",
+        "Bearing1_2",
+        "Bearing1_3",
+        "Bearing2_1",
+        "Bearing2_2",
+        "Bearing2_3",
+        "Bearing3_1",
+        "Bearing3_2",
+        "Bearing3_3"
+      ]
+    },
+    "cycles": 6,
+    "promotions": 2,
+    "per_unit_validation": {
+      "Bearing1_4": {
+        "rmse": 63.132,
+        "mae": 52.818,
+        "rows": 122
+      },
+      "Bearing2_4": {
+        "rmse": 21.045,
+        "mae": 16.848,
+        "rows": 42
+      },
+      "Bearing3_4": {
+        "rmse": 741.728,
+        "mae": 611.951,
+        "rows": 1515
+      }
+    },
+    "ledger": [
+      {
+        "cycle": 0,
+        "stage": "decide",
+        "action": "adapt",
+        "drift": {
+          "mean_abs_shift": 0.8789,
+          "level": "alarm"
+        },
+        "candidate": {
+          "tag": "batch000",
+          "rows": 4132,
+          "seconds": 1.73,
+          "parameter_count": 2305,
+          "overrides": {
+            "hidden": 64,
+            "epochs": 200,
+            "normalisation": "slope",
+            "target": "life_fraction",
+            "floor": 0.02,
+            "cap": 3000.0,
+            "rate_limit": 0.25,
+            "feature_transform": "eng34",
+            "activation": "tanh",
+            "seed": 42
+          },
+          "score": {
+            "rmse": 220.22153549454657,
+            "mae": 182.56084299966042,
+            "r2": -1.8094054218256188,
+            "bias": -89.23377787284575,
+            "max_abs_error": 487.1906254585062,
+            "score": -220.22153549454657
+          }
+        },
+        "champion_score_on_same_slice": {
+          "rmse": 238.81698944643384,
+          "mae": 203.60329929011672,
+          "r2": -2.303887736512454,
+          "bias": -27.822378067916087,
+          "max_abs_error": 485.89317222803425,
+          "score": -238.81698944643384
+        },
+        "gain": 18.595454,
+        "decision": "promote",
+        "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+        "hypothesis": "capacity-is-overfitting",
+        "claim": "The champion has more capacity than 445-7032 rows can support, so it memorises the units it was trained on and loses the ability to generalise to a new unit.",
+        "change": "Shrink the hidden layer and shorten the schedule: the capacity sweep's smallest configuration.",
+        "falsifier": "If the champion's *training* score is not near-perfect while its held-out score is much worse, the problem is not capacity but the target distribution itself.",
+        "expected_effect": "Training score stays high; held-out RMSE falls by 10-40%.",
+        "cost": 0.2
+      },
+      {
+        "cycle": 1,
+        "stage": "decide",
+        "action": "adapt",
+        "drift": {
+          "mean_abs_shift": 0.8951,
+          "level": "alarm"
+        },
+        "candidate": {
+          "tag": "batch001",
+          "rows": 4632,
+          "seconds": 2.05,
+          "parameter_count": 2369,
+          "overrides": {
+            "hidden": 64,
+            "epochs": 200,
+            "normalisation": "slope",
+            "target": "minutes",
+            "floor": 0.02,
+            "cap": 3000.0,
+            "rate_limit": 0.25,
+            "feature_transform": "eng34",
+            "activation": "tanh",
+            "seed": 42,
+            "extra_features": "elapsed"
+          },
+          "score": {
+            "rmse": 2632.9888719411133,
+            "mae": 2529.236525032747,
+            "r2": -400.5992476909178,
+            "bias": 2506.109205640386,
+            "max_abs_error": 3000.0,
+            "score": -2632.9888719411133
+          }
+        },
+        "champion_score_on_same_slice": {
+          "rmse": 245.43375634821328,
+          "mae": 210.20786203486634,
+          "r2": -2.4895018421165207,
+          "bias": -14.291425165963918,
+          "max_abs_error": 531.9567728697397,
+          "score": -245.43375634821328
+        },
+        "gain": -2387.555116,
+        "decision": "reject",
+        "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+        "hypothesis": "units-are-confounded",
+        "claim": "The model cannot tell which unit a row came from, so it predicts the population-average lifetime for every unit and is wrong by the spread of lifetimes.",
+        "change": "Give the model the unit's elapsed-observation count as a feature, so the age of the unit is visible.",
+        "falsifier": "If the per-unit RMSE spread is no larger than the within-unit RMSE, the unit is not the confounder.",
+        "expected_effect": "Per-unit RMSE spread shrinks; overall RMSE falls.",
+        "cost": 0.2
+      },
+      {
+        "cycle": 2,
+        "stage": "decide",
+        "action": "adapt",
+        "drift": {
+          "mean_abs_shift": 0.9306,
+          "level": "alarm"
+        },
+        "candidate": {
+          "tag": "batch002",
+          "rows": 5132,
+          "seconds": 2.22,
+          "parameter_count": 2305,
+          "overrides": {
+            "hidden": 64,
+            "epochs": 200,
+            "normalisation": "raw",
+            "target": "minutes",
+            "floor": 0.02,
+            "cap": 3000.0,
+            "rate_limit": 0.25,
+            "feature_transform": "eng34",
+            "activation": "tanh",
+            "seed": 42
+          },
+          "score": {
+            "rmse": 2632.9888719411133,
+            "mae": 2529.236525032747,
+            "r2": -400.5992476909178,
+            "bias": 2506.109205640386,
+            "max_abs_error": 3000.0,
+            "score": -2632.9888719411133
+          }
+        },
+        "champion_score_on_same_slice": {
+          "rmse": 236.549359290277,
+          "mae": 202.14003099085207,
+          "r2": -2.2414430482431307,
+          "bias": -31.769462900350604,
+          "max_abs_error": 495.04161314800535,
+          "score": -236.549359290277
+        },
+        "gain": -2396.439513,
+        "decision": "reject",
+        "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+        "hypothesis": "degradation-is-not-first-order",
+        "claim": "Absolute vibration or sensor levels are dominated by the unit's own baseline, so the model tracks the baseline instead of the degradation.",
+        "change": "Replace the raw features with the per-unit baseline-relative slope (the two-stage normalisation).",
+        "falsifier": "If the per-unit feature means differ by more than the within-unit variation, the baseline is not dominating.",
+        "expected_effect": "RMSE falls sharply; the effect is largest on the units with the most extreme baselines.",
+        "cost": 0.3
+      },
+      {
+        "cycle": 3,
+        "stage": "decide",
+        "action": "adapt",
+        "drift": {
+          "mean_abs_shift": 0.8976,
+          "level": "alarm"
+        },
+        "candidate": {
+          "tag": "batch003",
+          "rows": 5632,
+          "seconds": 2.34,
+          "parameter_count": 2305,
+          "overrides": {
+            "hidden": 64,
+            "epochs": 200,
+            "normalisation": "slope",
+            "target": "minutes",
+            "floor": 0.02,
+            "cap": 3000.0,
+            "rate_limit": 0.25,
+            "feature_transform": "eng34",
+            "activation": "tanh",
+            "seed": 42
+          },
+          "score": {
+            "rmse": 2632.9888719411133,
+            "mae": 2529.236525032747,
+            "r2": -400.5992476909178,
+            "bias": 2506.109205640386,
+            "max_abs_error": 3000.0,
+            "score": -2632.9888719411133
+          }
+        },
+        "champion_score_on_same_slice": {
+          "rmse": 224.96127473820783,
+          "mae": 189.56747546311047,
+          "r2": -1.93163819913075,
+          "bias": -64.96271238508069,
+          "max_abs_error": 487.1311132996832,
+          "score": -224.96127473820783
+        },
+        "gain": -2408.027597,
+        "decision": "reject",
+        "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+        "hypothesis": "lifetime-is-multiplicative",
+        "claim": "Remaining life is a fraction of total lifetime, not an absolute number of minutes, so the regression target should be the lifetime fraction.",
+        "change": "Regress the fraction of lifetime remaining, then convert back to minutes with the two-stage lifetime estimate.",
+        "falsifier": "If the two-stage conversion's error does not shrink with the fraction, the multiplicative model is wrong.",
+        "expected_effect": "RMSE falls, and the largest gains are on the short-lived units.",
+        "cost": 0.4
+      },
+      {
+        "cycle": 4,
+        "stage": "decide",
+        "action": "adapt",
+        "drift": {
+          "mean_abs_shift": 0.7905,
+          "level": "alarm"
+        },
+        "candidate": {
+          "tag": "batch004",
+          "rows": 6132,
+          "seconds": 2.58,
+          "parameter_count": 2305,
+          "overrides": {
+            "hidden": 64,
+            "epochs": 200,
+            "normalisation": "train_scale",
+            "target": "life_fraction",
+            "floor": 0.02,
+            "cap": 3000.0,
+            "rate_limit": 0.25,
+            "feature_transform": "eng34",
+            "activation": "tanh",
+            "seed": 42
+          },
+          "score": {
+            "rmse": 1011.4314369728279,
+            "mae": 773.1679912347602,
+            "r2": -58.26083132428719,
+            "bias": 683.0690821757743,
+            "max_abs_error": 2656.896245891597,
+            "score": -1011.4314369728279
+          }
+        },
+        "champion_score_on_same_slice": {
+          "rmse": 219.7719215458136,
+          "mae": 181.3514603651436,
+          "r2": -1.7979455215627773,
+          "bias": -98.50382698839051,
+          "max_abs_error": 487.84722289986524,
+          "score": -219.7719215458136
+        },
+        "gain": -791.659515,
+        "decision": "reject",
+        "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+        "hypothesis": "drift-is-a-scale-shift",
+        "claim": "The stream differs from the training set by a per-feature scale, not by a change in the decision boundary.",
+        "change": "Normalise the stream rows by the training set's own per-feature scale before predicting.",
+        "falsifier": "If the standardised feature shift is small, there is no scale shift to remove and the normalisation can only add noise.",
+        "expected_effect": "RMSE falls on the drifted batches.",
+        "cost": 0.1
+      },
+      {
+        "cycle": 5,
+        "stage": "decide",
+        "action": "adapt",
+        "drift": {
+          "mean_abs_shift": 1.6119,
+          "level": "alarm"
+        },
+        "candidate": {
+          "tag": "batch005",
+          "rows": 6170,
+          "seconds": 2.7,
+          "parameter_count": 2305,
+          "overrides": {
+            "hidden": 64,
+            "epochs": 200,
+            "normalisation": "slope",
+            "target": "life_fraction",
+            "floor": 0.02,
+            "cap": 3000.0,
+            "rate_limit": 0.25,
+            "feature_transform": "eng34",
+            "activation": "tanh",
+            "seed": 42
+          },
+          "score": {
+            "rmse": 219.5634965542558,
+            "mae": 180.85506717965632,
+            "r2": -1.7926410655505025,
+            "bias": -100.57693969273414,
+            "max_abs_error": 487.9784280517551,
+            "score": -219.5634965542558
+          }
+        },
+        "champion_score_on_same_slice": {
+          "rmse": 219.58482592441433,
+          "mae": 180.93212208017184,
+          "r2": -1.7931836709394604,
+          "bias": -100.16427102898544,
+          "max_abs_error": 487.95070695443053,
+          "score": -219.58482592441433
+        },
+        "gain": 0.021329,
+        "decision": "promote",
+        "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+        "hypothesis": "more-data-helps",
+        "claim": "The model is data-limited rather than capacity-limited.",
+        "change": "Keep the architecture and retrain on every row seen so far, including the stream.",
+        "falsifier": "If the held-out score does not improve as rows are added, the model is not data-limited.",
+        "expected_effect": "The score improves monotonically with the row count.",
+        "cost": 0.5
+      }
+    ],
+    "hypothesis_chain": [
+      {
+        "cycle": 0,
+        "stage": "decide",
+        "action": "adapt",
+        "drift": {
+          "mean_abs_shift": 0.8789,
+          "level": "alarm"
+        },
+        "candidate": {
+          "tag": "batch000",
+          "rows": 4132,
+          "seconds": 1.73,
+          "parameter_count": 2305,
+          "overrides": {
+            "hidden": 64,
+            "epochs": 200,
+            "normalisation": "slope",
+            "target": "life_fraction",
+            "floor": 0.02,
+            "cap": 3000.0,
+            "rate_limit": 0.25,
+            "feature_transform": "eng34",
+            "activation": "tanh",
+            "seed": 42
+          },
+          "score": {
+            "rmse": 220.22153549454657,
+            "mae": 182.56084299966042,
+            "r2": -1.8094054218256188,
+            "bias": -89.23377787284575,
+            "max_abs_error": 487.1906254585062,
+            "score": -220.22153549454657
+          }
+        },
+        "champion_score_on_same_slice": {
+          "rmse": 238.81698944643384,
+          "mae": 203.60329929011672,
+          "r2": -2.303887736512454,
+          "bias": -27.822378067916087,
+          "max_abs_error": 485.89317222803425,
+          "score": -238.81698944643384
+        },
+        "gain": 18.595454,
+        "decision": "promote",
+        "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+        "hypothesis": "capacity-is-overfitting",
+        "claim": "The champion has more capacity than 445-7032 rows can support, so it memorises the units it was trained on and loses the ability to generalise to a new unit.",
+        "change": "Shrink the hidden layer and shorten the schedule: the capacity sweep's smallest configuration.",
+        "falsifier": "If the champion's *training* score is not near-perfect while its held-out score is much worse, the problem is not capacity but the target distribution itself.",
+        "expected_effect": "Training score stays high; held-out RMSE falls by 10-40%.",
+        "cost": 0.2
+      },
+      {
+        "cycle": 1,
+        "stage": "decide",
+        "action": "adapt",
+        "drift": {
+          "mean_abs_shift": 0.8951,
+          "level": "alarm"
+        },
+        "candidate": {
+          "tag": "batch001",
+          "rows": 4632,
+          "seconds": 2.05,
+          "parameter_count": 2369,
+          "overrides": {
+            "hidden": 64,
+            "epochs": 200,
+            "normalisation": "slope",
+            "target": "minutes",
+            "floor": 0.02,
+            "cap": 3000.0,
+            "rate_limit": 0.25,
+            "feature_transform": "eng34",
+            "activation": "tanh",
+            "seed": 42,
+            "extra_features": "elapsed"
+          },
+          "score": {
+            "rmse": 2632.9888719411133,
+            "mae": 2529.236525032747,
+            "r2": -400.5992476909178,
+            "bias": 2506.109205640386,
+            "max_abs_error": 3000.0,
+            "score": -2632.9888719411133
+          }
+        },
+        "champion_score_on_same_slice": {
+          "rmse": 245.43375634821328,
+          "mae": 210.20786203486634,
+          "r2": -2.4895018421165207,
+          "bias": -14.291425165963918,
+          "max_abs_error": 531.9567728697397,
+          "score": -245.43375634821328
+        },
+        "gain": -2387.555116,
+        "decision": "reject",
+        "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+        "hypothesis": "units-are-confounded",
+        "claim": "The model cannot tell which unit a row came from, so it predicts the population-average lifetime for every unit and is wrong by the spread of lifetimes.",
+        "change": "Give the model the unit's elapsed-observation count as a feature, so the age of the unit is visible.",
+        "falsifier": "If the per-unit RMSE spread is no larger than the within-unit RMSE, the unit is not the confounder.",
+        "expected_effect": "Per-unit RMSE spread shrinks; overall RMSE falls.",
+        "cost": 0.2
+      },
+      {
+        "cycle": 2,
+        "stage": "decide",
+        "action": "adapt",
+        "drift": {
+          "mean_abs_shift": 0.9306,
+          "level": "alarm"
+        },
+        "candidate": {
+          "tag": "batch002",
+          "rows": 5132,
+          "seconds": 2.22,
+          "parameter_count": 2305,
+          "overrides": {
+            "hidden": 64,
+            "epochs": 200,
+            "normalisation": "raw",
+            "target": "minutes",
+            "floor": 0.02,
+            "cap": 3000.0,
+            "rate_limit": 0.25,
+            "feature_transform": "eng34",
+            "activation": "tanh",
+            "seed": 42
+          },
+          "score": {
+            "rmse": 2632.9888719411133,
+            "mae": 2529.236525032747,
+            "r2": -400.5992476909178,
+            "bias": 2506.109205640386,
+            "max_abs_error": 3000.0,
+            "score": -2632.9888719411133
+          }
+        },
+        "champion_score_on_same_slice": {
+          "rmse": 236.549359290277,
+          "mae": 202.14003099085207,
+          "r2": -2.2414430482431307,
+          "bias": -31.769462900350604,
+          "max_abs_error": 495.04161314800535,
+          "score": -236.549359290277
+        },
+        "gain": -2396.439513,
+        "decision": "reject",
+        "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+        "hypothesis": "degradation-is-not-first-order",
+        "claim": "Absolute vibration or sensor levels are dominated by the unit's own baseline, so the model tracks the baseline instead of the degradation.",
+        "change": "Replace the raw features with the per-unit baseline-relative slope (the two-stage normalisation).",
+        "falsifier": "If the per-unit feature means differ by more than the within-unit variation, the baseline is not dominating.",
+        "expected_effect": "RMSE falls sharply; the effect is largest on the units with the most extreme baselines.",
+        "cost": 0.3
+      },
+      {
+        "cycle": 3,
+        "stage": "decide",
+        "action": "adapt",
+        "drift": {
+          "mean_abs_shift": 0.8976,
+          "level": "alarm"
+        },
+        "candidate": {
+          "tag": "batch003",
+          "rows": 5632,
+          "seconds": 2.34,
+          "parameter_count": 2305,
+          "overrides": {
+            "hidden": 64,
+            "epochs": 200,
+            "normalisation": "slope",
+            "target": "minutes",
+            "floor": 0.02,
+            "cap": 3000.0,
+            "rate_limit": 0.25,
+            "feature_transform": "eng34",
+            "activation": "tanh",
+            "seed": 42
+          },
+          "score": {
+            "rmse": 2632.9888719411133,
+            "mae": 2529.236525032747,
+            "r2": -400.5992476909178,
+            "bias": 2506.109205640386,
+            "max_abs_error": 3000.0,
+            "score": -2632.9888719411133
+          }
+        },
+        "champion_score_on_same_slice": {
+          "rmse": 224.96127473820783,
+          "mae": 189.56747546311047,
+          "r2": -1.93163819913075,
+          "bias": -64.96271238508069,
+          "max_abs_error": 487.1311132996832,
+          "score": -224.96127473820783
+        },
+        "gain": -2408.027597,
+        "decision": "reject",
+        "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+        "hypothesis": "lifetime-is-multiplicative",
+        "claim": "Remaining life is a fraction of total lifetime, not an absolute number of minutes, so the regression target should be the lifetime fraction.",
+        "change": "Regress the fraction of lifetime remaining, then convert back to minutes with the two-stage lifetime estimate.",
+        "falsifier": "If the two-stage conversion's error does not shrink with the fraction, the multiplicative model is wrong.",
+        "expected_effect": "RMSE falls, and the largest gains are on the short-lived units.",
+        "cost": 0.4
+      },
+      {
+        "cycle": 4,
+        "stage": "decide",
+        "action": "adapt",
+        "drift": {
+          "mean_abs_shift": 0.7905,
+          "level": "alarm"
+        },
+        "candidate": {
+          "tag": "batch004",
+          "rows": 6132,
+          "seconds": 2.58,
+          "parameter_count": 2305,
+          "overrides": {
+            "hidden": 64,
+            "epochs": 200,
+            "normalisation": "train_scale",
+            "target": "life_fraction",
+            "floor": 0.02,
+            "cap": 3000.0,
+            "rate_limit": 0.25,
+            "feature_transform": "eng34",
+            "activation": "tanh",
+            "seed": 42
+          },
+          "score": {
+            "rmse": 1011.4314369728279,
+            "mae": 773.1679912347602,
+            "r2": -58.26083132428719,
+            "bias": 683.0690821757743,
+            "max_abs_error": 2656.896245891597,
+            "score": -1011.4314369728279
+          }
+        },
+        "champion_score_on_same_slice": {
+          "rmse": 219.7719215458136,
+          "mae": 181.3514603651436,
+          "r2": -1.7979455215627773,
+          "bias": -98.50382698839051,
+          "max_abs_error": 487.84722289986524,
+          "score": -219.7719215458136
+        },
+        "gain": -791.659515,
+        "decision": "reject",
+        "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+        "hypothesis": "drift-is-a-scale-shift",
+        "claim": "The stream differs from the training set by a per-feature scale, not by a change in the decision boundary.",
+        "change": "Normalise the stream rows by the training set's own per-feature scale before predicting.",
+        "falsifier": "If the standardised feature shift is small, there is no scale shift to remove and the normalisation can only add noise.",
+        "expected_effect": "RMSE falls on the drifted batches.",
+        "cost": 0.1
+      },
+      {
+        "cycle": 5,
+        "stage": "decide",
+        "action": "adapt",
+        "drift": {
+          "mean_abs_shift": 1.6119,
+          "level": "alarm"
+        },
+        "candidate": {
+          "tag": "batch005",
+          "rows": 6170,
+          "seconds": 2.7,
+          "parameter_count": 2305,
+          "overrides": {
+            "hidden": 64,
+            "epochs": 200,
+            "normalisation": "slope",
+            "target": "life_fraction",
+            "floor": 0.02,
+            "cap": 3000.0,
+            "rate_limit": 0.25,
+            "feature_transform": "eng34",
+            "activation": "tanh",
+            "seed": 42
+          },
+          "score": {
+            "rmse": 219.5634965542558,
+            "mae": 180.85506717965632,
+            "r2": -1.7926410655505025,
+            "bias": -100.57693969273414,
+            "max_abs_error": 487.9784280517551,
+            "score": -219.5634965542558
+          }
+        },
+        "champion_score_on_same_slice": {
+          "rmse": 219.58482592441433,
+          "mae": 180.93212208017184,
+          "r2": -1.7931836709394604,
+          "bias": -100.16427102898544,
+          "max_abs_error": 487.95070695443053,
+          "score": -219.58482592441433
+        },
+        "gain": 0.021329,
+        "decision": "promote",
+        "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
+        "hypothesis": "more-data-helps",
+        "claim": "The model is data-limited rather than capacity-limited.",
+        "change": "Keep the architecture and retrain on every row seen so far, including the stream.",
+        "falsifier": "If the held-out score does not improve as rows are added, the model is not data-limited.",
+        "expected_effect": "The score improves monotonically with the row count.",
+        "cost": 0.5
+      }
+    ]
+  }
+}

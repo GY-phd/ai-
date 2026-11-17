@@ -1,0 +1,198 @@
+{
+  "profiles": {
+    "A": {
+      "package": "cpu-a-guide-20261110-v1",
+      "initial_score": {
+        "acc": 0.8758029978586723,
+        "f1": 0.722385210472495,
+        "precision": 0.6786197340164183,
+        "recall": 0.8077945568420127,
+        "n_classes": 6,
+        "auc": 0.5,
+        "score": 0.7684105466883482,
+        "macro_f1": 0.722385210472495,
+        "confusion_matrix": [
+          [
+            118,
+            5,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            27,
+            224,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            75,
+            0,
+            0,
+            0
+          ],
+          [
+            81,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            397,
+            2
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            4
+          ]
+        ]
+      },
+      "final_score": {
+        "acc": 0.9903640256959315,
+        "f1": 0.970745067841578,
+        "precision": 0.9578603007615851,
+        "recall": 0.9874006632556515,
+        "n_classes": 6,
+        "auc": 0.5,
+        "score": 0.976630755197884,
+        "macro_f1": 0.970745067841578,
+        "confusion_matrix": [
+          [
+            119,
+            4,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            250,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            75,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0,
+            79,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            398,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            4
+          ]
+        ]
+      },
+      "promotions": 0,
+      "recipe": {
+        "hidden": 32,
+        "epochs": 50
+      }
+    },
+    "B": {
+      "package": "cpu-b-rul-20261110-v1",
+      "initial_score": {
+        "rmse": 641.3647755938919,
+        "mae": 499.1695070118684,
+        "r2": -0.8979551750629897,
+        "score": -641.3647755938919
+      },
+      "final_score": {
+        "rmse": 639.8081419802003,
+        "mae": 489.273657647982,
+        "r2": -0.8887534363636629,
+        "score": -639.8081419802003
+      },
+      "promotions": 2,
+      "recipe": {
+        "hidden": 64,
+        "epochs": 200,
+        "normalisation": "slope",
+        "target": "life_fraction",
+        "floor": 0.02,
+        "cap": 3000.0,
+        "rate_limit": 0.25,
+        "feature_transform": "eng34",
+        "activation": "tanh",
+        "seed": 42,
+        "fraction_basis": "target"
+      }
+    },
+    "C": {
+      "package": "cpu-c-guide-20261110-v1",
+      "initial_score": {
+        "rmse": 50.7706108374771,
+        "mae": 35.94461891768763,
+        "r2": 0.5906342470807977,
+        "score": -50.7706108374771,
+        "nasa_asym_score": 40093.67267648965,
+        "nasa_asym_score_mean": 1.7394972743498482,
+        "over_predict_rate": 0.5575079179140093,
+        "over_predict_mae": 31.10722985817218,
+        "under_predict_mae": 42.03937815043333
+      },
+      "final_score": {
+        "rmse": 44.49286641708608,
+        "mae": 31.565186000246594,
+        "r2": 0.685610884728681,
+        "score": -44.49286641708608,
+        "nasa_asym_score": 35982.36313478409,
+        "nasa_asym_score_mean": 1.5611246967236796,
+        "over_predict_rate": 0.5725194151590091,
+        "over_predict_mae": 28.817500949130306,
+        "under_predict_mae": 35.245126316346315
+      },
+      "promotions": 1,
+      "recipe": {
+        "hidden": 128,
+        "epochs": 200,
+        "target": "cycles",
+        "extra_features": "elapsed",
+        "fraction_basis": "target"
+      }
+    }
+  },
+  "closed_loop_entrypoint": "python -m tracks.run --all --workspace runs",
+  "report_entrypoint": "python -m tracks.report --workspace runs --out artifacts",
+  "verification_entrypoint": "python -m research.tracks.rmse_verification --out artifacts",
+  "figures_entrypoint": "python -m research.tracks.make_figures --out figureuse"
+}

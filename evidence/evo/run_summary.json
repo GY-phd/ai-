@@ -1,0 +1,1461 @@
+{
+  "iterations": 6,
+  "drifts_detected": 6,
+  "updates_triggered": 6,
+  "updates_approved": 5,
+  "rollbacks": 0,
+  "halted": false,
+  "total_gpu_seconds": 3.466,
+  "total_labels": 1350,
+  "total_tokens": 0,
+  "baseline_score": -1546.15737,
+  "final_score": -667.65549,
+  "best_score": -174.26074,
+  "baseline_tail_score": -1050.30037,
+  "tail_score": -239.46284,
+  "efficiency": 28.8359252295,
+  "records": [
+    {
+      "index": 1,
+      "window": [
+        0,
+        500
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "alarm",
+        "overall_psi": 7.10641,
+        "max_psi": 12.43835,
+        "top_features": [
+          [
+            "features_vertical_band3_energy_6k_12k",
+            12.43835
+          ],
+          [
+            "features_vertical_band1_energy_0_2k",
+            12.41595
+          ],
+          [
+            "features_vertical_peak_to_peak",
+            12.41595
+          ],
+          [
+            "features_vertical_spectral_rms",
+            12.41595
+          ],
+          [
+            "features_vertical_mean_abs",
+            12.41595
+          ]
+        ],
+        "drifted_features": [
+          "features_vertical_band3_energy_6k_12k",
+          "features_vertical_band1_energy_0_2k",
+          "features_vertical_peak_to_peak",
+          "features_vertical_spectral_rms",
+          "features_vertical_mean_abs",
+          "features_vertical_rms",
+          "features_vertical_peak",
+          "features_horizontal_band1_energy_0_2k",
+          "features_horizontal_spectral_centroid",
+          "features_vertical_band2_energy_2k_6k",
+          "features_horizontal_rms",
+          "features_horizontal_spectral_rms",
+          "features_horizontal_mean_abs",
+          "features_vertical_spectral_centroid",
+          "features_vertical_dominant_freq",
+          "features_horizontal_band2_energy_2k_6k",
+          "features_horizontal_skewness",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_dominant_freq",
+          "features_horizontal_peak_to_peak",
+          "features_horizontal_peak",
+          "features_horizontal_kurtosis",
+          "features_horizontal_shape_factor",
+          "features_vertical_kurtosis",
+          "features_vertical_shape_factor",
+          "features_vertical_skewness",
+          "features_horizontal_margin_factor",
+          "features_horizontal_impulse_factor",
+          "features_horizontal_crest_factor",
+          "features_vertical_spectral_kurtosis",
+          "features_vertical_margin_factor",
+          "features_vertical_impulse_factor",
+          "features_vertical_crest_factor",
+          "features_horizontal_spectral_kurtosis"
+        ],
+        "ks_hits": [
+          "features_horizontal_band1_energy_0_2k",
+          "features_horizontal_band2_energy_2k_6k",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_crest_factor",
+          "features_horizontal_dominant_freq",
+          "features_horizontal_impulse_factor",
+          "features_horizontal_kurtosis",
+          "features_horizontal_margin_factor",
+          "features_horizontal_mean_abs",
+          "features_horizontal_peak",
+          "features_horizontal_peak_to_peak",
+          "features_horizontal_rms",
+          "features_horizontal_shape_factor",
+          "features_horizontal_skewness",
+          "features_horizontal_spectral_centroid",
+          "features_horizontal_spectral_kurtosis",
+          "features_horizontal_spectral_rms",
+          "features_vertical_band1_energy_0_2k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_vertical_band3_energy_6k_12k",
+          "features_vertical_crest_factor",
+          "features_vertical_dominant_freq",
+          "features_vertical_impulse_factor",
+          "features_vertical_kurtosis",
+          "features_vertical_margin_factor",
+          "features_vertical_mean_abs",
+          "features_vertical_peak",
+          "features_vertical_peak_to_peak",
+          "features_vertical_rms",
+          "features_vertical_shape_factor",
+          "features_vertical_skewness",
+          "features_vertical_spectral_centroid",
+          "features_vertical_spectral_kurtosis",
+          "features_vertical_spectral_rms"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 2170.51308,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 34.0
+        }
+      },
+      "attribution": {
+        "drift_type": "covariate",
+        "culprit_features": [
+          "features_vertical_band3_energy_6k_12k",
+          "features_vertical_band1_energy_0_2k",
+          "features_vertical_peak_to_peak",
+          "features_vertical_spectral_rms",
+          "features_vertical_mean_abs"
+        ],
+        "rationale": "输入分布发生显著偏移 (max PSI=12.438), 主要特征 features_vertical_band3_energy_6k_12k, features_vertical_band1_energy_0_2k, features_vertical_peak_to_peak, 误差 2170.513→2170.513 变化有限, 判定为协变量漂移, 建议重训适配新分布。",
+        "evidence": {
+          "max_psi": 12.43835,
+          "overall_psi": 7.106406,
+          "baseline_error": 2170.513078,
+          "recent_error": 2170.513078,
+          "error_increase": 0.0
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "covariate 漂移, 重训以适配新分布。",
+        "expected_gain": 0.005,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "rules_fallback",
+        "n_candidates": 1,
+        "shadow_n": 400,
+        "p_value": 0.0,
+        "baseline_score": -2124.511105,
+        "candidate_score": -929.808755,
+        "reason": "增益 1194.7023 且统计显著 (p=0.0000), 批准上线",
+        "delta_score": 1194.70235,
+        "candidates_detail": [
+          {
+            "arm": 6,
+            "policy": {
+              "psi_trigger": 0.1,
+              "min_gain": 0.005,
+              "retrain_window": 2000,
+              "lr": 0.05,
+              "num_leaves": 31
+            },
+            "shadow_score": -929.808755,
+            "delta": 1194.70235,
+            "approved": true,
+            "reason": "增益 1194.7023 且统计显著 (p=0.0000), 批准上线"
+          }
+        ]
+      },
+      "approved": true,
+      "version": "v0002_iter001_lgbm",
+      "gain": 1194.70235,
+      "cost_gpu_seconds": 0.2201,
+      "cost_labels": 100,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 2,
+      "window": [
+        250,
+        750
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "alarm",
+        "overall_psi": 0.61623,
+        "max_psi": 4.04084,
+        "top_features": [
+          [
+            "features_horizontal_band2_energy_2k_6k",
+            4.04084
+          ],
+          [
+            "features_horizontal_spectral_centroid",
+            3.04427
+          ],
+          [
+            "features_horizontal_band3_energy_6k_12k",
+            2.61445
+          ],
+          [
+            "features_vertical_band2_energy_2k_6k",
+            1.82337
+          ],
+          [
+            "features_vertical_band3_energy_6k_12k",
+            1.51075
+          ]
+        ],
+        "drifted_features": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_horizontal_spectral_centroid",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_vertical_band3_energy_6k_12k",
+          "features_horizontal_dominant_freq",
+          "features_vertical_spectral_centroid",
+          "features_vertical_spectral_kurtosis",
+          "features_horizontal_spectral_kurtosis",
+          "features_vertical_dominant_freq",
+          "features_horizontal_rms",
+          "features_horizontal_spectral_rms",
+          "features_horizontal_mean_abs",
+          "features_vertical_spectral_rms",
+          "features_vertical_rms",
+          "features_vertical_mean_abs",
+          "features_vertical_band1_energy_0_2k",
+          "features_horizontal_peak_to_peak",
+          "features_horizontal_peak",
+          "features_vertical_peak_to_peak",
+          "features_horizontal_band1_energy_0_2k",
+          "features_vertical_peak"
+        ],
+        "ks_hits": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_mean_abs",
+          "features_horizontal_peak",
+          "features_horizontal_peak_to_peak",
+          "features_horizontal_rms",
+          "features_horizontal_spectral_centroid",
+          "features_horizontal_spectral_kurtosis",
+          "features_horizontal_spectral_rms",
+          "features_vertical_band1_energy_0_2k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_vertical_band3_energy_6k_12k",
+          "features_vertical_dominant_freq",
+          "features_vertical_mean_abs",
+          "features_vertical_peak",
+          "features_vertical_peak_to_peak",
+          "features_vertical_rms",
+          "features_vertical_spectral_centroid",
+          "features_vertical_spectral_kurtosis",
+          "features_vertical_spectral_rms"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 344.19426,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 22.0
+        }
+      },
+      "attribution": {
+        "drift_type": "covariate",
+        "culprit_features": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_horizontal_spectral_centroid",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_vertical_band3_energy_6k_12k"
+        ],
+        "rationale": "输入分布发生显著偏移 (max PSI=4.041), 主要特征 features_horizontal_band2_energy_2k_6k, features_horizontal_spectral_centroid, features_horizontal_band3_energy_6k_12k, 误差 426.993→344.194 变化有限, 判定为协变量漂移, 建议重训适配新分布。",
+        "evidence": {
+          "max_psi": 4.040838,
+          "overall_psi": 0.616225,
+          "baseline_error": 426.993008,
+          "recent_error": 344.19426,
+          "error_increase": -82.798748
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "covariate 漂移, 重训以适配新分布。",
+        "expected_gain": 0.005,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "rules_fallback",
+        "n_candidates": 3,
+        "shadow_n": 400,
+        "p_value": 0.0,
+        "baseline_score": -600.967069,
+        "candidate_score": -271.173772,
+        "reason": "增益 329.7933 且统计显著 (p=0.0000), 批准上线",
+        "delta_score": 329.793296,
+        "candidates_detail": [
+          {
+            "arm": 6,
+            "policy": {
+              "psi_trigger": 0.1,
+              "min_gain": 0.005,
+              "retrain_window": 2000,
+              "lr": 0.05,
+              "num_leaves": 31
+            },
+            "shadow_score": -271.173772,
+            "delta": 329.793296,
+            "approved": true,
+            "reason": "增益 329.7933 且统计显著 (p=0.0000), 批准上线"
+          },
+          {
+            "arm": 5,
+            "policy": {
+              "psi_trigger": 0.1,
+              "min_gain": 0.005,
+              "retrain_window": 1000,
+              "lr": 0.05,
+              "num_leaves": 31
+            },
+            "shadow_score": -271.173772,
+            "delta": 329.793296,
+            "approved": true,
+            "reason": "增益 329.7933 且统计显著 (p=0.0000), 批准上线"
+          },
+          {
+            "arm": 7,
+            "policy": {
+              "psi_trigger": 0.1,
+              "min_gain": 0.005,
+              "retrain_window": 2000,
+              "lr": 0.1,
+              "num_leaves": 31
+            },
+            "shadow_score": -272.343475,
+            "delta": 328.623594,
+            "approved": true,
+            "reason": "增益 328.6236 且统计显著 (p=0.0000), 批准上线"
+          }
+        ]
+      },
+      "approved": true,
+      "version": "v0003_iter002_lgbm",
+      "gain": 329.793296,
+      "cost_gpu_seconds": 1.2173,
+      "cost_labels": 250,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 3,
+      "window": [
+        500,
+        1000
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "alarm",
+        "overall_psi": 0.32929,
+        "max_psi": 2.94858,
+        "top_features": [
+          [
+            "features_horizontal_band2_energy_2k_6k",
+            2.94858
+          ],
+          [
+            "features_vertical_band2_energy_2k_6k",
+            2.28352
+          ],
+          [
+            "features_horizontal_band3_energy_6k_12k",
+            1.48206
+          ],
+          [
+            "features_horizontal_spectral_centroid",
+            1.09635
+          ],
+          [
+            "features_vertical_band3_energy_6k_12k",
+            0.90445
+          ]
+        ],
+        "drifted_features": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_spectral_centroid",
+          "features_vertical_band3_energy_6k_12k",
+          "features_horizontal_mean_abs",
+          "features_horizontal_rms",
+          "features_horizontal_spectral_rms",
+          "features_vertical_spectral_centroid",
+          "features_vertical_spectral_kurtosis",
+          "features_horizontal_kurtosis"
+        ],
+        "ks_hits": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_kurtosis",
+          "features_horizontal_mean_abs",
+          "features_horizontal_rms",
+          "features_horizontal_spectral_centroid",
+          "features_horizontal_spectral_rms",
+          "features_vertical_band2_energy_2k_6k",
+          "features_vertical_band3_energy_6k_12k",
+          "features_vertical_spectral_centroid",
+          "features_vertical_spectral_kurtosis"
+        ],
+        "concept_drift": true,
+        "label_coverage": 1.0,
+        "error_rate": 278.89796,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 11.0
+        }
+      },
+      "attribution": {
+        "drift_type": "mixed",
+        "culprit_features": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_spectral_centroid",
+          "features_vertical_band3_energy_6k_12k"
+        ],
+        "rationale": "同时出现分布偏移 (max PSI=2.949) 与误差上升 (176.929→278.898), 判定为混合漂移, 建议重训 + 增量样本加权。",
+        "evidence": {
+          "max_psi": 2.948578,
+          "overall_psi": 0.329285,
+          "baseline_error": 176.928686,
+          "recent_error": 278.897964,
+          "error_increase": 101.969277
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "mixed 漂移, 重训以适配新分布。",
+        "expected_gain": 101.969277,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "rules_fallback",
+        "n_candidates": 1,
+        "shadow_n": 400,
+        "p_value": 0.0,
+        "baseline_score": -338.633573,
+        "candidate_score": -237.15107,
+        "reason": "增益 101.4825 且统计显著 (p=0.0000), 批准上线",
+        "delta_score": 101.482502,
+        "candidates_detail": [
+          {
+            "arm": 6,
+            "policy": {
+              "psi_trigger": 0.1,
+              "min_gain": 0.005,
+              "retrain_window": 2000,
+              "lr": 0.05,
+              "num_leaves": 31
+            },
+            "shadow_score": -237.15107,
+            "delta": 101.482502,
+            "approved": true,
+            "reason": "增益 101.4825 且统计显著 (p=0.0000), 批准上线"
+          }
+        ]
+      },
+      "approved": true,
+      "version": "v0004_iter003_lgbm",
+      "gain": 101.482502,
+      "cost_gpu_seconds": 0.4132,
+      "cost_labels": 250,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 4,
+      "window": [
+        750,
+        1250
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "alarm",
+        "overall_psi": 0.30111,
+        "max_psi": 4.14872,
+        "top_features": [
+          [
+            "features_horizontal_band2_energy_2k_6k",
+            4.14872
+          ],
+          [
+            "features_vertical_band2_energy_2k_6k",
+            2.63224
+          ],
+          [
+            "features_vertical_spectral_kurtosis",
+            0.63331
+          ],
+          [
+            "features_vertical_band3_energy_6k_12k",
+            0.52769
+          ],
+          [
+            "features_horizontal_spectral_centroid",
+            0.40162
+          ]
+        ],
+        "drifted_features": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_vertical_spectral_kurtosis",
+          "features_vertical_band3_energy_6k_12k",
+          "features_horizontal_spectral_centroid",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_mean_abs",
+          "features_horizontal_rms",
+          "features_horizontal_spectral_rms"
+        ],
+        "ks_hits": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_mean_abs",
+          "features_horizontal_rms",
+          "features_horizontal_spectral_centroid",
+          "features_horizontal_spectral_rms",
+          "features_vertical_band2_energy_2k_6k",
+          "features_vertical_band3_energy_6k_12k",
+          "features_vertical_spectral_kurtosis"
+        ],
+        "concept_drift": true,
+        "label_coverage": 1.0,
+        "error_rate": 353.83798,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 9.0
+        }
+      },
+      "attribution": {
+        "drift_type": "mixed",
+        "culprit_features": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_vertical_spectral_kurtosis",
+          "features_vertical_band3_energy_6k_12k",
+          "features_horizontal_spectral_centroid"
+        ],
+        "rationale": "同时出现分布偏移 (max PSI=4.149) 与误差上升 (175.702→353.838), 判定为混合漂移, 建议重训 + 增量样本加权。",
+        "evidence": {
+          "max_psi": 4.148725,
+          "overall_psi": 0.301113,
+          "baseline_error": 175.701918,
+          "recent_error": 353.837985,
+          "error_increase": 178.136066
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "mixed 漂移, 重训以适配新分布。",
+        "expected_gain": 178.136066,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "rules_fallback",
+        "n_candidates": 1,
+        "shadow_n": 400,
+        "p_value": 0.0,
+        "baseline_score": -399.044352,
+        "candidate_score": -179.605037,
+        "reason": "增益 219.4393 且统计显著 (p=0.0000), 批准上线",
+        "delta_score": 219.439316,
+        "candidates_detail": [
+          {
+            "arm": 6,
+            "policy": {
+              "psi_trigger": 0.1,
+              "min_gain": 0.005,
+              "retrain_window": 2000,
+              "lr": 0.05,
+              "num_leaves": 31
+            },
+            "shadow_score": -179.605037,
+            "delta": 219.439316,
+            "approved": true,
+            "reason": "增益 219.4393 且统计显著 (p=0.0000), 批准上线"
+          }
+        ]
+      },
+      "approved": true,
+      "version": "v0005_iter004_lgbm",
+      "gain": 219.439316,
+      "cost_gpu_seconds": 0.5014,
+      "cost_labels": 250,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 5,
+      "window": [
+        1000,
+        1500
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "alarm",
+        "overall_psi": 0.21167,
+        "max_psi": 1.6193,
+        "top_features": [
+          [
+            "features_vertical_band2_energy_2k_6k",
+            1.6193
+          ],
+          [
+            "features_horizontal_band2_energy_2k_6k",
+            1.31222
+          ],
+          [
+            "features_horizontal_band3_energy_6k_12k",
+            1.00092
+          ],
+          [
+            "features_horizontal_spectral_centroid",
+            0.82197
+          ],
+          [
+            "features_vertical_band3_energy_6k_12k",
+            0.70627
+          ]
+        ],
+        "drifted_features": [
+          "features_vertical_band2_energy_2k_6k",
+          "features_horizontal_band2_energy_2k_6k",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_spectral_centroid",
+          "features_vertical_band3_energy_6k_12k",
+          "features_horizontal_skewness",
+          "features_horizontal_band1_energy_0_2k",
+          "features_vertical_spectral_centroid",
+          "features_horizontal_spectral_kurtosis",
+          "features_vertical_kurtosis"
+        ],
+        "ks_hits": [
+          "features_horizontal_band1_energy_0_2k",
+          "features_horizontal_band2_energy_2k_6k",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_skewness",
+          "features_horizontal_spectral_centroid",
+          "features_horizontal_spectral_kurtosis",
+          "features_vertical_band2_energy_2k_6k",
+          "features_vertical_band3_energy_6k_12k",
+          "features_vertical_kurtosis",
+          "features_vertical_spectral_centroid"
+        ],
+        "concept_drift": false,
+        "label_coverage": 1.0,
+        "error_rate": 138.57343,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 10.0
+        }
+      },
+      "attribution": {
+        "drift_type": "mixed",
+        "culprit_features": [
+          "features_vertical_band2_energy_2k_6k",
+          "features_horizontal_band2_energy_2k_6k",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_spectral_centroid",
+          "features_vertical_band3_energy_6k_12k"
+        ],
+        "rationale": "同时出现分布偏移 (max PSI=1.619) 与误差上升 (113.205→138.573), 判定为混合漂移, 建议重训 + 增量样本加权。",
+        "evidence": {
+          "max_psi": 1.619303,
+          "overall_psi": 0.211671,
+          "baseline_error": 113.205203,
+          "recent_error": 138.573427,
+          "error_increase": 25.368224
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "mixed 漂移, 重训以适配新分布。",
+        "expected_gain": 25.368224,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "rules_fallback",
+        "n_candidates": 1,
+        "shadow_n": 400,
+        "p_value": 1.0,
+        "baseline_score": -164.609422,
+        "candidate_score": -202.325151,
+        "reason": "候选未优于现网 (delta=-37.7157), 拒绝上线",
+        "delta_score": -37.715729,
+        "candidates_detail": [
+          {
+            "arm": 6,
+            "policy": {
+              "psi_trigger": 0.1,
+              "min_gain": 0.005,
+              "retrain_window": 2000,
+              "lr": 0.05,
+              "num_leaves": 31
+            },
+            "shadow_score": -202.325151,
+            "delta": -37.715729,
+            "approved": false,
+            "reason": "候选未优于现网 (delta=-37.7157), 拒绝上线"
+          }
+        ],
+        "rejected_reason": "候选未优于现网 (delta=-37.7157), 拒绝上线"
+      },
+      "approved": false,
+      "version": null,
+      "gain": 0.0,
+      "cost_gpu_seconds": 0.6593,
+      "cost_labels": 250,
+      "cost_tokens": 0,
+      "rolled_back": false
+    },
+    {
+      "index": 6,
+      "window": [
+        1250,
+        1750
+      ],
+      "drift": {
+        "triggered": true,
+        "severity": "alarm",
+        "overall_psi": 1.15998,
+        "max_psi": 9.73651,
+        "top_features": [
+          [
+            "features_horizontal_band2_energy_2k_6k",
+            9.73651
+          ],
+          [
+            "features_vertical_band2_energy_2k_6k",
+            8.7872
+          ],
+          [
+            "features_horizontal_spectral_centroid",
+            6.39674
+          ],
+          [
+            "features_horizontal_band3_energy_6k_12k",
+            5.93945
+          ],
+          [
+            "features_horizontal_spectral_kurtosis",
+            1.15018
+          ]
+        ],
+        "drifted_features": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_horizontal_spectral_centroid",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_spectral_kurtosis",
+          "features_horizontal_band1_energy_0_2k",
+          "features_vertical_band3_energy_6k_12k",
+          "features_horizontal_skewness",
+          "features_vertical_spectral_centroid",
+          "features_vertical_spectral_rms",
+          "features_vertical_spectral_kurtosis",
+          "features_vertical_rms",
+          "features_vertical_mean_abs",
+          "features_vertical_skewness",
+          "features_vertical_peak_to_peak",
+          "features_vertical_kurtosis",
+          "features_horizontal_kurtosis"
+        ],
+        "ks_hits": [
+          "features_horizontal_band1_energy_0_2k",
+          "features_horizontal_band2_energy_2k_6k",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_kurtosis",
+          "features_horizontal_skewness",
+          "features_horizontal_spectral_centroid",
+          "features_horizontal_spectral_kurtosis",
+          "features_vertical_band2_energy_2k_6k",
+          "features_vertical_band3_energy_6k_12k",
+          "features_vertical_mean_abs",
+          "features_vertical_peak_to_peak",
+          "features_vertical_rms",
+          "features_vertical_skewness",
+          "features_vertical_spectral_centroid",
+          "features_vertical_spectral_kurtosis",
+          "features_vertical_spectral_rms"
+        ],
+        "concept_drift": true,
+        "label_coverage": 1.0,
+        "error_rate": 266.76856,
+        "details": {
+          "n": 500.0,
+          "n_drifted": 17.0
+        }
+      },
+      "attribution": {
+        "drift_type": "mixed",
+        "culprit_features": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_horizontal_spectral_centroid",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_spectral_kurtosis"
+        ],
+        "rationale": "同时出现分布偏移 (max PSI=9.737) 与误差上升 (113.205→266.769), 判定为混合漂移, 建议重训 + 增量样本加权。",
+        "evidence": {
+          "max_psi": 9.73651,
+          "overall_psi": 1.15998,
+          "baseline_error": 113.205203,
+          "recent_error": 266.768562,
+          "error_increase": 153.563359
+        }
+      },
+      "decision": {
+        "action": "retrain",
+        "target_model": "lgbm",
+        "reasoning": "mixed 漂移, 重训以适配新分布。",
+        "expected_gain": 153.563359,
+        "risk_level": "low",
+        "needs_more_labels": false,
+        "source": "rules_fallback",
+        "n_candidates": 1,
+        "shadow_n": 400,
+        "p_value": 0.0,
+        "baseline_score": -337.974046,
+        "candidate_score": -291.054773,
+        "reason": "增益 46.9193 且统计显著 (p=0.0000), 批准上线",
+        "delta_score": 46.919273,
+        "candidates_detail": [
+          {
+            "arm": 6,
+            "policy": {
+              "psi_trigger": 0.1,
+              "min_gain": 0.005,
+              "retrain_window": 2000,
+              "lr": 0.05,
+              "num_leaves": 31
+            },
+            "shadow_score": -291.054773,
+            "delta": 46.919273,
+            "approved": true,
+            "reason": "增益 46.9193 且统计显著 (p=0.0000), 批准上线"
+          }
+        ]
+      },
+      "approved": true,
+      "version": "v0006_iter006_lgbm",
+      "gain": 46.919273,
+      "cost_gpu_seconds": 0.4543,
+      "cost_labels": 250,
+      "cost_tokens": 0,
+      "rolled_back": false
+    }
+  ],
+  "policy_final": {
+    "policy": {
+      "psi_trigger": 0.1,
+      "min_gain": 0.005,
+      "retrain_window": 2000,
+      "lr": 0.05,
+      "num_leaves": 31
+    },
+    "champion": {
+      "psi_trigger": 0.1,
+      "min_gain": 0.005,
+      "retrain_window": 2000,
+      "lr": 0.05,
+      "num_leaves": 31
+    },
+    "champion_efficiency": 0.0,
+    "champion_gain": 1194.70235,
+    "exploring_locked": false,
+    "budget": {
+      "gpu_seconds": 3.466,
+      "labels": 1350,
+      "tokens": 0,
+      "usage_ratio": 0.675
+    },
+    "halted": false,
+    "consecutive_failures": 0,
+    "bandit": {
+      "params": {
+        "psi_trigger": {
+          "value": 0.1,
+          "index": 1,
+          "trials": [
+            0,
+            6,
+            0,
+            0,
+            0
+          ],
+          "means": [
+            null,
+            0.833333,
+            null,
+            null,
+            null
+          ]
+        },
+        "min_gain": {
+          "value": 0.005,
+          "index": 1,
+          "trials": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "means": [
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "retrain_window": {
+          "value": 1000,
+          "index": 1,
+          "trials": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "means": [
+            null,
+            0.5,
+            null,
+            null
+          ]
+        },
+        "lr": {
+          "value": 0.1,
+          "index": 2,
+          "trials": [
+            0,
+            0,
+            1
+          ],
+          "means": [
+            null,
+            null,
+            0.497843
+          ]
+        },
+        "num_leaves": {
+          "value": 31,
+          "index": 1,
+          "trials": [
+            0,
+            0,
+            0
+          ],
+          "means": [
+            null,
+            null,
+            null
+          ]
+        }
+      },
+      "n_actions": 0
+    },
+    "n_actions": 0
+  },
+  "seed": 20261105,
+  "gates": {
+    "min_iterations": 3,
+    "attempted_iterations": 6,
+    "total_iterations": 6,
+    "iteration_gate_passed": true,
+    "tail_score": -239.46284,
+    "baseline_tail_score": -1050.30037,
+    "final_score": -667.65549,
+    "baseline_score": -1546.15737,
+    "baseline_gate_passed": true,
+    "baseline_gate_metric": "tail_score",
+    "hypothesis_cycles": 6,
+    "hypothesis_cycles_with_falsification": 6,
+    "hypothesis_cycle_gate_passed": true,
+    "all_passed": true
+  },
+  "hypothesis_cycles": [
+    {
+      "iteration": 1,
+      "read_history": {
+        "window": [
+          0,
+          500
+        ],
+        "max_psi": 12.43835,
+        "severity": "alarm",
+        "drift_type": "covariate",
+        "culprit_features": [
+          "features_vertical_band3_energy_6k_12k",
+          "features_vertical_band1_energy_0_2k",
+          "features_vertical_peak_to_peak",
+          "features_vertical_spectral_rms",
+          "features_vertical_mean_abs"
+        ],
+        "rationale": "输入分布发生显著偏移 (max PSI=12.438), 主要特征 features_vertical_band3_energy_6k_12k, features_vertical_band1_energy_0_2k, features_vertical_peak_to_peak, 误差 2170.513→2170.513 变化有限, 判定为协变量漂移, 建议重训适配新分布。",
+        "baseline_error": 2170.513078,
+        "recent_iterations": [
+          {
+            "index": 1,
+            "action": "retrain",
+            "approved": true,
+            "gain": 1194.70235
+          }
+        ],
+        "champion_policy": {
+          "psi_trigger": 0.1,
+          "min_gain": 0.005,
+          "retrain_window": 2000,
+          "lr": 0.05,
+          "num_leaves": 31
+        },
+        "summary": "PSI 12.438(alarm) / covariate / 关键特征 ['features_vertical_band3_energy_6k_12k', 'features_vertical_band1_energy_0_2k', 'features_vertical_peak_to_peak']"
+      },
+      "hypothesis": "在 covariate 漂移下, 用最近窗口样本重训并调整策略参数 {'psi_trigger': 0.1, 'min_gain': 0.005, 'retrain_window': 2000, 'lr': 0.05, 'num_leaves': 31} 可降低退化误差",
+      "expected_gain": 0.005,
+      "falsification_criterion": "若影子评估中候选相对现网模型的得分增益 ≤ 0, 或 McNemar/Wilcoxon 检验 p > 0.05, 则该假设不成立, 应拒绝上线",
+      "experiment": {
+        "action": "retrain",
+        "candidates_trained": 1,
+        "shadow_n_samples": 400,
+        "p_value": 0.0,
+        "baseline_score": -2124.511105,
+        "candidate_score": -929.808755,
+        "delta_score": 1194.70235,
+        "cost_gpu_seconds": 0.2201,
+        "cost_labels": 100,
+        "cost_tokens": 0,
+        "summary": "训练 1 个候选, 影子评估增益 1194.7024, p=0.0"
+      },
+      "decision": {
+        "approved": true,
+        "action": "retrain",
+        "reason": "增益 1194.7023 且统计显著 (p=0.0000), 批准上线",
+        "version": "v0002_iter001_lgbm",
+        "rolled_back": false,
+        "source": "rules_fallback",
+        "expected_gain": 0.005
+      },
+      "approved": true,
+      "gain": 1194.70235,
+      "cost_gpu_seconds": 0.2201,
+      "cost_labels": 100,
+      "cost_tokens": 0,
+      "timestamp": 1794741619.67059
+    },
+    {
+      "iteration": 2,
+      "read_history": {
+        "window": [
+          250,
+          750
+        ],
+        "max_psi": 4.040838,
+        "severity": "alarm",
+        "drift_type": "covariate",
+        "culprit_features": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_horizontal_spectral_centroid",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_vertical_band3_energy_6k_12k"
+        ],
+        "rationale": "输入分布发生显著偏移 (max PSI=4.041), 主要特征 features_horizontal_band2_energy_2k_6k, features_horizontal_spectral_centroid, features_horizontal_band3_energy_6k_12k, 误差 426.993→344.194 变化有限, 判定为协变量漂移, 建议重训适配新分布。",
+        "baseline_error": 426.993008,
+        "recent_iterations": [
+          {
+            "index": 1,
+            "action": "retrain",
+            "approved": true,
+            "gain": 1194.70235
+          },
+          {
+            "index": 2,
+            "action": "retrain",
+            "approved": true,
+            "gain": 329.793296
+          }
+        ],
+        "champion_policy": {
+          "psi_trigger": 0.1,
+          "min_gain": 0.005,
+          "retrain_window": 2000,
+          "lr": 0.05,
+          "num_leaves": 31
+        },
+        "summary": "PSI 4.041(alarm) / covariate / 关键特征 ['features_horizontal_band2_energy_2k_6k', 'features_horizontal_spectral_centroid', 'features_horizontal_band3_energy_6k_12k']"
+      },
+      "hypothesis": "在 covariate 漂移下, 用最近窗口样本重训并调整策略参数 {'psi_trigger': 0.1, 'min_gain': 0.005, 'retrain_window': 2000, 'lr': 0.05, 'num_leaves': 31} 可降低退化误差",
+      "expected_gain": 0.005,
+      "falsification_criterion": "若影子评估中候选相对现网模型的得分增益 ≤ 0, 或 McNemar/Wilcoxon 检验 p > 0.05, 则该假设不成立, 应拒绝上线",
+      "experiment": {
+        "action": "retrain",
+        "candidates_trained": 3,
+        "shadow_n_samples": 400,
+        "p_value": 0.0,
+        "baseline_score": -600.967069,
+        "candidate_score": -271.173772,
+        "delta_score": 329.793296,
+        "cost_gpu_seconds": 1.2173,
+        "cost_labels": 250,
+        "cost_tokens": 0,
+        "summary": "训练 3 个候选, 影子评估增益 329.7933, p=0.0"
+      },
+      "decision": {
+        "approved": true,
+        "action": "retrain",
+        "reason": "增益 329.7933 且统计显著 (p=0.0000), 批准上线",
+        "version": "v0003_iter002_lgbm",
+        "rolled_back": false,
+        "source": "rules_fallback",
+        "expected_gain": 0.005
+      },
+      "approved": true,
+      "gain": 329.793296,
+      "cost_gpu_seconds": 1.2173,
+      "cost_labels": 250,
+      "cost_tokens": 0,
+      "timestamp": 1794741621.1414332
+    },
+    {
+      "iteration": 3,
+      "read_history": {
+        "window": [
+          500,
+          1000
+        ],
+        "max_psi": 2.948578,
+        "severity": "alarm",
+        "drift_type": "mixed",
+        "culprit_features": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_spectral_centroid",
+          "features_vertical_band3_energy_6k_12k"
+        ],
+        "rationale": "同时出现分布偏移 (max PSI=2.949) 与误差上升 (176.929→278.898), 判定为混合漂移, 建议重训 + 增量样本加权。",
+        "baseline_error": 176.928686,
+        "recent_iterations": [
+          {
+            "index": 1,
+            "action": "retrain",
+            "approved": true,
+            "gain": 1194.70235
+          },
+          {
+            "index": 2,
+            "action": "retrain",
+            "approved": true,
+            "gain": 329.793296
+          },
+          {
+            "index": 3,
+            "action": "retrain",
+            "approved": true,
+            "gain": 101.482502
+          }
+        ],
+        "champion_policy": {
+          "psi_trigger": 0.1,
+          "min_gain": 0.005,
+          "retrain_window": 2000,
+          "lr": 0.05,
+          "num_leaves": 31
+        },
+        "summary": "PSI 2.949(alarm) / mixed / 关键特征 ['features_horizontal_band2_energy_2k_6k', 'features_vertical_band2_energy_2k_6k', 'features_horizontal_band3_energy_6k_12k']"
+      },
+      "hypothesis": "在 mixed 漂移下, 用最近窗口样本重训并调整策略参数 {'psi_trigger': 0.1, 'min_gain': 0.005, 'retrain_window': 2000, 'lr': 0.05, 'num_leaves': 31} 可降低退化误差",
+      "expected_gain": 101.969277,
+      "falsification_criterion": "若影子评估中候选相对现网模型的得分增益 ≤ 0, 或 McNemar/Wilcoxon 检验 p > 0.05, 则该假设不成立, 应拒绝上线",
+      "experiment": {
+        "action": "retrain",
+        "candidates_trained": 1,
+        "shadow_n_samples": 400,
+        "p_value": 0.0,
+        "baseline_score": -338.633573,
+        "candidate_score": -237.15107,
+        "delta_score": 101.482502,
+        "cost_gpu_seconds": 0.4132,
+        "cost_labels": 250,
+        "cost_tokens": 0,
+        "summary": "训练 1 个候选, 影子评估增益 101.4825, p=0.0"
+      },
+      "decision": {
+        "approved": true,
+        "action": "retrain",
+        "reason": "增益 101.4825 且统计显著 (p=0.0000), 批准上线",
+        "version": "v0004_iter003_lgbm",
+        "rolled_back": false,
+        "source": "rules_fallback",
+        "expected_gain": 101.969277
+      },
+      "approved": true,
+      "gain": 101.482502,
+      "cost_gpu_seconds": 0.4132,
+      "cost_labels": 250,
+      "cost_tokens": 0,
+      "timestamp": 1794741621.702911
+    },
+    {
+      "iteration": 4,
+      "read_history": {
+        "window": [
+          750,
+          1250
+        ],
+        "max_psi": 4.148725,
+        "severity": "alarm",
+        "drift_type": "mixed",
+        "culprit_features": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_vertical_spectral_kurtosis",
+          "features_vertical_band3_energy_6k_12k",
+          "features_horizontal_spectral_centroid"
+        ],
+        "rationale": "同时出现分布偏移 (max PSI=4.149) 与误差上升 (175.702→353.838), 判定为混合漂移, 建议重训 + 增量样本加权。",
+        "baseline_error": 175.701918,
+        "recent_iterations": [
+          {
+            "index": 2,
+            "action": "retrain",
+            "approved": true,
+            "gain": 329.793296
+          },
+          {
+            "index": 3,
+            "action": "retrain",
+            "approved": true,
+            "gain": 101.482502
+          },
+          {
+            "index": 4,
+            "action": "retrain",
+            "approved": true,
+            "gain": 219.439316
+          }
+        ],
+        "champion_policy": {
+          "psi_trigger": 0.1,
+          "min_gain": 0.005,
+          "retrain_window": 2000,
+          "lr": 0.05,
+          "num_leaves": 31
+        },
+        "summary": "PSI 4.149(alarm) / mixed / 关键特征 ['features_horizontal_band2_energy_2k_6k', 'features_vertical_band2_energy_2k_6k', 'features_vertical_spectral_kurtosis']"
+      },
+      "hypothesis": "在 mixed 漂移下, 用最近窗口样本重训并调整策略参数 {'psi_trigger': 0.1, 'min_gain': 0.005, 'retrain_window': 2000, 'lr': 0.05, 'num_leaves': 31} 可降低退化误差",
+      "expected_gain": 178.136066,
+      "falsification_criterion": "若影子评估中候选相对现网模型的得分增益 ≤ 0, 或 McNemar/Wilcoxon 检验 p > 0.05, 则该假设不成立, 应拒绝上线",
+      "experiment": {
+        "action": "retrain",
+        "candidates_trained": 1,
+        "shadow_n_samples": 400,
+        "p_value": 0.0,
+        "baseline_score": -399.044352,
+        "candidate_score": -179.605037,
+        "delta_score": 219.439316,
+        "cost_gpu_seconds": 0.5014,
+        "cost_labels": 250,
+        "cost_tokens": 0,
+        "summary": "训练 1 个候选, 影子评估增益 219.4393, p=0.0"
+      },
+      "decision": {
+        "approved": true,
+        "action": "retrain",
+        "reason": "增益 219.4393 且统计显著 (p=0.0000), 批准上线",
+        "version": "v0005_iter004_lgbm",
+        "rolled_back": false,
+        "source": "rules_fallback",
+        "expected_gain": 178.136066
+      },
+      "approved": true,
+      "gain": 219.439316,
+      "cost_gpu_seconds": 0.5014,
+      "cost_labels": 250,
+      "cost_tokens": 0,
+      "timestamp": 1794741622.3517473
+    },
+    {
+      "iteration": 5,
+      "read_history": {
+        "window": [
+          1000,
+          1500
+        ],
+        "max_psi": 1.619303,
+        "severity": "alarm",
+        "drift_type": "mixed",
+        "culprit_features": [
+          "features_vertical_band2_energy_2k_6k",
+          "features_horizontal_band2_energy_2k_6k",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_spectral_centroid",
+          "features_vertical_band3_energy_6k_12k"
+        ],
+        "rationale": "同时出现分布偏移 (max PSI=1.619) 与误差上升 (113.205→138.573), 判定为混合漂移, 建议重训 + 增量样本加权。",
+        "baseline_error": 113.205203,
+        "recent_iterations": [
+          {
+            "index": 3,
+            "action": "retrain",
+            "approved": true,
+            "gain": 101.482502
+          },
+          {
+            "index": 4,
+            "action": "retrain",
+            "approved": true,
+            "gain": 219.439316
+          },
+          {
+            "index": 5,
+            "action": "retrain",
+            "approved": false,
+            "gain": 0.0
+          }
+        ],
+        "champion_policy": {
+          "psi_trigger": 0.1,
+          "min_gain": 0.005,
+          "retrain_window": 2000,
+          "lr": 0.05,
+          "num_leaves": 31
+        },
+        "summary": "PSI 1.619(alarm) / mixed / 关键特征 ['features_vertical_band2_energy_2k_6k', 'features_horizontal_band2_energy_2k_6k', 'features_horizontal_band3_energy_6k_12k']"
+      },
+      "hypothesis": "在 mixed 漂移下, 用最近窗口样本重训并调整策略参数 {'psi_trigger': 0.1, 'min_gain': 0.005, 'retrain_window': 2000, 'lr': 0.05, 'num_leaves': 31} 可降低退化误差",
+      "expected_gain": 25.368224,
+      "falsification_criterion": "若影子评估中候选相对现网模型的得分增益 ≤ 0, 或 McNemar/Wilcoxon 检验 p > 0.05, 则该假设不成立, 应拒绝上线",
+      "experiment": {
+        "action": "retrain",
+        "candidates_trained": 1,
+        "shadow_n_samples": 400,
+        "p_value": 1.0,
+        "baseline_score": -164.609422,
+        "candidate_score": -202.325151,
+        "delta_score": 0.0,
+        "cost_gpu_seconds": 0.6593,
+        "cost_labels": 250,
+        "cost_tokens": 0,
+        "summary": "训练 1 个候选, 影子评估增益 0.0000, p=1.0"
+      },
+      "decision": {
+        "approved": false,
+        "action": "retrain",
+        "reason": "候选未优于现网 (delta=-37.7157), 拒绝上线",
+        "version": null,
+        "rolled_back": false,
+        "source": "rules_fallback",
+        "expected_gain": 25.368224
+      },
+      "approved": false,
+      "gain": 0.0,
+      "cost_gpu_seconds": 0.6593,
+      "cost_labels": 250,
+      "cost_tokens": 0,
+      "timestamp": 1794741623.134503
+    },
+    {
+      "iteration": 6,
+      "read_history": {
+        "window": [
+          1250,
+          1750
+        ],
+        "max_psi": 9.73651,
+        "severity": "alarm",
+        "drift_type": "mixed",
+        "culprit_features": [
+          "features_horizontal_band2_energy_2k_6k",
+          "features_vertical_band2_energy_2k_6k",
+          "features_horizontal_spectral_centroid",
+          "features_horizontal_band3_energy_6k_12k",
+          "features_horizontal_spectral_kurtosis"
+        ],
+        "rationale": "同时出现分布偏移 (max PSI=9.737) 与误差上升 (113.205→266.769), 判定为混合漂移, 建议重训 + 增量样本加权。",
+        "baseline_error": 113.205203,
+        "recent_iterations": [
+          {
+            "index": 4,
+            "action": "retrain",
+            "approved": true,
+            "gain": 219.439316
+          },
+          {
+            "index": 5,
+            "action": "retrain",
+            "approved": false,
+            "gain": 0.0
+          },
+          {
+            "index": 6,
+            "action": "retrain",
+            "approved": true,
+            "gain": 46.919273
+          }
+        ],
+        "champion_policy": {
+          "psi_trigger": 0.1,
+          "min_gain": 0.005,
+          "retrain_window": 2000,
+          "lr": 0.05,
+          "num_leaves": 31
+        },
+        "summary": "PSI 9.737(alarm) / mixed / 关键特征 ['features_horizontal_band2_energy_2k_6k', 'features_vertical_band2_energy_2k_6k', 'features_horizontal_spectral_centroid']"
+      },
+      "hypothesis": "在 mixed 漂移下, 用最近窗口样本重训并调整策略参数 {'psi_trigger': 0.1, 'min_gain': 0.005, 'retrain_window': 2000, 'lr': 0.05, 'num_leaves': 31} 可降低退化误差",
+      "expected_gain": 153.563359,
+      "falsification_criterion": "若影子评估中候选相对现网模型的得分增益 ≤ 0, 或 McNemar/Wilcoxon 检验 p > 0.05, 则该假设不成立, 应拒绝上线",
+      "experiment": {
+        "action": "retrain",
+        "candidates_trained": 1,
+        "shadow_n_samples": 400,
+        "p_value": 0.0,
+        "baseline_score": -337.974046,
+        "candidate_score": -291.054773,
+        "delta_score": 46.919273,
+        "cost_gpu_seconds": 0.4543,
+        "cost_labels": 250,
+        "cost_tokens": 0,
+        "summary": "训练 1 个候选, 影子评估增益 46.9193, p=0.0"
+      },
+      "decision": {
+        "approved": true,
+        "action": "retrain",
+        "reason": "增益 46.9193 且统计显著 (p=0.0000), 批准上线",
+        "version": "v0006_iter006_lgbm",
+        "rolled_back": false,
+        "source": "rules_fallback",
+        "expected_gain": 153.563359
+      },
+      "approved": true,
+      "gain": 46.919273,
+      "cost_gpu_seconds": 0.4543,
+      "cost_labels": 250,
+      "cost_tokens": 0,
+      "timestamp": 1794741623.7364287
+    }
+  ]
+}

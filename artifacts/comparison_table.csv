@@ -1,0 +1,4 @@
+﻿profile,name,metric,direction,official_baseline,system_initial,system_final,gain_pct,cycles,promotions
+A,气体分类,Macro-F1,higher,0.714,0.7224,0.9707,35.95,4,0
+B,轴承 RUL,RMSE (分钟),lower,681.1598,639.4007,636.6707,6.53,6,1
+C,发动机 RUL,RMSE (循环),lower,52.8686,50.7706,44.4929,15.84,5,1

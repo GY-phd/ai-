@@ -1,0 +1,115 @@
+{
+  "config": {
+    "hidden": 96,
+    "epochs": 400,
+    "learning_rate": 0.003,
+    "batch_size": 128,
+    "feature_transform": "eng34",
+    "activation": "tanh",
+    "seed": 42,
+    "floor": 0.02,
+    "cap": 3000.0,
+    "rate_limit": 0.25,
+    "weight_decay": 0.01
+  },
+  "official_split": {
+    "official_rmse": 681.1598326043113,
+    "engine_rmse": 716.7236271966414,
+    "official_mae": 563.1058414514887,
+    "engine_mae": 570.1443716540999,
+    "per_bearing": {
+      "xjtu_Bearing1_4": {
+        "official_rmse": 241.9807988305028,
+        "engine_rmse": 60.45300766658357
+      },
+      "xjtu_Bearing2_4": {
+        "official_rmse": 390.81504161336534,
+        "engine_rmse": 19.5067687035767
+      },
+      "xjtu_Bearing3_4": {
+        "official_rmse": 710.8130722393482,
+        "engine_rmse": 754.3179559391818
+      }
+    }
+  },
+  "leave_one_bearing_out": {
+    "official_mean": 761.2512194051699,
+    "engine_mean": 389.32118851234605,
+    "official_median": 878.8176048390624,
+    "engine_median": 182.57240713209262,
+    "official_worst": 1385.7974713070746,
+    "engine_worst": 1268.5065596335783,
+    "wins": 8,
+    "folds": 9,
+    "gain_pct": 48.86,
+    "per_fold": [
+      {
+        "bearing": "xjtu_Bearing1_1",
+        "official_rmse": 541.5378556262539,
+        "engine_rmse": 60.286258025648
+      },
+      {
+        "bearing": "xjtu_Bearing1_2",
+        "official_rmse": 228.71464012199942,
+        "engine_rmse": 79.46571274445948
+      },
+      {
+        "bearing": "xjtu_Bearing1_3",
+        "official_rmse": 1059.3485725908636,
+        "engine_rmse": 76.84411545911352
+      },
+      {
+        "bearing": "xjtu_Bearing2_1",
+        "official_rmse": 244.58298956213008,
+        "engine_rmse": 240.8602217574376
+      },
+      {
+        "bearing": "xjtu_Bearing2_2",
+        "official_rmse": 932.6380304593022,
+        "engine_rmse": 80.02733653314229
+      },
+      {
+        "bearing": "xjtu_Bearing2_3",
+        "official_rmse": 217.42483391740927,
+        "engine_rmse": 267.52702534118254
+      },
+      {
+        "bearing": "xjtu_Bearing3_1",
+        "official_rmse": 1385.7974713070746,
+        "engine_rmse": 1268.5065596335783
+      },
+      {
+        "bearing": "xjtu_Bearing3_2",
+        "official_rmse": 1362.3989762224335,
+        "engine_rmse": 1247.8010599844597
+      },
+      {
+        "bearing": "xjtu_Bearing3_3",
+        "official_rmse": 878.8176048390624,
+        "engine_rmse": 182.57240713209262
+      }
+    ]
+  },
+  "unseen_condition": {
+    "official_mean": 802.8478217171023,
+    "engine_mean": 501.6491710493495,
+    "gain_pct": 37.52,
+    "per_condition": [
+      {
+        "condition": "Bearing1",
+        "official_rmse": 694.9193243223204,
+        "engine_rmse": 73.91061199300403
+      },
+      {
+        "condition": "Bearing2",
+        "official_rmse": 408.3680541618285,
+        "engine_rmse": 238.05618249777578
+      },
+      {
+        "condition": "Bearing3",
+        "official_rmse": 1305.256086667158,
+        "engine_rmse": 1192.9807186572687
+      }
+    ]
+  }
+}

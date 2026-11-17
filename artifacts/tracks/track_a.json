@@ -1,0 +1,1364 @@
+{
+  "train_class_counts": {
+    "Ethanol": 90,
+    "Ethylene": 98,
+    "Ammonia": 83,
+    "Acetaldehyde": 30,
+    "Acetone": 70,
+    "Toluene": 74
+  },
+  "validation_class_counts": {
+    "Ethanol": 164,
+    "Ethylene": 334,
+    "Ammonia": 100,
+    "Acetaldehyde": 109,
+    "Acetone": 532,
+    "Toluene": 5
+  },
+  "train_batches": [
+    1
+  ],
+  "validation_batches": [
+    2
+  ],
+  "candidates": {
+    "raw + mlp": {
+      "macro_f1": 0.7227084743182236,
+      "accuracy": 0.8794212218649518,
+      "per_class_f1": {
+        "Ethanol": 0.684,
+        "Ethylene": 0.9408,
+        "Ammonia": 1.0,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.9972,
+        "Toluene": 0.7143
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          158,
+          6,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          32,
+          302,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          100,
+          0,
+          0,
+          0
+        ],
+        [
+          108,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          529,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "raw + mlp + balanced": {
+      "macro_f1": 0.712256532415258,
+      "accuracy": 0.8665594855305466,
+      "per_class_f1": {
+        "Ethanol": 0.6639,
+        "Ethylene": 0.9258,
+        "Ammonia": 0.9744,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.9953,
+        "Toluene": 0.7143
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          158,
+          6,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          41,
+          293,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          5,
+          0,
+          95,
+          0,
+          0,
+          0
+        ],
+        [
+          108,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          527,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "batch-norm + mlp": {
+      "macro_f1": 0.5095958633105847,
+      "accuracy": 0.7178456591639871,
+      "per_class_f1": {
+        "Ethanol": 0.3153,
+        "Ethylene": 0.8126,
+        "Ammonia": 0.8743,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.972,
+        "Toluene": 0.0833
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          73,
+          5,
+          2,
+          5,
+          0,
+          79
+        ],
+        [
+          101,
+          232,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          20,
+          0,
+          80,
+          0,
+          0,
+          0
+        ],
+        [
+          105,
+          0,
+          0,
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          503,
+          27
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "batch-norm + mlp + balanced": {
+      "macro_f1": 0.5038224384146204,
+      "accuracy": 0.7033762057877814,
+      "per_class_f1": {
+        "Ethanol": 0.3025,
+        "Ethylene": 0.7828,
+        "Ammonia": 0.8743,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.969,
+        "Toluene": 0.0943
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          72,
+          5,
+          2,
+          21,
+          0,
+          64
+        ],
+        [
+          115,
+          218,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          20,
+          0,
+          80,
+          0,
+          0,
+          0
+        ],
+        [
+          105,
+          0,
+          0,
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          4,
+          500,
+          28
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "batch-norm + logreg": {
+      "macro_f1": 0.5855102715855416,
+      "accuracy": 0.819935691318328,
+      "per_class_f1": {
+        "Ethanol": 0.574,
+        "Ethylene": 0.939,
+        "Ammonia": 0.8791,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.974,
+        "Toluene": 0.1471
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          130,
+          5,
+          2,
+          0,
+          0,
+          27
+        ],
+        [
+          34,
+          300,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          20,
+          0,
+          80,
+          0,
+          0,
+          0
+        ],
+        [
+          105,
+          0,
+          0,
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          505,
+          27
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "raw + logreg": {
+      "macro_f1": 0.3482570756073436,
+      "accuracy": 0.3022508038585209,
+      "per_class_f1": {
+        "Ethanol": 0.0512,
+        "Ethylene": 0.8319,
+        "Ammonia": 0.5195,
+        "Acetaldehyde": 0.036,
+        "Acetone": 0.026,
+        "Toluene": 0.625
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          22,
+          3,
+          133,
+          0,
+          0,
+          6
+        ],
+        [
+          42,
+          240,
+          52,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          100,
+          0,
+          0,
+          0
+        ],
+        [
+          107,
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          525,
+          0,
+          0,
+          0,
+          7,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    }
+  },
+  "official_baseline_validation": {
+    "macro_f1": 0.7140297220788709,
+    "accuracy": 0.8786173633440515,
+    "per_class_f1": {
+      "Ethanol": 0.684,
+      "Ethylene": 0.9423,
+      "Ammonia": 0.995,
+      "Acetaldehyde": 0.0,
+      "Acetone": 0.9962,
+      "Toluene": 0.6667
+    },
+    "per_class_support": {
+      "Ethanol": 164,
+      "Ethylene": 334,
+      "Ammonia": 100,
+      "Acetaldehyde": 109,
+      "Acetone": 532,
+      "Toluene": 5
+    },
+    "confusion_matrix": [
+      [
+        158,
+        5,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        32,
+        302,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        100,
+        0,
+        0,
+        0
+      ],
+      [
+        108,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        528,
+        4
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        5
+      ]
+    ]
+  },
+  "capacity_sweep": {
+    "raw/mlp/h16/e20": {
+      "macro_f1": 0.7076464157168724,
+      "accuracy": 0.8786173633440515,
+      "per_class_f1": {
+        "Ethanol": 0.6868,
+        "Ethylene": 0.9437,
+        "Ammonia": 0.995,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.9953,
+        "Toluene": 0.625
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          159,
+          4,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          32,
+          302,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          100,
+          0,
+          0,
+          0
+        ],
+        [
+          108,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          527,
+          5
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "raw/mlp/h16/e50": {
+      "macro_f1": 0.6675692148329481,
+      "accuracy": 0.8585209003215434,
+      "per_class_f1": {
+        "Ethanol": 0.6516,
+        "Ethylene": 0.947,
+        "Ammonia": 0.8391,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.9962,
+        "Toluene": 0.5714
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          159,
+          4,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          30,
+          304,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          27,
+          0,
+          73,
+          0,
+          0,
+          0
+        ],
+        [
+          108,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          528,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          0,
+          4
+        ]
+      ]
+    },
+    "raw/mlp/h16/e150": {
+      "macro_f1": 0.6278245200010052,
+      "accuracy": 0.8231511254019293,
+      "per_class_f1": {
+        "Ethanol": 0.5962,
+        "Ethylene": 0.9272,
+        "Ammonia": 0.5816,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.9953,
+        "Toluene": 0.6667
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          158,
+          5,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          41,
+          293,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          59,
+          0,
+          41,
+          0,
+          0,
+          0
+        ],
+        [
+          108,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          527,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "raw/mlp/h16/e400": {
+      "macro_f1": 0.5725098156561963,
+      "accuracy": 0.8070739549839229,
+      "per_class_f1": {
+        "Ethanol": 0.5688,
+        "Ethylene": 0.9306,
+        "Ammonia": 0.3333,
+        "Acetaldehyde": 0.0179,
+        "Acetone": 0.9962,
+        "Toluene": 0.5882
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          155,
+          5,
+          0,
+          1,
+          0,
+          3
+        ],
+        [
+          39,
+          295,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          80,
+          0,
+          20,
+          0,
+          0,
+          0
+        ],
+        [
+          107,
+          0,
+          0,
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          528,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "raw/mlp/h32/e20": {
+      "macro_f1": 0.7187354630392223,
+      "accuracy": 0.8858520900321544,
+      "per_class_f1": {
+        "Ethanol": 0.6976,
+        "Ethylene": 0.9569,
+        "Ammonia": 0.995,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.9962,
+        "Toluene": 0.6667
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          158,
+          5,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          23,
+          311,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          100,
+          0,
+          0,
+          0
+        ],
+        [
+          108,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          528,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "raw/mlp/h32/e50": {
+      "macro_f1": 0.7227084743182236,
+      "accuracy": 0.8794212218649518,
+      "per_class_f1": {
+        "Ethanol": 0.684,
+        "Ethylene": 0.9408,
+        "Ammonia": 1.0,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.9972,
+        "Toluene": 0.7143
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          158,
+          6,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          32,
+          302,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          100,
+          0,
+          0,
+          0
+        ],
+        [
+          108,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          529,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "raw/mlp/h32/e150": {
+      "macro_f1": 0.6218348509770832,
+      "accuracy": 0.8207395498392283,
+      "per_class_f1": {
+        "Ethanol": 0.5918,
+        "Ethylene": 0.9325,
+        "Ammonia": 0.4962,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.9962,
+        "Toluene": 0.7143
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          158,
+          6,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          37,
+          297,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          67,
+          0,
+          33,
+          0,
+          0,
+          0
+        ],
+        [
+          108,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          528,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "raw/mlp/h32/e400": {
+      "macro_f1": 0.5547591005159812,
+      "accuracy": 0.8038585209003215,
+      "per_class_f1": {
+        "Ethanol": 0.5694,
+        "Ethylene": 0.9371,
+        "Ammonia": 0.1651,
+        "Acetaldehyde": 0.0357,
+        "Acetone": 0.9962,
+        "Toluene": 0.625
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          158,
+          4,
+          0,
+          0,
+          0,
+          2
+        ],
+        [
+          36,
+          298,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          91,
+          0,
+          9,
+          0,
+          0,
+          0
+        ],
+        [
+          106,
+          0,
+          0,
+          2,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          528,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "raw/mlp/h64/e20": {
+      "macro_f1": 0.7165034061977679,
+      "accuracy": 0.8818327974276527,
+      "per_class_f1": {
+        "Ethanol": 0.6886,
+        "Ethylene": 0.9475,
+        "Ammonia": 1.0,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.9962,
+        "Toluene": 0.6667
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          157,
+          7,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          27,
+          307,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          100,
+          0,
+          0,
+          0
+        ],
+        [
+          108,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          528,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "raw/mlp/h64/e50": {
+      "macro_f1": 0.7093611551166915,
+      "accuracy": 0.8665594855305466,
+      "per_class_f1": {
+        "Ethanol": 0.6653,
+        "Ethylene": 0.934,
+        "Ammonia": 0.9474,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.9953,
+        "Toluene": 0.7143
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          159,
+          5,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          37,
+          297,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          10,
+          0,
+          90,
+          0,
+          0,
+          0
+        ],
+        [
+          108,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          527,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "raw/mlp/h64/e150": {
+      "macro_f1": 0.4898843908793516,
+      "accuracy": 0.7797427652733119,
+      "per_class_f1": {
+        "Ethanol": 0.5471,
+        "Ethylene": 0.9323,
+        "Ammonia": 0.0,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.9838,
+        "Toluene": 0.4762
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          154,
+          5,
+          0,
+          0,
+          0,
+          5
+        ],
+        [
+          38,
+          296,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          100,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          107,
+          0,
+          0,
+          0,
+          0,
+          2
+        ],
+        [
+          0,
+          0,
+          0,
+          13,
+          515,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    },
+    "raw/mlp/h64/e400": {
+      "macro_f1": 0.40302375029957954,
+      "accuracy": 0.727491961414791,
+      "per_class_f1": {
+        "Ethanol": 0.3849,
+        "Ethylene": 0.9323,
+        "Ammonia": 0.0,
+        "Acetaldehyde": 0.0,
+        "Acetone": 0.9759,
+        "Toluene": 0.125
+      },
+      "per_class_support": {
+        "Ethanol": 164,
+        "Ethylene": 334,
+        "Ammonia": 100,
+        "Acetaldehyde": 109,
+        "Acetone": 532,
+        "Toluene": 5
+      },
+      "confusion_matrix": [
+        [
+          97,
+          5,
+          0,
+          0,
+          0,
+          62
+        ],
+        [
+          38,
+          296,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          100,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          105,
+          0,
+          0,
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          21,
+          507,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ]
+    }
+  },
+  "decision": {
+    "winner": "raw + mlp",
+    "macro_f1": 0.7227,
+    "official_macro_f1": 0.714,
+    "gain_pct": 1.22
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "A": {
+    "profile": "A",
+    "parameter_count": 4326,
+    "train_in_sample": {
+      "macro_f1": 0.9557538394951876,
+      "accuracy": 0.9730337078651685,
+      "confusion_matrix": [
+        [
+          89,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          98,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          81,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          21,
+          0,
+          7
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          70,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          74
+        ]
+      ],
+      "labels": [
+        "Ethanol",
+        "Ethylene",
+        "Ammonia",
+        "Acetaldehyde",
+        "Acetone",
+        "Toluene"
+      ]
+    },
+    "validation": {
+      "macro_f1": 0.7140297220788709,
+      "accuracy": 0.8786173633440515,
+      "confusion_matrix": [
+        [
+          158,
+          5,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          32,
+          302,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          100,
+          0,
+          0,
+          0
+        ],
+        [
+          108,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          528,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
+      ],
+      "labels": [
+        "Ethanol",
+        "Ethylene",
+        "Ammonia",
+        "Acetaldehyde",
+        "Acetone",
+        "Toluene"
+      ]
+    },
+    "generalisation_gap": 0.2417
+  },
+  "B": {
+    "profile": "B",
+    "parameter_count": 865,
+    "train_in_sample": {
+      "rmse": 233.3578239319839,
+      "mae": 167.2222699905699
+    },
+    "validation": {
+      "rmse": 681.1598326043113,
+      "mae": 563.1058414514887
+    },
+    "generalisation_gap": 447.802
+  },
+  "C": {
+    "profile": "C",
+    "parameter_count": 833,
+    "train_in_sample": {
+      "rmse": 55.38038477916956,
+      "mae": 40.580370311027536,
+      "nasa_asym_score": 245179.9786129674,
+      "nasa_asym_score_mean": 2.168026763106645,
+      "over_predict_rate": 0.5681454429696964
+    },
+    "validation": {
+      "rmse": 52.86857256611151,
+      "mae": 38.89982982666355,
+      "nasa_asym_score": 49966.18977821033,
+      "nasa_asym_score_mean": 2.167824624851852,
+      "over_predict_rate": 0.5718686277061912
+    },
+    "generalisation_gap": -2.5118
+  }
+}

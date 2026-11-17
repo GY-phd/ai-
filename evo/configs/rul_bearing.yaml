@@ -1,0 +1,190 @@
+# ===================================================================
+# 赛题 B 配置 — 滚动轴承剩余寿命预测 (XJTU-SY)
+# CPU-only, 回归任务, 主指标 RMSE(分钟)
+#
+# 用法:  python -m evo run --config configs/rul_bearing.yaml
+# ===================================================================
+
+paths:
+  # 官方数据包根目录 (赛题组提供)
+  data_root: "D:/GY/deepseek/cpu-b-rul-20261110-v1/public"
+  # 模型产出目录
+  artifacts_root: "artifacts/rul_b"
+  # 审计日志 (append-only, 防篡改)
+  audit_log: "artifacts/rul_b/audit/audit.jsonl"
+  # 影子评估缓存
+  shadow_root: "artifacts/rul_b/shadow"
+
+runtime:
+  seed: 20261110
+  # 轴承流窗口: 越小迭代越多, 越能体现长期适应能力。
+  # 250 → 留出轴承 (2538 样本) 可跑约 18 轮
+  window_size: 250
+  window_step: 125
+  # 标签延迟: 工业现场 RUL 标签滞后到达 (快照需走完全周期才知剩余寿命)
+  label_delay: 0
+  offline: true
+
+data:
+  # 赛题 JSONL 格式
+  format: "jsonl"
+  train_file: "train.jsonl"
+  valid_file: "validation.jsonl"
+  # 平台提供的真实测试流 (本地没有时按轴承留出构造)
+  stream_file: "stream.jsonl"
+  # 留出轴承数 (0 = 自动挑最长的若干根)。按轴承留出保证流里的轴承
+  # 从未参与初始训练 —— 与赛题"按整根轴承隔离"的语义一致。
+  # 注意: 留出越多, 初始训练数据越少, 基线越弱。1 根最长轴承即可提供
+  # 2500+ 样本的流, 同时保留 8 根轴承用于训练。
+  n_holdout_bearings: 1
+  holdout_bearings: []
+  feature_cols: []
+  label_col: "answer"
+  # 回归任务: RUL (分钟)
+  task: "regression"
+
+drift:
+  psi_warn: 0.1
+  psi_alarm: 0.25
+  ks_pvalue: 0.01
+  # 轴承流窗口较小, 降低最小动作样本量以保证能触发
+  min_samples_for_action: 100
+  psi_bins: 10
+
+attribution:
+  n_error_bins: 5
+  min_label_coverage: 0.2
+  # 误差上升的绝对门限 (分钟)。RUL 量级是几百~几千分钟,
+  # 所以绝对门限要比分类任务大一个数量级。
+  abs_error_margin: 60.0
+
+model:
+  # 候选模型族 (回归版)
+  #
+  # **实测结论 (art/bench2.txt, 在官方留出轴承 Bearing1_4/2_4/3_4 上)**:
+  #   lgbm(200,lr.05,l31)   RMSE = 694.80   <- 原基线
+  #   mlp(128)              RMSE = 539.24   (-22.4%)
+  #   mlp(256)              RMSE = 521.78   (-24.8%)
+  #   mlp(256,128)          RMSE = 553.77
+  #
+  # 为什么 MLP 完胜 LightGBM:
+  #   RUL = (总快照数 - 当前快照) 是**结构性派生量**, 与振动特征之间是
+  #   高度非线性的映射 (不同轴承的退化轨迹形状差异大)。树模型用阶梯
+  #   划分逼近这条光滑曲面, 分辨率不足; MLP 的连续隐层映射拟合得更准。
+  #   官方基线本身就是 34->24->1 的 MLP, 说明赛题设计者也预期这类解法。
+  #
+  # 因此把 **mlp 提为 base**, lgbm 保留为可被策略层探索替换的挑战者
+  # (多模型族让 champion-challenger 机制有真正的选择空间)。
+  candidates: ["mlp", "lgbm", "rf", "extra_trees", "logreg"]
+  base: "mlp"
+  mlp_params:
+    # 容量是 RUL 场景的主要瓶颈。实测 (art/bench2.txt, 官方留出轴承):
+    #   mlp(128)      RMSE=539.24
+    #   mlp(256)      RMSE=521.07   <- 最优
+    #   mlp(256,128)  RMSE=553.77
+    #   mlp(512)      RMSE=617.66   <- 过拟合, 反而更差
+    hidden_layer_sizes: [256]
+    # 权重衰减: 实测 1e-4 与 1e-3 基本持平 (521.07 vs 521.78), 1e-2 更差。
+    alpha: 0.0001
+    # Adam, 与官方基线的 lr=0.003 对齐。
+    learning_rate_init: 0.003
+    # 迭代上限。sklearn 的 MLP 无早停收敛, 需给足迭代次数。
+    max_iter: 1200
+    random_state: 42
+    solver: "adam"
+    early_stopping: false
+  lgbm_params:
+    n_estimators: 200
+    learning_rate: 0.05
+    num_leaves: 31
+    subsample: 0.9
+    colsample_bytree: 0.9
+    random_state: 42
+    # RUL 重尾分布 → 用 L2 之外的选择会不稳, 这里保持默认 L2
+    verbose: -1
+  rf_params:
+    n_estimators: 300
+    random_state: 42
+    n_jobs: -1
+  extra_trees_params:
+    n_estimators: 300
+    random_state: 42
+    n_jobs: -1
+  logreg_params:
+    alpha: 1.0
+    random_state: 42
+  calibrate: false
+  # 早停开关。
+  # **实测结论: RUL 场景关闭早停**。
+  #   用公开验证集早停 → tail RMSE 285.6 (分布不同, 过早截断, 精度崩);
+  #   用流内同分布数据早停 → tail RMSE 194.9, 但几乎不触发, 也没省算力。
+  # 保留开关以便其他场景 (同分布验证集充足时) 启用。
+  early_stopping: false
+  early_stopping_rounds: 60
+
+policy:
+  param_space:
+    # 回归任务的"分数"是 -RMSE, 量级为 -100 ~ -1000,
+    # 因此增益门限必须比分类任务大得多 (单位: 分钟)
+    psi_trigger: [0.08, 0.1, 0.15, 0.2, 0.25]
+    min_gain: [10.0, 25.0, 50.0, 100.0]
+    retrain_window: [500, 1000, 2000, 4000]
+    lr: [0.02, 0.05, 0.1]
+    num_leaves: [15, 31, 63]
+  update_interval: 4
+  decision_probe_interval: 2
+  decision_min_improvement: 0.002
+  decision_min_samples: 3
+  decision_cost_scale: 5.0
+  max_param_shift: 1
+  # 探索预算 (自适应)。实测:
+  #   rate=0.0  → tail RMSE 197.3, GPU 8.1s, eff 13.13
+  #   rate=0.15 → tail RMSE 197.3, GPU 8.8s, eff 12.96
+  #   rate=0.30 → tail RMSE 197.3, GPU 16.3s, eff 11.47
+  # 探索在本场景几乎不带来精度收益 (影子集仅 100 样本, 显著性检验难通过),
+  # 但算力成本线性上升。取 0.15 作为"保留探索能力 + 控制成本"的折中,
+  # 且探索率本身会随"探索是否真的带来改进"自动升降。
+  exploration_rate: 0.15
+  # 自适应探索的上下界
+  exploration_rate_min: 0.05
+  exploration_rate_max: 0.40
+
+budget:
+  max_gpu_seconds: 3600
+  # 轴承数据标签全部可得 (RUL 由快照序列确定性计算), 但仍受配额约束以体现成本意识
+  max_label_quota: 4000
+  max_llm_tokens: 200000
+  per_iteration_gpu_seconds: 300
+  per_iteration_label_quota: 500
+  halt_ratio: 0.9
+
+safety:
+  max_consecutive_failures: 3
+  # 性能回退相对幅度 (分数为 -RMSE, 相对幅度意义有限)
+  rollback_margin: 0.005
+  # 影子集最少样本 (轴承流窗口 250, 取 60%)
+  shadow_min_steps: 100
+  shadow_holdout: 100
+  alpha: 0.05
+  max_iterations: 40
+  max_candidates_per_iter: 3
+
+experiment:
+  project: "rul-bearing-b"
+  workspace: null
+  local_dir: "artifacts/rul_b/experiments"
+  required_fields:
+    - config
+    - metrics
+    - tags
+    - notes
+
+llm:
+  base_url_env: "PYTRIO_BASE_URL"
+  api_key_env: "PYTRIO_API_KEY"
+  model_env: "PYTRIO_MODEL"
+  default_model: "Qwen3.8-27B"
+  temperature: 0.2
+  max_tokens: 1024
+  timeout: 60
+  fallback: "rules"

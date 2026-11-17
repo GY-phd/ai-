@@ -1,0 +1,20 @@
+{
+  "mlp/h32/e20/scaling1": {"rmse": 51.573, "mae": 38.596, "nasa_asym_score": 46755.4},
+  "mlp/h32/e20/scaling0": {"rmse": 51.678, "mae": 38.708, "nasa_asym_score": 47143.1},
+  "mlp/h32/e60/scaling1": {"rmse": 51.148, "mae": 38.340, "nasa_asym_score": 40198.5},
+  "mlp/h32/e60/scaling0": {"rmse": 51.388, "mae": 38.479, "nasa_asym_score": 42150.2},
+  "mlp/h32/e200/scaling1": {"rmse": 50.740, "mae": 37.705, "nasa_asym_score": 38287.9},
+  "mlp/h32/e200/scaling0": {"rmse": 51.058, "mae": 38.212, "nasa_asym_score": 39173.1},
+  "mlp/h64/e20/scaling1": {"rmse": 51.516, "mae": 38.542, "nasa_asym_score": 47085.2},
+  "mlp/h64/e20/scaling0": {"rmse": 51.558, "mae": 38.568, "nasa_asym_score": 43299.6},
+  "mlp/h64/e60/scaling1": {"rmse": 51.063, "mae": 38.230, "nasa_asym_score": 40690.4},
+  "mlp/h64/e60/scaling0": {"rmse": 51.335, "mae": 38.472, "nasa_asym_score": 41153.3},
+  "mlp/h64/e200/scaling1": {"rmse": 50.639, "mae": 37.633, "nasa_asym_score": 39731.9},
+  "mlp/h64/e200/scaling0": {"rmse": 50.963, "mae": 37.915, "nasa_asym_score": 39983.8},
+  "mlp/h128/e20/scaling1": {"rmse": 51.468, "mae": 38.497, "nasa_asym_score": 47197.1},
+  "mlp/h128/e20/scaling0": {"rmse": 51.547, "mae": 38.560, "nasa_asym_score": 42773.3},
+  "mlp/h128/e60/scaling1": {"rmse": 50.934, "mae": 38.061, "nasa_asym_score": 40753.0},
+  "mlp/h128/e60/scaling0": {"rmse": 51.294, "mae": 38.421, "nasa_asym_score": 40384.5},
+  "mlp/h128/e200/scaling1": {"rmse": 50.571, "mae": 37.564, "nasa_asym_score": 41043.9},
+  "mlp/h128/e200/scaling0": {"rmse": 50.844, "mae": 37.814, "nasa_asym_score": 37822.0}
+}

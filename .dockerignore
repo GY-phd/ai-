@@ -1,0 +1,53 @@
+# Keep the build context small and reproducible.  The image must contain
+# code, configuration and evidence - never data, never weights, never the
+# artefacts of a local run.
+.git
+.gitignore
+.github
+
+# The official data pack is mounted at runtime.
+data/
+runs/
+dist/
+art/
+art_probe*/
+swanlog/
+logs/
+*.log
+
+# Weights must never enter the image.
+*.npz
+*.npy
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.ckpt
+*.h5
+*.onnx
+*.pkl
+*.joblib
+
+# Local environment
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local credentials and developer-only connectivity checks.  The image
+# must never carry an API key or a script that reaches out to a model
+# provider.
+.env
+.env.*
+*.key
+secrets.*
+credentials.*
+tools/check_pytrio_live.py
+tools/check_pytrio_profile.py

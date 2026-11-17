@@ -1,0 +1,83 @@
+{
+  "protocol": "train on the 9 training bearings, score on the 3 independent validation bearings (the official split)",
+  "data_root": "D:\\GY\\cpu\\cpu-b-rul-20261110-v1\\public",
+  "train_rows": 7032,
+  "validation_rows": 1679,
+  "validation_bearings": [
+    "Bearing1_4",
+    "Bearing2_4",
+    "Bearing3_4"
+  ],
+  "results": {
+    "lgbm": {
+      "rmse": 694.799,
+      "mae": 563.924,
+      "label": "lgbm(200,lr.05,l31) [old base]"
+    },
+    "extra_trees(300)": {
+      "rmse": 616.601,
+      "mae": 488.955,
+      "label": "extra_trees(300)  (7s)"
+    },
+    "rf(300)": {
+      "rmse": 711.704,
+      "mae": 587.195,
+      "label": "rf(300)  (16s)"
+    },
+    "mlp(24,)_0.001": {
+      "rmse": 740.913,
+      "mae": 526.711,
+      "label": "mlp(24,) alpha=0.001  (11s)"
+    },
+    "mlp(64,)_0.001": {
+      "rmse": 660.065,
+      "mae": 519.553,
+      "label": "mlp(64,) alpha=0.001  (14s)"
+    },
+    "mlp(128,)_0.001": {
+      "rmse": 539.239,
+      "mae": 421.332,
+      "label": "mlp(128,) alpha=0.001  (29s)"
+    },
+    "mlp(256,)_0.001": {
+      "rmse": 521.781,
+      "mae": 430.392,
+      "label": "mlp(256,) alpha=0.001  (41s)"
+    },
+    "mlp(256,)_0.01": {
+      "rmse": 523.518,
+      "mae": 432.515,
+      "label": "mlp(256,) alpha=0.01  (41s)"
+    },
+    "mlp(256,)_0.0001": {
+      "rmse": 521.068,
+      "mae": 422.393,
+      "label": "mlp(256,) alpha=0.0001  (42s)"
+    },
+    "mlp(512,)_0.001": {
+      "rmse": 617.659,
+      "mae": 455.349,
+      "label": "mlp(512,) alpha=0.001  (79s)"
+    },
+    "mlp(256, 128)_0.001": {
+      "rmse": 553.772,
+      "mae": 442.435,
+      "label": "mlp(256, 128) alpha=0.001  (40s)"
+    },
+    "mlp_ttr": {
+      "rmse": 716.034,
+      "mae": 571.488,
+      "label": "mlp + target scaling (TTR)"
+    },
+    "ens_mlp3": {
+      "rmse": 530.971,
+      "mae": 431.017,
+      "label": "ensemble 3xMLP"
+    },
+    "ens_mlp3_lgbm": {
+      "rmse": 561.551,
+      "mae": 456.236,
+      "label": "ensemble 3xMLP + lgbm"
+    }
+  }
+}

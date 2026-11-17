@@ -1,0 +1,51 @@
+{
+  "initial_only": {
+    "rmse": 1251.3041773594318
+  },
+  "initial_plus_stream_fraction": {
+    "rmse": 1245.4202250821056
+  },
+  "initial_plus_stream_minutes": {
+    "rmse": 1873.6477284882637
+  },
+  "fraction_diagnostic": {
+    "Bearing2_1": {
+      "rows_seen": 491,
+      "fraction_target": [
+        0.998,
+        0.833,
+        0.668,
+        0.5031,
+        0.3381,
+        0.1731
+      ],
+      "true_fraction": [
+        1.0,
+        0.8347,
+        0.6694,
+        0.5041,
+        0.3388,
+        0.1735
+      ]
+    },
+    "Bearing2_2": {
+      "rows_seen": 109,
+      "fraction_target": [
+        0.9908,
+        0.8257,
+        0.6606,
+        0.4954,
+        0.3303,
+        0.1651
+      ],
+      "true_fraction": [
+        1.0,
+        0.8875,
+        0.775,
+        0.6625,
+        0.55,
+        0.4375
+      ]
+    }
+  }
+}

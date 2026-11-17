@@ -1,0 +1,18 @@
+# Normalise every text file to LF - in the repository *and* in every working
+# tree.  The manifest records a SHA-256 per file, and a checkout that
+# rewrote the line endings would invalidate the digest of every text file.
+# Leaving the conversion to core.autocrlf makes the tree depend on the
+# machine, so the line endings are pinned here instead.
+* text=auto eol=lf
+
+# PowerShell and the Windows batch files read CRLF more reliably.
+*.ps1   text eol=crlf
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+
+# Binary payloads are never touched.
+*.npz   binary
+*.pdf   binary
+*.png   binary
+*.jpg   binary
+*.zip   binary
