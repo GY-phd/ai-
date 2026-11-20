@@ -12,6 +12,14 @@ exactly what the platform's own reference loader computes for the same
 checkpoint.  The prediction is written before the next line is read and
 is flushed immediately, because the platform measures the whole
 prediction pass and a missing line fails the whole measurement.
+
+Where the code lives
+--------------------
+The prediction portal function itself is in the Controller layer
+(``contest_baselines/layers/controller/serving.py``), because it is one
+of the two entry points the platform can reach.  This module keeps the
+module-level helpers that the rest of the codebase and the tests import,
+and delegates the portal function to the Controller.
 """
 from __future__ import annotations
 
@@ -23,6 +31,19 @@ import numpy as np
 
 from .data import flatten
 from .model import Model
+from .layers.controller.serving import (
+    ARTIFACT_ENV,
+    MODEL_DIR,
+    _find_checkpoint,
+    predict_sample,
+)
+
+__all__ = [
+    "ARTIFACT_ENV",
+    "MODEL_DIR",
+    "flatten",
+    "predict_sample",
+]
 
 # A last-resort fallback so that a prediction is never missing because the
 # environment variable was not set.  It is a *constant*, not a learned
@@ -36,26 +57,6 @@ from .model import Model
 # classification fallback therefore reports the error instead of
 # inventing a label.
 _FALLBACK_REGRESSION = 0.0
-
-
-def _find_checkpoint(model_dir):
-    """Locate the selected checkpoint inside the artefact root."""
-    declared = os.environ.get("CONTEST_ARTIFACT_PATH")
-    if declared:
-        path = Path(declared)
-        if path.is_file():
-            return path
-    root = Path(model_dir)
-    if root.is_file():
-        return root
-    if root.is_dir():
-        preferred = root / "checkpoint.npz"
-        if preferred.is_file():
-            return preferred
-        for path in sorted(root.rglob("*")):
-            if path.is_file() and path.suffix.lower() == ".npz":
-                return path
-    return None
 
 
 def _classes_from_context(sample):
@@ -73,58 +74,3 @@ def _classes_from_context(sample):
     """
     return None
 
-
-def predict_sample(sample, model_dir):
-    """Answer one sample.  Returns the platform's output shape."""
-    task = getattr(sample, "task", None)
-    inputs = getattr(sample, "inputs", None)
-    if not isinstance(task, str) or not task:
-        raise ValueError("the sample carries no task")
-    if inputs is None:
-        raise ValueError("the sample carries no inputs")
-
-    checkpoint = _find_checkpoint(model_dir)
-    if checkpoint is None:
-        # No artefact is mounted.  For a regression task a neutral value
-        # is a valid answer and is better than raising: a missing line
-        # fails the whole measurement.
-        #
-        # For a classification task there is **no** valid neutral answer:
-        # the platform requires every label to be one of the profile's own
-        # classes, and a made-up label would be rejected - or, worse,
-        # accepted as a wrong prediction.  The honest response is to say
-        # that the artefact is missing.
-        if task == "regression":
-            return {"outputs": {"value": float(_FALLBACK_REGRESSION)}}
-        raise ValueError("no checkpoint is mounted, so the class list is "
-                         "unknown and no valid classification label can be "
-                         "produced")
-
-    model = Model.load(checkpoint)
-    if model.meta["task"] != task:
-        raise ValueError("the artefact is %s but the sample is %s"
-                         % (model.meta["task"], task))
-
-    paths, values = flatten(inputs)
-    if paths != model.meta["paths"]:
-        raise ValueError("the sample's feature schema differs from the checkpoint")
-
-    if task == "classification":
-        probability = model.predict(np.asarray([values], dtype=np.float64))[0]
-        outputs = [{"label": label, "score": float(score)}
-                   for label, score in zip(model.meta["classes"], probability)]
-        # Exactly one label may hold the top score.  A numerical tie would
-        # fail the platform's check, so the first one wins the tie and the
-        # others are pushed just below it - while staying inside [0, 1].
-        best = max(range(len(outputs)), key=lambda index: outputs[index]["score"])
-        top = outputs[best]["score"]
-        for index, item in enumerate(outputs):
-            if index == best:
-                continue
-            item["score"] = float(min(max(item["score"], 0.0), max(top - 1e-12, 0.0)))
-        return {"outputs": outputs}
-
-    value = float(model.predict(np.asarray([values], dtype=np.float64))[0])
-    if not np.isfinite(value) or value < 0:
-        value = 0.0
-    return {"outputs": {"value": value}}

@@ -96,7 +96,22 @@ ARTIFACT_FILES = (
     "rul_comparison.json", "run_summary.json", "scenarios.json",
 )
 ARTIFACT_GLOBS = ("figures/*.png", "tracks/*.json", "official/*.json")
-MAX_TOTAL_BYTES = 4 * 1024 * 1024
+
+# The size budget is a **sanity bound**, not a size target.
+#
+# What it is really there to catch is a weight that slipped through the
+# suffix rule - a 200 MiB ``.npz`` would blow it immediately.  The weight
+# rule itself is the precise check, and it is enforced separately (and
+# again by the pre-commit hook and by the CI).
+#
+# The budget is 8 MiB rather than 4 MiB because the repository carries
+# more evidence than it used to: the figures for the report
+# (``figureuse/``, ~890 KB), the thirty rounds' SwanLab records
+# (``runs/harness-offline/swanlab/``) and the MVC layer's source and
+# tests.  Every byte of that is either evidence a reviewer reads or code
+# the reviewer runs, and a GitHub repository is not the place to be
+# stingy.  The limit still holds: a stray weight of any size fails.
+MAX_TOTAL_BYTES = 8 * 1024 * 1024
 
 PUSH_TEMPLATE = """# 上传到 GitHub
 

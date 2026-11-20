@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -21,13 +22,36 @@ WEIGHT_SUFFIXES = {
     ".hdf5", ".onnx", ".pkl", ".pickle", ".joblib", ".pb", ".tflite",
     ".model", ".weights", ".mlmodel", ".gguf",
 }
-MAX_TOTAL_BYTES = 4 * 1024 * 1024
+MAX_TOTAL_BYTES = 8 * 1024 * 1024
 REQUIRED = ("README.md", "LICENSE", "requirements.txt", "MANIFEST.json")
 
 # The version control metadata is not part of the payload: it is often
 # larger than the repository itself, and it is never published.
 SKIP_DIRS = {".git", ".hg", ".svn", "__pycache__", ".pytest_cache",
              ".mypy_cache", ".ruff_cache", ".venv", "venv", "node_modules"}
+
+
+def _tracked_weights(root: Path):
+    """The weight files git is tracking under ``root``.
+
+    Returns ``None`` when the folder is not a git repository - the check
+    is then simply not applicable, and saying so is better than
+    pretending the tree is clean.
+
+    The names are read with ``-z`` so that a CJK file name survives; a
+    name mangled by a newline split would be checked against the wrong
+    suffix and a real weight would slip through.
+    """
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "-z"],
+            capture_output=True, check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    names = [name for name in result.stdout.decode("utf-8", "replace").split("\0") if name]
+    return [name for name in names
+            if Path(name).suffix.lower() in WEIGHT_SUFFIXES]
 
 
 def main() -> int:
@@ -49,6 +73,19 @@ def main() -> int:
              "workflows or the push guide), so the full manifest comparison "
              "does not apply inside the image - the weight check does, and "
              "that is the one the image build cares about.",
+    )
+    parser.add_argument(
+        "--working-tree",
+        action="store_true",
+        help="check the folder as a **working repository** rather than as a "
+             "prepared package.  A working tree holds the local research runs "
+             "and their weights - that is what the weights are for - so the "
+             "size and the on-disk weight checks do not apply to it.  What "
+             "does apply is the check on the files **git tracks**, because "
+             "that is what the reviewers clone.  Without this flag the "
+             "script judges the folder as a package, which is the right "
+             "question to ask of dist/github and the wrong one to ask of the "
+             "repository root.",
     )
     args = parser.parse_args()
 
@@ -81,18 +118,45 @@ def main() -> int:
         if path.suffix.lower() in WEIGHT_SUFFIXES:
             weights.append(str(path.relative_to(root)))
 
-    if weights:
-        problems.append(f"weight files present: {weights}")
-    if total > MAX_TOTAL_BYTES:
-        problems.append(f"payload {total} bytes exceeds {MAX_TOTAL_BYTES}")
+    # A **working tree** is a different thing from a **package**.  The
+    # working tree holds the local research runs and the weights those
+    # runs produced - a gigabyte and a half of it - and that is the
+    # point of having them.  What must never happen is that one of those
+    # files reaches a **commit**, because that is what the reviewers
+    # clone.
+    #
+    # So for a working tree the on-disk weight check and the size check
+    # are not the question; the question is what git is tracking.  The
+    # check on the tracked set is made for **both** kinds of tree, and
+    # for a package it is the only one that matters.
+    if not args.working_tree:
+        if weights:
+            problems.append(f"weight files present: {weights}")
+        if total > MAX_TOTAL_BYTES:
+            problems.append(f"payload {total} bytes exceeds {MAX_TOTAL_BYTES}")
 
-    # The manifest must agree with what is actually on disk.
+    # The **committed** set is what the reviewers clone, and it is a
+    # different question from "what is on this disk".  A working tree
+    # holds the local research runs and their weights; a commit must not.
+    # Git is the only thing that knows the difference, so the check goes
+    # through it.
+    tracked_weights = _tracked_weights(root)
+    if tracked_weights is not None and tracked_weights:
+        problems.append(f"weight files are tracked by git: {tracked_weights}")
+    elif tracked_weights is None and not args.working_tree:
+        problems.append("the folder is not a git repository, so the tracked "
+                        "set could not be checked")
+
+    # The manifest must agree with what is actually on disk.  It describes
+    # the **package**, so it is checked for a package and not for a
+    # working tree: the working tree has more files than the package,
+    # and that is normal.
     manifest_path = root / "MANIFEST.json"
     if manifest_path.is_file():
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         if manifest.get("contains_model_weights") is not False:
             problems.append("manifest does not declare contains_model_weights=false")
-        if not args.weights_only:
+        if not args.weights_only and not args.working_tree:
             for rel, entry in (manifest.get("files") or {}).items():
                 target = root / rel
                 if not target.is_file():

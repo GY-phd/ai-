@@ -55,8 +55,80 @@ artifacts/**/*.pt
 artifacts/**/*.pth
 artifacts/**/*.joblib
 artifacts/**/*.onnx
-artifacts/**/*.h5
-artifacts/**/*.safetensors
+
+# ---- 2b. 本地工作区的重物与重复品 ----------------------------------
+# The repository root is a **working** directory: it holds the research
+# runtime, the scratch folders and the unpacked SDK copies that the
+# clean tree in ``dist/github`` does not.  They must never reach version
+# control, because a single ``git add -A`` at the root would otherwise
+# sweep a gigabyte of local state into a commit.
+#
+# The rule is stated as a **directory** rule rather than as a weight
+# suffix, because the point is not the file type but the fact that the
+# folder is a local copy of something that is already tracked (or of
+# something that is scratch).
+#
+# ``AI2/``            an earlier single-task implementation; the
+#                     shipped one is ``evo/`` at the root.
+# ``_tmp_rm/``        scratch: files copied aside while cleaning up.
+# ``contest-harness-sdk-1.0.*``  the unpacked SDK distributions; the
+#                     shipped copy is ``contest_harness_sdk/``.
+# ``contest-harness-sdk-*.tar.gz``  the SDK's release archive.
+AI2/
+_tmp_rm/
+contest-harness-sdk-1.0.1/
+contest-harness-sdk-1.0.2/
+contest-harness-sdk-*.tar.gz
+
+# The research runtime's own artefacts: the LightGBM checkpoints and
+# the fit reports that live beside them.
+evo/artifacts/
+
+# ---- 2c. 本地研究运行的产物目录 --------------------------------------
+# ``artifacts/`` and ``runs/`` ship a **selected** set of files: the
+# run reports, the ledgers, the comparison tables and the figures that
+# the README's numbers come from.  Those are tracked individually and
+# they are the evidence.
+#
+# The rest are the **research runs** - one directory per experiment,
+# each holding its own checkpoint and its own summary.  There are
+# hundreds of them and they are the working material, not the result.
+#
+# So the rule is: a directory that is *not* tracked is ignored.  Git
+# already knows which files were deliberately added, so the exclusion
+# below only has to name the ones that are not.
+#
+# The tracked evidence lives in a small, fixed set of directories, and
+# every other experiment directory matches one of these patterns:
+artifacts/_tmp_*/
+artifacts/audit*/
+artifacts/cyc/
+artifacts/dbg_syn*/
+artifacts/diag_*/
+artifacts/es*/
+artifacts/es2_*/
+artifacts/experiments/
+artifacts/exp_*/
+artifacts/fix_*/
+artifacts/final/
+artifacts/n200*/
+artifacts/official*/
+artifacts/rp_rp*/
+artifacts/rul_*/
+artifacts/rulcmp_*/
+artifacts/scen_*/
+artifacts/sweep/
+artifacts/synth_regress/
+runs/_*/
+runs/audit-offline*/
+runs/mvc-check*/
+runs/pytest*/
+runs/tmp*/
+evidence/registry/*
+
+# The names are matched with a trailing slash so that only a
+# **directory** is excluded: a file called ``artifacts/comparison.json``
+# at the top level is evidence and is not touched by these patterns.
 
 # ---- 3. 打包输出 ----
 dist/

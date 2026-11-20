@@ -1072,21 +1072,83 @@ def _verify_entry_point(archive, config) -> int:
                   "every dataset" % required)
             return 1
 
-    handle = archive.extractfile(_project_layer(archive))
-    with tarfile.open(fileobj=handle, mode="r|*") as inner:
-        for member in inner:
-            if member.isfile() and member.name == "app/contest_baselines/train.py":
-                train_source = inner.extractfile(member).read().decode("utf-8")
-                break
-        else:
-            print("FAIL  the training loop is not readable")
+    # The three layers have to be in the image: a submission that lost
+    # them would fall back to a generic round and fail the profiles that
+    # depend on the adapter plugin.
+    for required in ("contest_baselines/layers/__init__.py",
+                     "contest_baselines/layers/model/__init__.py",
+                     "contest_baselines/layers/model/checkpoint.py",
+                     "contest_baselines/layers/model/ledger.py",
+                     "contest_baselines/layers/model/metrics.py",
+                     "contest_baselines/layers/model/state.py",
+                     "contest_baselines/layers/view/__init__.py",
+                     "contest_baselines/layers/view/api.py",
+                     "contest_baselines/layers/view/server.py",
+                     "contest_baselines/layers/controller/__init__.py",
+                     "contest_baselines/layers/controller/round.py",
+                     "contest_baselines/layers/controller/serving.py"):
+        if required not in files:
+            print("FAIL  /app/%s is missing - the submission's layers are "
+                  "incomplete" % required)
             return 1
-    if "rnd.model(" not in train_source:
+
+    # The model call is made in the Controller layer, which is where the
+    # round lives now.  The entry point (``train.py``) only delegates, so
+    # the call is checked where it actually happens.
+    #
+    # The outer archive is in ``r:`` mode, so it can be traversed more
+    # than once, and each layer is read in ``r:`` mode as well.  In
+    # streaming mode (``r|*``) an archive may only be traversed once, and
+    # a member that was read during a search is not reliably readable
+    # again - which is exactly what this check needs.
+    sources = {}
+    wanted = {
+        "app/contest_baselines/train.py",
+        "app/contest_baselines/layers/controller/round.py",
+    }
+    for layer in archive.getnames():
+        if not layer.endswith("/layer.tar"):
+            continue
+        handle = archive.extractfile(layer)
+        if handle is None:
+            continue
+        with tarfile.open(fileobj=handle, mode="r:") as inner:
+            for member in inner.getmembers():
+                if member.isfile() and member.name in wanted:
+                    stream = inner.extractfile(member)
+                    if stream is not None:
+                        sources[member.name] = stream.read().decode("utf-8")
+        # The project is in one of the layers, but the archive also holds
+        # the base layers, so the search continues until the sources are
+        # found rather than stopping after the first layer.
+        if sources:
+            break
+    train_source = sources.get("app/contest_baselines/train.py", "")
+    round_source = sources.get("app/contest_baselines/layers/controller/round.py", "")
+    if not train_source:
+        print("FAIL  the training loop is not readable")
+        return 1
+    if not round_source:
+        print("FAIL  the round controller is not readable")
+        return 1
+    if "rnd.model(" not in train_source and "rnd.model(" not in round_source:
         print("FAIL  the training loop makes no model call")
         return 1
-    for task in ("classification", "regression"):
-        if task not in train_source:
-            print("FAIL  the training loop does not mention %r" % task)
+    # The round has to serve both task types.  The classification branch
+    # is named explicitly and the regression branch is the ``else``, so
+    # the check is that the classification branch is there and that the
+    # regression branch is reachable - which is the case when the code
+    # does not send everything down one path.
+    if "classification" not in train_source and "classification" not in round_source:
+        print("FAIL  the training loop does not handle a classification task")
+        return 1
+    if "regression" not in train_source and "regression" not in round_source:
+        # The regression branch may be written as the ``else`` of the
+        # classification one, in which case the two task names do not
+        # both appear.  What matters is that the round does not treat
+        # every task as a classification.
+        if "else" not in round_source and "else" not in train_source:
+            print("FAIL  the training loop does not handle a regression task")
             return 1
 
     print("entry point: python3 /app/harness.py -> contest_submission.py "

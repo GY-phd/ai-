@@ -32,22 +32,68 @@ The one thing this package deliberately does **not** do is change the
 ``task``, ``paths``, ``classes``, ``hidden``, ``mean``, ``scale``,
 ``target_mean`` and ``target_scale``; the tensors are re-expressed into
 whatever convention the parent used and are never reinterpreted.
+
+How the package is laid out
+---------------------------
+The package is organised as **three layers**, in ``layers/``:
+
+============================  ==============================================
+``layers/model``              the data structures and where they live:
+                              the checkpoint, the ledger, the metric
+                              records, the round state
+``layers/view``               the read-only API, so a web consumer can
+                              inspect the model, the metrics and the
+                              ledger without touching the state
+``layers/controller``         the portal functions the platform can
+                              reach: ``train`` (one round) and
+                              ``predict`` (one sample)
+============================  ==============================================
+
+The rule that holds them together: a layer may use the layers below it
+and beside it, never the layer above it, and never a Controller.  So the
+Model layer knows nothing about the protocol, the View layer never
+writes, and the Controller is the only layer that knows the protocol
+exists.
+
+The rest of the package holds the parts that do not belong to a layer:
+``adapters/`` (the per-profile plugin), ``data.py`` (reading the
+platform's projections), ``metrics.py`` (the platform's metric
+definitions), ``strategies.py`` (the hypothesis bank and the changes
+they apply) and ``swanlab_log.py`` (the experiment record).
 """
 from __future__ import annotations
 
 from .adapters import Adapter, get as get_adapter, register as register_adapter
 from .data import flatten, json_value, read_rows
+from .layers import (
+    Checkpoint,
+    Ledger,
+    LedgerEntry,
+    MetricRecord,
+    RoundController,
+    RoundState,
+    View,
+    predict_sample,
+)
 from .model import FORMAT, MAX_HIDDEN, Model, checkpoint_digest
 
 __all__ = [
     "Adapter",
+    "Checkpoint",
     "FORMAT",
+    "Ledger",
+    "LedgerEntry",
     "MAX_HIDDEN",
+    "MetricRecord",
     "Model",
+    "RoundController",
+    "RoundState",
+    "View",
     "checkpoint_digest",
     "flatten",
     "get_adapter",
     "json_value",
+    "predict_sample",
     "read_rows",
     "register_adapter",
 ]

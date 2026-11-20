@@ -1,8 +1,8 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 4192570,
-  "file_count": 295,
+  "total_bytes": 4373790,
+  "file_count": 349,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "files": {
     "README.md": {
@@ -30,8 +30,8 @@
       "sha256": "0ea89256915a705a41b3fd45e520edbc8565add1b43d7fb20f35fc7b26d41a8f"
     },
     ".gitignore": {
-      "bytes": 2643,
-      "sha256": "1ebb8bc6bea4f9c1ea1504839d540c2a46b5dc0a4cc12c0def082a6830e5a25d"
+      "bytes": 5369,
+      "sha256": "cb3b67e3af64652da672495c3034f14b3b77b41f2fc0f76ca9e50a7ac25b8379"
     },
     ".gitattributes": {
       "bytes": 614,
@@ -210,12 +210,12 @@
       "sha256": "c957458cb4adfb53f61c3d122e90cd91d7805842f90088b6f0a30812ec5234db"
     },
     "tools/build_docker_image.py": {
-      "bytes": 47295,
-      "sha256": "06df5c7943e20c860bf5c287be7da48c13d5c22b2dfd0c9a28ec65c102d7beb4"
+      "bytes": 50716,
+      "sha256": "dcbb786886fd01d27d64653cd7e0b7ec85ae5ec28a093a7693dc706eccb973e0"
     },
     "tools/build_github_repo.py": {
-      "bytes": 16790,
-      "sha256": "38e78a51e1d2ef7b6377611d9a5d4e0537187c9ddab2d4e730b2182d7ed37363"
+      "bytes": 17592,
+      "sha256": "96777b23494c54be2b41fb5a17ac5c97c0064f2773988fa9bbeaad1da5f94301"
     },
     "tools/check_pytrio_live.py": {
       "bytes": 2439,
@@ -228,6 +228,14 @@
     "tools/demo_safety.py": {
       "bytes": 3120,
       "sha256": "62d44819114460dc737009db14566b400b42f5de3d51e9725d69fc85a38b0333"
+    },
+    "tools/git_hooks/pre-commit": {
+      "bytes": 3267,
+      "sha256": "4f069a470b6edf04dcd482637c47f39bdd3d177a83f6951db945d34e47bf96a4"
+    },
+    "tools/install_git_hooks.py": {
+      "bytes": 3263,
+      "sha256": "8831101840b56c7c5d2d984ff691b8da26514f92a40285d947a1b4576a249a67"
     },
     "tools/make_requests.py": {
       "bytes": 839,
@@ -274,8 +282,8 @@
       "sha256": "05ad952256676afb1d08cb41870b14759c69b2460ff69980177be384858f89f8"
     },
     "tools/verify_repo.py": {
-      "bytes": 4934,
-      "sha256": "e59df595958fd6e3098ff82111f42ccac44b6ace7187cf308a0acca2fa9ef6f9"
+      "bytes": 8128,
+      "sha256": "c1c3ce76c36b0d511c47e43d096968c81c22a34aba6c7988a59cdf70271b33ed"
     },
     "research/__init__.py": {
       "bytes": 0,
@@ -417,6 +425,10 @@
       "bytes": 7917,
       "sha256": "c95f75ed8f9e0c845f005f84b7968c992dea2a80a49f4f5ab263e0bf3e4ce04a"
     },
+    "tests/test_controller_round.py": {
+      "bytes": 6792,
+      "sha256": "804e14a14baea40b0010563dc15b8b4ae7580f765784d2682d8b00c202cc8473"
+    },
     "tests/test_core.py": {
       "bytes": 48931,
       "sha256": "7afb46b112561d57f9db91e0404f3b7f7a932c6c4964be591ed80cf09093f68e"
@@ -440,6 +452,10 @@
     "tests/test_harness_integration.py": {
       "bytes": 10483,
       "sha256": "2e637f2ea06a2f28e29b91dc8a2cd651c598adf1955353cdbd13078ecb878c84"
+    },
+    "tests/test_layers.py": {
+      "bytes": 9088,
+      "sha256": "0310aadfd56b7c8221fcf477fb0530f05e41a5b645c7ad0939616678992dfb03"
     },
     "tests/test_ledger.py": {
       "bytes": 3028,
@@ -486,8 +502,8 @@
       "sha256": "efaaa83572b8c2c355f9ee687ca68cfa880fa7ab24848f3cda1b7618e690b025"
     },
     ".github/workflows/ci.yml": {
-      "bytes": 2362,
-      "sha256": "698359aa02713c13e378b1d6477303ca9284cb93b096ec6faef67a45803b8ed3"
+      "bytes": 3226,
+      "sha256": "50522b238e8663dfdbd2ed00582eef64129df80011169d91e47ea78479f5a1bf"
     },
     "runs/A/run_report.json": {
       "bytes": 19280,
@@ -642,12 +658,132 @@
       "sha256": "25a899c8408d8c33409b16e7d371be15ae3a477ea5c2c1b9d848f2b03206aa7f"
     },
     "runs/harness-offline/ledger.jsonl": {
-      "bytes": 5681,
-      "sha256": "36280f6c561076365259cccdd08fd7feb67c61e3fd97948f2f9560c49dd58d5e"
+      "bytes": 18975,
+      "sha256": "2311c162d52fd02cb8dceabc8cf517e3b9941c0bd6abf885eb21a7605296ad37"
     },
     "runs/harness-offline/run_report.json": {
-      "bytes": 9304,
-      "sha256": "1ca33bc2f5a3ab00bdc0802bca468bb3ed076949d29af48f6ad1f81d75fe694c"
+      "bytes": 31216,
+      "sha256": "8cb520e373588e4fefce23b1681d25cde2e6be11988adf1bf1a6318def85c80a"
+    },
+    "runs/harness-offline/swanlab/A-round-1.jsonl": {
+      "bytes": 1270,
+      "sha256": "59fb0d50330789d6fe77eccde22aba96ab6976c4d723c21914f66601abd0c8b9"
+    },
+    "runs/harness-offline/swanlab/A-round-10.jsonl": {
+      "bytes": 1273,
+      "sha256": "cd6d14e30d5d1995c2e2750b75720eb2f94e2a6e1bae67de19f32cf9ad742bf5"
+    },
+    "runs/harness-offline/swanlab/A-round-2.jsonl": {
+      "bytes": 1335,
+      "sha256": "6fad77a961ae54e5f2f8095045bc8b8a09266cc6cff325f8c401d1724cab8f87"
+    },
+    "runs/harness-offline/swanlab/A-round-3.jsonl": {
+      "bytes": 1487,
+      "sha256": "9912c2c422d55bfed41543932a9410bd8090998b9ecf4e678ea452c05a575533"
+    },
+    "runs/harness-offline/swanlab/A-round-4.jsonl": {
+      "bytes": 1322,
+      "sha256": "10074f24b885c18cb20db81235f76533f508a7df2598a9ab2dd3f3ced6fa707a"
+    },
+    "runs/harness-offline/swanlab/A-round-5.jsonl": {
+      "bytes": 1467,
+      "sha256": "6143b0d122169c057641e4b3345b0a8f64fc955fe0467bc4ab0ead5241452f26"
+    },
+    "runs/harness-offline/swanlab/A-round-6.jsonl": {
+      "bytes": 1270,
+      "sha256": "3cbdd33aabad8a080a8a6fcdf53d4f8ea19ef9cf7c55090321ad8ade8e8ac744"
+    },
+    "runs/harness-offline/swanlab/A-round-7.jsonl": {
+      "bytes": 1270,
+      "sha256": "0ce7512e67b9446122b442499019d0f32d495ff54bad909a95c19828be102e1f"
+    },
+    "runs/harness-offline/swanlab/A-round-8.jsonl": {
+      "bytes": 1269,
+      "sha256": "50ab73679eaed16ef9a4c82ccd2b7af5a2e111461f4e6f4074c29a7803e7de24"
+    },
+    "runs/harness-offline/swanlab/A-round-9.jsonl": {
+      "bytes": 1271,
+      "sha256": "6e0794468883ea947c3f5d488aba1850ce93c92200ea7a9aa5ef66b9e25f064d"
+    },
+    "runs/harness-offline/swanlab/B-round-1.jsonl": {
+      "bytes": 1240,
+      "sha256": "83487fd832758ee725635d188e00544df45e92680bbe601adeacbfe4c9ab2746"
+    },
+    "runs/harness-offline/swanlab/B-round-10.jsonl": {
+      "bytes": 1246,
+      "sha256": "6853fa3c32dc3617c97608b9d4ae247d8faa16b17c1612d7ac3859c40ce3e860"
+    },
+    "runs/harness-offline/swanlab/B-round-2.jsonl": {
+      "bytes": 1306,
+      "sha256": "191751a476e709ad57b328bb318807fcee441aa5aa0b49a2a03bc391a46446f4"
+    },
+    "runs/harness-offline/swanlab/B-round-3.jsonl": {
+      "bytes": 1396,
+      "sha256": "93f07f06d1e2bf5cfd94d609a532aab85be9579364c4a089da911408902f0926"
+    },
+    "runs/harness-offline/swanlab/B-round-4.jsonl": {
+      "bytes": 1624,
+      "sha256": "d4bdc2dffe2ad997d6cd29bf028c96ab1a6efabfbcd9bafb0d2204724f97267b"
+    },
+    "runs/harness-offline/swanlab/B-round-5.jsonl": {
+      "bytes": 1456,
+      "sha256": "fa37da1c7abda9d723e63edcab1cc097fe9bd69d4d7db8c4f6cff58ce953eaa6"
+    },
+    "runs/harness-offline/swanlab/B-round-6.jsonl": {
+      "bytes": 1240,
+      "sha256": "e47b1045d8113846d7302df50397190b75830b6daea2bc411fb4e31507bbd8d5"
+    },
+    "runs/harness-offline/swanlab/B-round-7.jsonl": {
+      "bytes": 1240,
+      "sha256": "f0995ca42869258ea82c2388777028196b64f267b4c2695de00019e9b096f343"
+    },
+    "runs/harness-offline/swanlab/B-round-8.jsonl": {
+      "bytes": 1241,
+      "sha256": "e4a1fdabca7b93e45f0c309301ac683558b56c73880fa5d35ad4be02c2caa978"
+    },
+    "runs/harness-offline/swanlab/B-round-9.jsonl": {
+      "bytes": 1241,
+      "sha256": "d88028363c003e924e5afe761ad330af983014d57ffbf0b366fc92190f6a8190"
+    },
+    "runs/harness-offline/swanlab/C-round-1.jsonl": {
+      "bytes": 1248,
+      "sha256": "ad0eca9176c6c30f90d0dafbe8636b0a085f42142793ff7d7899e15ae6e09968"
+    },
+    "runs/harness-offline/swanlab/C-round-10.jsonl": {
+      "bytes": 1248,
+      "sha256": "e5c86b02381d0da62b5958efe5c92a63440293cd13ca162f16adf1c8de5166f7"
+    },
+    "runs/harness-offline/swanlab/C-round-2.jsonl": {
+      "bytes": 1314,
+      "sha256": "628362bc38f6a2ce6f4fe9c2b831d80a224da2b198e682b27d81edc6916d0001"
+    },
+    "runs/harness-offline/swanlab/C-round-3.jsonl": {
+      "bytes": 1409,
+      "sha256": "d643377f046a55b16f587fde2bc126db7cef5fc5f906c683fc89c649ef250fc2"
+    },
+    "runs/harness-offline/swanlab/C-round-4.jsonl": {
+      "bytes": 1632,
+      "sha256": "e743e1dfbba33c1606ae851a55b6d11d1bef4b8765264d20f2f7769884840596"
+    },
+    "runs/harness-offline/swanlab/C-round-5.jsonl": {
+      "bytes": 1468,
+      "sha256": "3d85d7e21a8f5e4108cb5248610e91e1d4d1032f6f58ca6dced1ab8a5bb14938"
+    },
+    "runs/harness-offline/swanlab/C-round-6.jsonl": {
+      "bytes": 1246,
+      "sha256": "fd2a3d280bc74d3e1dc806abbe162390ebb66a110078de7cd24d1fd4d8081d45"
+    },
+    "runs/harness-offline/swanlab/C-round-7.jsonl": {
+      "bytes": 1253,
+      "sha256": "c368ff6fbc6358d30fe848c32aa3ab72bec8cce4ee178fb388b6e8d200cedc7f"
+    },
+    "runs/harness-offline/swanlab/C-round-8.jsonl": {
+      "bytes": 1252,
+      "sha256": "7406f382aff8f51791572f757f3f5fa56167d842771c2eb471d925a4ac1c76b1"
+    },
+    "runs/harness-offline/swanlab/C-round-9.jsonl": {
+      "bytes": 1251,
+      "sha256": "b9661c1f034ac7a9af756aa8ef13b53b103319d292eac40d9891843ae70bc29f"
     },
     "runs/harness-offline-10/ledger.jsonl": {
       "bytes": 18828,
@@ -664,6 +800,38 @@
     "runs/harness-offline-verify/run_report.json": {
       "bytes": 9305,
       "sha256": "d711aa81aabe534cbac8f2bc1cd92537691cc24749d2324af8296d8b930718aa"
+    },
+    "runs/mvc-check/ledger.jsonl": {
+      "bytes": 485,
+      "sha256": "6f4f584dd29e15a5ff703fa7a8d20edc720207254e3a1fae290fbd2fef52fa13"
+    },
+    "runs/mvc-check/run_report.json": {
+      "bytes": 1141,
+      "sha256": "0efc7f969d06d699fae8c584e0a7e1cd3301fc89a8d72b7cc016f0ceea6860b3"
+    },
+    "runs/mvc-check/swanlab/B-round-1.jsonl": {
+      "bytes": 1240,
+      "sha256": "711d96de735d7fe47fce76b613694f38b016f5df05c5c1006c9bd512f91d8bdf"
+    },
+    "runs/mvc-check3/ledger.jsonl": {
+      "bytes": 1486,
+      "sha256": "3933bdb3eba6abc4aa4a37f99988bddce8c79ff511429b54668479def0ff9c06"
+    },
+    "runs/mvc-check3/run_report.json": {
+      "bytes": 2852,
+      "sha256": "a693217ca7f45c406fb8723bcf4221a10fd0a013d4d1e1bf9628840b6d4d32dc"
+    },
+    "runs/mvc-check3/swanlab/B-round-1.jsonl": {
+      "bytes": 1240,
+      "sha256": "6cf350d3d346ab51d493957eb04d1ae83c2ce134d1e8ed5e39fa05ad06a04bc4"
+    },
+    "runs/mvc-check3/swanlab/B-round-2.jsonl": {
+      "bytes": 1306,
+      "sha256": "b5995e9d0e4b0bc58f64a0330fb085f41c6be3fdf3c0b4d5af1bfe4da8b5e388"
+    },
+    "runs/mvc-check3/swanlab/B-round-3.jsonl": {
+      "bytes": 1396,
+      "sha256": "faf0e353234c9ed4ba12d321646bd3ba7af59a548d747cfa39e1cf60012558be"
     },
     "runs/summary.json": {
       "bytes": 105227,
@@ -694,8 +862,8 @@
       "sha256": "59d76ad70fdbd65cb0b708e8323a8bdbb1efea09cd36bc4c5b94645571a73d65"
     },
     "contest_baselines/__init__.py": {
-      "bytes": 2135,
-      "sha256": "60494c421b377659f84bdc1dda6b52617855dfcd20def0ee2c491bbf0b166243"
+      "bytes": 3912,
+      "sha256": "d6cdc02d50e0b9fbd55e679998206c589e8409fac8ee4a9048319cf80190660c"
     },
     "contest_baselines/adapters/__init__.py": {
       "bytes": 1731,
@@ -729,6 +897,54 @@
       "bytes": 7102,
       "sha256": "1069c69113179e1630bd407f9243f91d25e005276ec29b076f8bbc700b0ec4d6"
     },
+    "contest_baselines/layers/__init__.py": {
+      "bytes": 2678,
+      "sha256": "2e08cb6019ca24041e0e317df9f921198688931fa02339ef8d51fff7041e300c"
+    },
+    "contest_baselines/layers/controller/__init__.py": {
+      "bytes": 1841,
+      "sha256": "c17bab0084e51a7d19f00d42bfb530919accda3b930bbbace51c10a8cd81f16a"
+    },
+    "contest_baselines/layers/controller/round.py": {
+      "bytes": 30071,
+      "sha256": "470eb8b369dae645f1a0c19efea9d1b2d718a800013540b0d0f4e419aea12968"
+    },
+    "contest_baselines/layers/controller/serving.py": {
+      "bytes": 6412,
+      "sha256": "1a81a743d9c296e429dab254869703d9153d860b539b5be86f0250f34c690cbb"
+    },
+    "contest_baselines/layers/model/__init__.py": {
+      "bytes": 2981,
+      "sha256": "580849a02c0847e08d164b0cf0416930d17db8d3ce1393c432ee0bc07df4bb2f"
+    },
+    "contest_baselines/layers/model/checkpoint.py": {
+      "bytes": 5136,
+      "sha256": "4a605b5046edd4f1b2500cbe1df126c5dfe2920eb194fa02ca434e8c4b959a5b"
+    },
+    "contest_baselines/layers/model/ledger.py": {
+      "bytes": 6091,
+      "sha256": "f7a9fcaf1d8f6e777254ca8bacc7b664b7c8728bc1560fb63920bef0d0195a6b"
+    },
+    "contest_baselines/layers/model/metrics.py": {
+      "bytes": 3693,
+      "sha256": "3f51f84cac1ed6eac47ff9f27aae0083830baeede5310138949229a342dbd0de"
+    },
+    "contest_baselines/layers/model/state.py": {
+      "bytes": 3332,
+      "sha256": "c5b1afd3ef5edc043a1f37cc1d97317b541391538c82912bc28ec78d3ddcd7b5"
+    },
+    "contest_baselines/layers/view/__init__.py": {
+      "bytes": 2317,
+      "sha256": "0513e45a33219bca80d20be0e87730c1505ab2b00dacbf09abb9ea8909851f98"
+    },
+    "contest_baselines/layers/view/api.py": {
+      "bytes": 9593,
+      "sha256": "4afcc71ceaf517ac9f10f1f3c9c551f31ca280634c463ee8c3a55facd4304b37"
+    },
+    "contest_baselines/layers/view/server.py": {
+      "bytes": 7031,
+      "sha256": "5541df01ae9046ad7d28104de9db6caaa87265f357adc9b177a1099ee2fe48ad"
+    },
     "contest_baselines/metrics.py": {
       "bytes": 6381,
       "sha256": "d1dee4865c454ccb9ff06125d55d3837608dfbb3b07cd50c4f4b89bf87b2f717"
@@ -742,8 +958,8 @@
       "sha256": "58768397ba1d4cf4b297bb528d7b5f1173ae9e586f3ae636e4ff6573e63480ac"
     },
     "contest_baselines/predict.py": {
-      "bytes": 5501,
-      "sha256": "3ac23280ad09ef788b1575351b327388ae858c66b1ba8b2bc263f21eb3f5a928"
+      "bytes": 2861,
+      "sha256": "324f6106df7e8bb2874435d975ec829b710133840c14f026f5b773eb402306c4"
     },
     "contest_baselines/strategies.py": {
       "bytes": 13377,
@@ -754,8 +970,8 @@
       "sha256": "562a9239b3bea6176d80d6d41f7588197e902e0b921d6e7767dab57b80427779"
     },
     "contest_baselines/train.py": {
-      "bytes": 21685,
-      "sha256": "3179890f9316e583dab84b43a572fea1393685212a5b3c87b1b7fd6464e8578f"
+      "bytes": 3038,
+      "sha256": "d501753937179eed444490f45a80dc461407f8c52c1979b3f52175db9dc4ef74"
     },
     "contest_harness_sdk/contest_harness/__init__.py": {
       "bytes": 605,

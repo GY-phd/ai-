@@ -48,6 +48,27 @@ jobs:
       - name: Verify the repository ships no model weights
         run: python tools/verify_repo.py --dir .
 
+      # The working tree holds the local research runs and their weights;
+      # the **commit** must not.  A weight in the history cannot be
+      # removed without rewriting it, so this is checked on every push.
+      - name: Verify git tracks no model weight
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, "tools")
+          from pathlib import Path
+          from verify_repo import _tracked_weights
+
+          weights = _tracked_weights(Path("."))
+          if weights:
+              raise SystemExit("FAIL  git tracks model weights: %s" % weights)
+          print("OK  git tracks no model weight")
+          PY
+      # The hook that refuses such a commit travels with the repository,
+      # so a fresh clone gets it too.
+      - name: Install the weight guard hook
+        run: python tools/install_git_hooks.py
+
       - name: Render the recorded decision table
         run: python tools/show_run.py --workspace evidence
 
