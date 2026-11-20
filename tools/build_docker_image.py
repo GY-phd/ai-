@@ -130,6 +130,35 @@ def log(message: str) -> None:
     print(message, flush=True)
 
 
+def _remove_tree(path: Path) -> None:
+    """Delete a directory tree, tolerating a locked file.
+
+    On Windows an indexer or an antivirus scanner can hold a handle on a
+    file inside a directory that is being replaced, and ``shutil.rmtree``
+    then fails with ``PermissionError``.  The build is reproducible, so
+    a directory that cannot be deleted is renamed out of the way and
+    removed on a later attempt rather than aborting the build.
+    """
+    if not path.exists():
+        return
+    for attempt in range(5):
+        try:
+            shutil.rmtree(path)
+            return
+        except PermissionError:
+            if attempt == 4:
+                # Last resort: move it aside so the build can proceed.
+                # The stale tree is harmless - it is only a cache.
+                try:
+                    path.rename(path.with_name(path.name + ".stale-%d" % attempt))
+                except OSError:
+                    pass
+                return
+            time.sleep(1.0 + attempt)
+        except OSError:
+            return
+
+
 # ------------------------------------------------------------------ registry
 def _http(url: str, headers: dict | None = None, retries: int = 8):
     """GET a URL, retrying transient TLS failures.
@@ -606,8 +635,7 @@ def build(out_path: Path, tag: str, cache: Path, keep_cache: bool) -> int:
 
     log("materialising the base root filesystem ...")
     rootfs = cache / "rootfs"
-    if rootfs.exists():
-        shutil.rmtree(rootfs)
+    _remove_tree(rootfs)
     for _layer, blob in blobs:
         extract_base_layer(blob, rootfs)
 
@@ -845,8 +873,7 @@ def install_requirements(rootfs: Path) -> Path | None:
     relative_site = site_dir.relative_to(rootfs).as_posix()
 
     staging = rootfs.parent / "deps-staging"
-    if staging.exists():
-        shutil.rmtree(staging)
+    _remove_tree(staging)
     target = staging / relative_site / "site-packages"
     target.mkdir(parents=True, exist_ok=True)
 
@@ -872,7 +899,7 @@ def install_requirements(rootfs: Path) -> Path | None:
         return None
     installed = target / "contest_harness"
     if installed.exists():
-        shutil.rmtree(installed)
+        _remove_tree(installed)
     shutil.copytree(sdk, installed,
                     ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     log("  installed the contest SDK (%d module(s))"
@@ -888,7 +915,7 @@ def install_requirements(rootfs: Path) -> Path | None:
             elif path.is_file():
                 _tar_add_bytes(archive, name, path.read_bytes(),
                                mode=0o755 if path.suffix == ".so" else 0o644)
-    shutil.rmtree(staging, ignore_errors=True)
+    _remove_tree(staging)
     log("  packed %d dependency file(s) into a layer" %
         sum(1 for p in layer_path.parent.rglob("*") if p.is_file()))
     return layer_path
@@ -1027,7 +1054,19 @@ def _verify_entry_point(archive, config) -> int:
     for required in ("contest_baselines/train.py",
                      "contest_baselines/predict.py",
                      "contest_baselines/data.py",
-                     "contest_baselines/model.py"):
+                     "contest_baselines/model.py",
+                     # The plugin layer: one adapter per dataset profile.
+                     # A submission that lost its adapters would fall back
+                     # to a generic regression and fail every profile but
+                     # one, so their presence is part of the contract.
+                     "contest_baselines/adapters/__init__.py",
+                     "contest_baselines/adapters/base.py",
+                     "contest_baselines/adapters/registry.py",
+                     "contest_baselines/adapters/profile_a.py",
+                     "contest_baselines/adapters/profile_b.py",
+                     "contest_baselines/adapters/profile_c.py",
+                     # The experiment record the platform collects.
+                     "contest_baselines/swanlab_log.py"):
         if required not in files:
             print("FAIL  /app/%s is missing - the submission cannot serve "
                   "every dataset" % required)

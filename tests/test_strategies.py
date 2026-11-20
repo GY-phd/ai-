@@ -96,7 +96,12 @@ class SchemaGuardTest(unittest.TestCase):
         model = _model()
         before = list(model.meta["paths"])
         train = _train()
-        prepare(for_profile("A")[4], model, train, "A", 42)
+        # Look the hypothesis up by name rather than by position: the
+        # adapter owns the order, and the order is not part of the
+        # contract this test protects.
+        migration = next(h for h in for_profile("A")
+                         if h.key == "capacity-is-overfitting")
+        prepare(migration, model, train, "A", 42)
         self.assertEqual(list(model.meta["paths"]), before)
 
 

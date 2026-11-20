@@ -35,15 +35,19 @@ whatever convention the parent used and are never reinterpreted.
 """
 from __future__ import annotations
 
+from .adapters import Adapter, get as get_adapter, register as register_adapter
 from .data import flatten, json_value, read_rows
 from .model import FORMAT, MAX_HIDDEN, Model, checkpoint_digest
 
 __all__ = [
+    "Adapter",
     "FORMAT",
     "MAX_HIDDEN",
     "Model",
     "checkpoint_digest",
     "flatten",
+    "get_adapter",
     "json_value",
     "read_rows",
+    "register_adapter",
 ]

@@ -7,6 +7,37 @@ from pathlib import Path
 from unittest import mock
 
 from harness import config as harness_config
+from harness.llm import MODEL_ALIASES, resolve_model_id
+
+
+class ModelIdTest(unittest.TestCase):
+    """The model's two spellings must both work.
+
+    The platform's dropdown lists the models under their PyTRiO ids,
+    which use a slash (``Qwen/Qwen3.8-27B``), while the competition's
+    text and this project's configuration use the short form with a dot
+    (``Qwen3.8-27B``).  An endpoint that speaks the PyTRiO protocol
+    rejects the short form, so the planner resolves it.
+    """
+
+    def test_the_short_form_resolves_to_the_platform_spelling(self):
+        self.assertEqual(resolve_model_id("Qwen3.8-27B"), "Qwen/Qwen3.8-27B")
+        self.assertEqual(resolve_model_id("Qwen3.5-4B"), "Qwen/Qwen3.5-4B")
+
+    def test_the_resolution_ignores_case(self):
+        self.assertEqual(resolve_model_id("qwen3.8-27b"), "Qwen/Qwen3.8-27B")
+
+    def test_the_platform_spelling_is_left_alone(self):
+        self.assertEqual(resolve_model_id("Qwen/Qwen3.8-27B"), "Qwen/Qwen3.8-27B")
+
+    def test_an_unknown_id_is_returned_unchanged(self):
+        """The whitelist check decides what may be used; this only picks a spelling."""
+        self.assertEqual(resolve_model_id("some-other-model"), "some-other-model")
+        self.assertEqual(resolve_model_id(""), "")
+
+    def test_the_configured_model_is_one_of_the_known_ones(self):
+        cfg = harness_config.load()
+        self.assertIn(cfg["llm"]["model_id"].lower(), MODEL_ALIASES)
 
 
 class ConfigTest(unittest.TestCase):

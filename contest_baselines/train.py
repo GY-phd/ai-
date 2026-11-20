@@ -44,10 +44,12 @@ import time
 
 import numpy as np
 
-from .data import read_rows, unit_ids
+from .adapters import get as get_adapter
+from .data import read_rows
 from .metrics import is_better, primary_metric_name, primary_metric_value, score_metrics
 from .model import Model, checkpoint_digest
 from .strategies import build_plan, epoch_budget, prepare
+from .swanlab_log import SubmissionSwanLab
 
 # The host's model service can be temporarily unavailable, and a gateway can
 # reject an option it does not know.  Neither is a property of this
@@ -205,11 +207,16 @@ def run_round(rnd):
     profile_key = rnd.dataset_key
     task = rnd.task.get("task")
 
+    # The profile's specifics - what a unit is, which hypotheses it can
+    # test, how long a round may run - come from its adapter.  The loop
+    # itself is profile-agnostic.
+    adapter = get_adapter(profile_key)
+
     model, parent_name, parent_path = _load_parent(rnd)
     train, validation = _read_public(rnd, model)
 
     history = rnd.history()
-    hypothesis = build_plan(profile_key, rnd.round_index, history)
+    hypothesis = build_plan(profile_key, rnd.round_index, history, adapter=adapter)
     log("round %d: hypothesis %r" % (rnd.round_index, hypothesis.key))
 
     parent_metrics = _measure(model, validation, profile_key)
@@ -222,8 +229,10 @@ def run_round(rnd):
     candidate = Model.load(parent_path)
 
     seed = int(candidate.meta.get("seed", 42))
-    x, y, changed = prepare(hypothesis, candidate, train, profile_key, seed)
-    epochs = epoch_budget(hypothesis, rnd.round_index, rnd.wall_seconds)
+    x, y, changed = prepare(hypothesis, candidate, train, profile_key, seed,
+                             adapter=adapter)
+    epochs = epoch_budget(hypothesis, rnd.round_index, rnd.wall_seconds,
+                          adapter=adapter)
     log("applying %r: %s" % (hypothesis.key, json.dumps(changed, ensure_ascii=False)))
 
     losses = candidate.fit(x, y, epochs)
@@ -267,6 +276,61 @@ def run_round(rnd):
                            candidate_metrics, adopted, reason)
     state = rnd.state_workspace(str(work / "state"))
     _append_ledger(state, entry)
+
+    # ---- the SwanLab record -----------------------------------------------
+    # Every training / adjustment / evaluation event is recorded in
+    # SwanLab's shape.  The record is written **locally** into the round's
+    # workspace and copied into the candidate directory, so the platform's
+    # evaluation machine collects it whether or not a candidate was
+    # adopted.  The cloud mirror is a best effort and never affects the
+    # round.
+    tracker = SubmissionSwanLab(
+        work,
+        run_name="zhixun-engine-%s-round-%d" % (profile_key, rnd.round_index),
+        config={"dataset_key": profile_key, "task": task,
+                "adapter": adapter.label, "round": rnd.round_index,
+                "hypothesis": hypothesis.key, "epochs": epochs},
+    )
+    tracker.log(
+        {
+            "val_%s_before" % primary_metric_name(task): parent_primary,
+            "val_%s_after" % primary_metric_name(task): candidate_primary,
+            "val_%s_delta" % primary_metric_name(task): candidate_primary - parent_primary,
+            "score_before": parent_metrics.get("score"),
+            "score_after": candidate_metrics.get("score"),
+            "epochs": epochs,
+            "learning_rate": float(candidate.meta["learning_rate"]),
+            "batch_size": int(candidate.meta["batch_size"]),
+            "hidden": int(candidate.meta["hidden"]),
+            "adopted": bool(adopted),
+            "train_rows": len(train["ids"]),
+            "validation_rows": len(validation["ids"]),
+            "seconds": round(time.monotonic() - started, 2),
+        },
+        context={
+            "stage": "round",
+            "dataset_key": profile_key,
+            "task": task,
+            "adapter": adapter.label,
+            "round": rnd.round_index,
+            "hypothesis": hypothesis.key,
+            "claim": hypothesis.claim,
+            "change": hypothesis.change,
+            "falsifier": hypothesis.falsifier,
+            "expected_effect": hypothesis.expect,
+            "applied": changed,
+            "decision": reason,
+            "parent_checkpoint_sha256": rnd.parent.checkpoint_sha256,
+        },
+    )
+    tracker.finish()
+    # The record travels with the candidate, and also with the state that
+    # the next round inherits.
+    try:
+        shutil.copyfile(tracker.path, candidate_dir / tracker.path.name)
+        shutil.copyfile(tracker.path, state / tracker.path.name)
+    except OSError:
+        pass
 
     # ---- the model call ---------------------------------------------------
     # The round must contain at least one real model call, and the call has

@@ -133,9 +133,27 @@ def score_metrics(task, y_true, y_pred, profile=None):
         "bias": float(np.mean(pred - true)) if true.size else float("nan"),
         "score": -error,
     }
-    if profile == "C":
-        out.update(nasa_asymmetric_score(true, pred))
+    # The extra metrics are the profile's, and the profile says which they
+    # are.  Profile C adds NASA's asymmetric score, which punishes
+    # over-estimating the remaining life five times as hard as
+    # under-estimating it.  The platform does not score it, so it is
+    # recorded as evidence and not optimised.
+    out.update(extra_metrics(profile, true, pred))
     return out
+
+
+def extra_metrics(profile, true, pred):
+    """The metrics a profile records beyond the platform's own.
+
+    The profile's adapter decides.  A profile that has no extra metrics
+    returns an empty block, and the caller's metric dict is unchanged.
+    """
+    from .adapters import get as get_adapter
+    try:
+        adapter = get_adapter(profile)
+    except KeyError:
+        return {}
+    return adapter.extra_metrics(true, pred)
 
 
 def primary_metric_name(task):

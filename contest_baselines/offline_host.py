@@ -28,6 +28,8 @@ import sys
 import threading
 from pathlib import Path
 
+from .adapters import get as get_adapter
+
 ROOT = Path(__file__).resolve().parent.parent
 
 
@@ -44,20 +46,33 @@ def package_root(dataset_key):
                                  "C": "cpu-c-guide-20261110-v1"}[dataset_key]
 
 
-def start_frame(dataset_key, round_index=1):
-    """Build the ``start`` frame the platform would send."""
-    root = package_root(dataset_key)
-    train = root / "public" / "train.jsonl"
-    validation = root / "public" / "validation.jsonl"
-    checkpoint = root / "checkpoint.npz"
+def start_frame(dataset_key, round_index=1, parent_root=None, parent_artifact_id=None,
+                parent_checkpoint=None):
+    """Build the ``start`` frame the platform would send.
+
+    ``parent_root`` overrides where the parent artefact is mounted, and
+    ``parent_checkpoint`` names the checkpoint inside it.  The offline
+    harness uses both to **advance the parent** from round to round, the
+    way the platform does when it adopts a candidate.
+
+    The **public projection always comes from the data package**, never
+    from the parent artefact: on the platform the two are separate mounts
+    (``/data`` and ``/previous``), and the parent artefact holds only
+    the checkpoint and the code.
+    """
+    package = package_root(dataset_key)
+    train = package / "public" / "train.jsonl"
+    validation = package / "public" / "validation.jsonl"
+    checkpoint = Path(parent_checkpoint) if parent_checkpoint else (package / "checkpoint.npz")
     digest = "sha256:" + hashlib.sha256(checkpoint.read_bytes()).hexdigest()
-    classes = []
-    task = "regression"
-    if dataset_key == "A":
-        task = "classification"
-        classes = ["Ethanol", "Ethylene", "Ammonia", "Acetaldehyde", "Acetone", "Toluene"]
+    # The task and the class list come from the profile's adapter, so the
+    # offline host cannot drift away from the submission's own view of
+    # what a profile is.
+    adapter = get_adapter(dataset_key)
+    classes = list(adapter.expected_classes()) if adapter.task == "classification" else []
+    task = adapter.task
     parent = {
-        "artifact_id": "baseline-%s" % dataset_key,
+        "artifact_id": parent_artifact_id or ("baseline-%s" % dataset_key),
         "artifact_sha256": digest,
         "artifact": {
             "checkpoint_paths": ["checkpoint.npz"],
@@ -82,6 +97,10 @@ def start_frame(dataset_key, round_index=1):
             "task": task,
             "metric": "macro_f1" if task == "classification" else "rmse",
             "metric_direction": "higher" if task == "classification" else "lower",
+            # The frozen label list for a classification profile.  The
+            # parent checkpoint's own list stays authoritative, but the
+            # contract states it so the frame is self-describing.
+            "classes": classes,
             "public_projection": {
                 "train_path": str(train),
                 "validation_path": str(validation),

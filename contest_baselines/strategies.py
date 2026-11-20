@@ -7,27 +7,33 @@ over ten rounds, with at least three complete
 That is not a request for one clever trick; it is a request for a
 **closed loop** that makes a defensible decision every round.
 
-So the round's logic is split into three parts, and each part is one
+    10|So the round's logic is split into three parts, and each part is one
 module-level concern:
 
-``hypotheses``
+``contest_baselines.adapters``
+    The **plugin layer**.  One adapter per dataset profile answers what
+    that profile's units are, which hypotheses it can test, how long a
+    round may run, and how wide a capacity migration should be.  A
+    profile's specifics live in its adapter, not in this file.
+
+``contest_baselines.adapters.hypotheses``
     The bank of testable claims, each with a falsifier.  A claim without
     a falsifier is not a hypothesis but a guess, and the loop would then
     accept any improvement for any reason.
 
-``strategies``
+``contest_baselines.strategies``
     The concrete thing each hypothesis asks for, expressed as a change
     to the *training procedure* only.  Nothing here changes the model's
     forward pass, so every candidate stays a reference-compatible
     ``contest.cpu-mlp.v1`` checkpoint.
 
-``train``
+``contest_baselines.train``
     The driver: read the parent, apply one strategy, fit, measure on the
     public validation set, and write the evidence.
 
 What may change, and what may not
 ----------------------------------
-The rules allow the learning rate, the batch size, the epoch count, the
+    30|The rules allow the learning rate, the batch size, the epoch count, the
 training distribution, and an explicitly implemented weight migration.
 Everything else - the feature schema, the task, the class list, the
 target's meaning, the normalisation state - is inherited from the parent
@@ -38,136 +44,23 @@ from __future__ import annotations
 
 import numpy as np
 
-from .data import unit_ids
-
-
-class Hypothesis:
-    """One testable claim with a concrete change attached."""
-
-    def __init__(self, key, claim, change, falsifier, expect, profiles=None):
-        self.key = key
-        self.claim = claim
-        self.change = change
-        self.falsifier = falsifier
-        self.expect = expect
-        self.profiles = set(profiles) if profiles else None
-
-    def applies_to(self, profile_key):
-        return self.profiles is None or profile_key in self.profiles
-
-    def as_record(self):
-        return {
-            "hypothesis": self.key,
-            "claim": self.claim,
-            "change": self.change,
-            "falsifier": self.falsifier,
-            "expected_effect": self.expect,
-        }
-
-
-BANK = [
-    Hypothesis(
-        key="more-data-helps",
-        claim="The parent was stopped early, so the model is data-limited "
-              "rather than capacity-limited.",
-        change="Continue the parent's weights and Adam state for more "
-               "epochs on the same public training rows.",
-        falsifier="If the held-out score does not improve as the epoch "
-                  "count grows, the model is not data-limited.",
-        expect="RMSE falls monotonically with the epoch count.",
-        profiles={"A", "B", "C"},
-    ),
-    Hypothesis(
-        key="the-parent-was-left-unconverged",
-        claim="The parent's learning rate was set for a short schedule and "
-              "its own validation score was still falling when it stopped, "
-              "so a larger learning rate reaches a better point.",
-        change="Continue with a larger learning rate.",
-        falsifier="If the parent's validation score was already flat at the "
-                  "end of its own schedule, the schedule - not the rate - "
-                  "was the limit.",
-        expect="RMSE falls more than the same number of epochs at the "
-               "parent's own rate.",
-        profiles={"A", "B", "C"},
-    ),
-    Hypothesis(
-        key="the-tail-is-underweighted",
-        claim="The training rows are dominated by a few long-lived units, "
-              "so the loss is dominated by the easy rows and the short-lived "
-              "units - which are the ones the metric punishes hardest - are "
-              "fitted badly.",
-        change="Oversample the units with the least remaining life, so "
-               "every unit contributes a comparable mass to the loss.",
-        falsifier="If the per-unit RMSE spread does not shrink, the tail "
-                  "was not underweighted.",
-        expect="RMSE falls, and the largest gain is on the short-lived units.",
-        profiles={"B", "C"},
-    ),
-    Hypothesis(
-        key="the-unit-is-the-confounder",
-        claim="The model cannot tell which unit a row came from, so it "
-              "predicts the population-average lifetime for every unit and "
-              "is wrong by the spread of lifetimes.",
-        change="Give every unit the same total mass in the loss, so the "
-               "population average stops being the objective the model is "
-               "fitted to.  The change is a training-distribution change "
-               "only: the feature schema, the forward pass and the "
-               "checkpoint format are untouched, because the platform's "
-               "prediction request carries no sample id and so cannot "
-               "reproduce an id-derived column at scoring time.",
-        falsifier="If the per-unit RMSE spread is no larger than the "
-                  "within-unit RMSE, the unit is not the confounder.",
-        expect="RMSE falls and the per-unit spread shrinks.",
-        profiles={"B", "C"},
-    ),
-    Hypothesis(
-        key="capacity-is-overfitting",
-        claim="The parent has more capacity than the public rows can "
-              "support, so it memorises the units it was trained on.",
-        change="Migrate the weights to a narrower hidden layer.  The "
-               "migration keeps the surviving units' weights and Adam "
-               "state, so it is a continuation and not a re-initialisation.",
-        falsifier="If the parent's training score is not near-perfect while "
-                  "its held-out score is much worse, the problem is not "
-                  "capacity but the target distribution itself.",
-        expect="RMSE falls; the training score stays high.",
-        profiles={"A", "B", "C"},
-    ),
-    Hypothesis(
-        key="rare-class-is-underweighted",
-        claim="The training mix is not the deployment mix, so a class that "
-              "is common in training but rare in deployment dominates the "
-              "Macro-F1 loss.",
-        change="Oversample the rare classes so every class carries the same "
-               "total mass in the loss.",
-        falsifier="If the rare class's per-class F1 does not rise, the "
-                  "oversampling did not reach it.",
-        expect="Macro-F1 rises; the rare class's F1 rises the most.",
-        profiles={"A"},
-    ),
-    Hypothesis(
-        key="the-batch-is-mixing-scales",
-        claim="The parent's rows come from batches measured at different "
-              "times, and the array ages between them, so the loss is "
-              "dominated by the scale shift rather than by the chemistry.",
-        change="Oversample the rows of the batch that is rarest in "
-               "training, so the minority batch's own decision boundary is "
-               "fitted rather than averaged away.",
-        falsifier="If the rare batch's own accuracy does not rise, the "
-                  "batch was not being mixed away.",
-        expect="Macro-F1 rises; the rare batch's accuracy rises the most.",
-        profiles={"A"},
-    ),
-]
+from .adapters import get as get_adapter
+from .adapters.hypotheses import BANK, Hypothesis  # noqa: F401  (re-exported)
 
 
 def for_profile(profile_key):
-    """The hypotheses relevant to one profile."""
-    return [h for h in BANK if h.applies_to(profile_key)]
+    """The hypotheses relevant to one profile.
+
+    The adapter decides.  A hypothesis the adapter does not list is not
+    tried, whatever its own ``profiles`` set says - the adapter is the
+    profile's own statement of what it can test, and it has the final
+    word.
+    """
+    return list(get_adapter(profile_key).hypotheses())
 
 
 # --------------------------------------------------------------------- plans
-def build_plan(profile_key, round_index, history):
+def build_plan(profile_key, round_index, history, adapter=None):
     """Choose the strategy for one round.
 
     The plan is a *function of what has already been tried*, which is what
@@ -180,13 +73,14 @@ def build_plan(profile_key, round_index, history):
     changes (a width migration, a resampling) are only worth their cost
     once the cheap ones have been exhausted.
     """
+    adapter = adapter or get_adapter(profile_key)
     tried = {record.get("hypothesis") for record in history}
-    for hypothesis in for_profile(profile_key):
+    for hypothesis in adapter.hypotheses():
         if hypothesis.key not in tried:
             return hypothesis
     # Every hypothesis has been tried once; repeat the first one, which by
     # construction is the one with the best evidence behind it.
-    return for_profile(profile_key)[0]
+    return adapter.hypotheses()[0]
 
 
 # ----------------------------------------------------------------- strategies
@@ -223,19 +117,7 @@ def _unit_shortness(y, units):
     return weight
 
 
-def _unit_elapsed(units, order):
-    """Each row's elapsed-observation count inside its own unit."""
-    units = np.asarray(units)
-    order = np.asarray(order, dtype=np.float64)
-    out = np.zeros(len(units), dtype=np.float64)
-    for name in np.unique(units):
-        indices = np.nonzero(units == name)[0]
-        ordered = indices[np.argsort(order[indices], kind="stable")]
-        out[ordered] = np.arange(1, len(ordered) + 1, dtype=np.float64)
-    return out
-
-
-def prepare(hypothesis, model, train, profile_key, seed):
+def prepare(hypothesis, model, train, profile_key, seed, adapter=None):
     """Apply a hypothesis to the training data and to the model's settings.
 
     Returns a description of what was changed, so the round's
@@ -249,11 +131,15 @@ def prepare(hypothesis, model, train, profile_key, seed):
     data's.  Every hypothesis here therefore changes the *training
     procedure* only: the learning rate, the epoch budget, the training
     distribution, or the hidden width through an explicit migration.
+
+    The profile's specifics - what a unit is, how the units are
+    weighted, how wide a migration should be - come from the adapter.
     """
+    adapter = adapter or get_adapter(profile_key)
     task = model.meta["task"]
     x = train["x"]
     y = train["y"]
-    units = unit_ids(train["ids"])
+    units = adapter.groups(train["ids"])
     parent_paths = list(model.meta["paths"])
     changed = {}
 
@@ -262,7 +148,7 @@ def prepare(hypothesis, model, train, profile_key, seed):
         model.meta["learning_rate"] = rate
         changed["learning_rate"] = rate
 
-    elif hypothesis.key == "the-tail-is-underweight" or hypothesis.key == "the-tail-is-underweighted":
+    elif hypothesis.key in ("the-tail-is-underweight", "the-tail-is-underweighted"):
         weight = _unit_shortness(y, units)
         # Give the short-lived units a comparable mass, without letting any
         # single row dominate.
@@ -270,6 +156,7 @@ def prepare(hypothesis, model, train, profile_key, seed):
         indices = _oversample_indices(weight, len(y), seed)
         changed["resampled_rows"] = int(len(indices))
         changed["resample_weight"] = "unit-relative remaining life"
+        changed["units"] = int(len(np.unique(units)))
         x, y = x[indices], y[indices]
 
     elif hypothesis.key == "the-unit-is-the-confounder":
@@ -299,7 +186,7 @@ def prepare(hypothesis, model, train, profile_key, seed):
         x, y = x[indices], y[indices]
 
     elif hypothesis.key == "capacity-is-overfitting":
-        target = 16 if task == "classification" else 32
+        target = adapter.resize_hidden(task)
         migration = model.resize(target, seed=model.meta["seed"])
         changed["hidden"] = migration
         # The feature matrix has to be re-standardised for the new width;
@@ -318,18 +205,32 @@ def prepare(hypothesis, model, train, profile_key, seed):
         x, y = x[indices], y[indices]
 
     elif hypothesis.key == "the-batch-is-mixing-scales":
-        batches = _batch_of(train["ids"])
-        if batches is None:
-            changed["skipped"] = "no batch information in the sample ids"
+        # This hypothesis needs **at least two batches inside the training
+        # set** - otherwise "oversample the rarest batch" has no meaning
+        # and the resampling would be a uniform no-op.  The platform's
+        # public projection for profile A contains a single batch, so
+        # this branch records the veto instead of pretending.
+        labels = adapter.labels(train["ids"])
+        # ``None`` means "this id carries no batch label", which is a
+        # different thing from a batch name.  It is counted separately
+        # and never treated as a batch.
+        known = sorted({str(name) for name in labels if name is not None})
+        unlabelled = int(sum(1 for name in labels if name is None))
+        if len(known) < 2:
+            changed["skipped"] = (
+                "the training projection holds %d labelled batch(es), so there "
+                "is no minority batch to oversample" % len(known))
+            if unlabelled:
+                changed["unlabelled_rows"] = unlabelled
         else:
-            counts = {}
-            for name in np.unique(batches):
-                counts[name] = int(np.sum(batches == name))
+            counts = {name: int(np.sum(labels == name)) for name in known}
             rare = min(counts, key=lambda key: counts[key])
-            weight = np.where(batches == rare, 8.0, 1.0)
+            weight = np.where(labels == rare, 8.0, 1.0)
             indices = _oversample_indices(weight, len(y), seed)
             changed["resampled_rows"] = int(len(indices))
+            changed["resample_weight"] = "rare batch x8"
             changed["rare_batch"] = rare
+            changed["batches"] = len(known)
             x, y = x[indices], y[indices]
 
     else:
@@ -352,26 +253,15 @@ def prepare(hypothesis, model, train, profile_key, seed):
     return x, y, changed
 
 
-def _batch_of(identifiers):
-    """The measurement batch of each row, if the ids carry one."""
-    batches = []
-    for identifier in identifiers:
-        parts = identifier.split("_")
-        if len(parts) >= 2 and parts[0] == "gas":
-            batches.append(parts[1])
-        else:
-            batches.append(None)
-    if all(item is None for item in batches):
-        return None
-    return np.asarray(batches, dtype=object)
-
-
-def epoch_budget(hypothesis, round_index, wall_seconds=None):
+def epoch_budget(hypothesis, round_index, wall_seconds=None, adapter=None):
     """How many epochs to run for this round.
 
     The budget grows with the round index so that a strategy that needs
     time to show its effect is not cut short, and it stays bounded so
     that the round always finishes inside the platform's wall clock.
+
+    The adapter scales it: profile C has sixteen times the rows of
+    profile B, so its budget is smaller.
     """
     base = {"more-data-helps": 30, "the-parent-was-left-unconverged": 30,
             "the-tail-is-underweighted": 40, "the-unit-is-the-confounder": 40,
@@ -386,4 +276,7 @@ def epoch_budget(hypothesis, round_index, wall_seconds=None):
     # and the second round would be a repetition dressed up as an
     # experiment rather than an experiment at all.
     count += (round_index - 1) * 10
-    return int(min(count, 150))
+    count = int(min(count, 150))
+    if adapter is not None:
+        count = max(1, int(count * float(adapter.epoch_scale())))
+    return count

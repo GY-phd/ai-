@@ -26,9 +26,16 @@ from .model import Model
 
 # A last-resort fallback so that a prediction is never missing because the
 # environment variable was not set.  It is a *constant*, not a learned
-# number: it is the neutral prediction for each task.
+# number: the neutral prediction for each task.
+#
+# For regression that is 0.0.  For classification there is no safe
+# constant, because the platform requires every label to be one of the
+# profile's own classes and rejects an unknown one - the previous value
+# ("normal") was not one of the six official gas classes, so a fallback
+# would have produced a prediction the platform could not score.  The
+# classification fallback therefore reports the error instead of
+# inventing a label.
 _FALLBACK_REGRESSION = 0.0
-_FALLBACK_LABEL = "normal"
 
 
 def _find_checkpoint(model_dir):
@@ -57,6 +64,12 @@ def _classes_from_context(sample):
     The prediction context carries the artefact's own description, and the
     checkpoint carries the class list.  The checkpoint is authoritative:
     it is what the platform will score.
+
+    This helper is kept for the shape of the answer rather than for its
+    content: the context does **not** carry the class list (the SDK's
+    ``contest.predict-context.v1`` has only ``dataset_key``, ``task``,
+    ``artifact`` and ``artifact_id``), so there is nothing here to read.
+    The class list always comes from the checkpoint's ``meta["classes"]``.
     """
     return None
 
@@ -72,11 +85,20 @@ def predict_sample(sample, model_dir):
 
     checkpoint = _find_checkpoint(model_dir)
     if checkpoint is None:
-        # No artefact is mounted.  Returning a valid neutral answer is
-        # better than raising: a missing line fails the whole measurement.
+        # No artefact is mounted.  For a regression task a neutral value
+        # is a valid answer and is better than raising: a missing line
+        # fails the whole measurement.
+        #
+        # For a classification task there is **no** valid neutral answer:
+        # the platform requires every label to be one of the profile's own
+        # classes, and a made-up label would be rejected - or, worse,
+        # accepted as a wrong prediction.  The honest response is to say
+        # that the artefact is missing.
         if task == "regression":
             return {"outputs": {"value": float(_FALLBACK_REGRESSION)}}
-        return {"outputs": [{"label": _FALLBACK_LABEL, "score": 1.0}]}
+        raise ValueError("no checkpoint is mounted, so the class list is "
+                         "unknown and no valid classification label can be "
+                         "produced")
 
     model = Model.load(checkpoint)
     if model.meta["task"] != task:

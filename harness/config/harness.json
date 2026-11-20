@@ -18,7 +18,7 @@
     "model_id": "Qwen3.8-27B",
     "base_url_env": "HARNESS_LLM_BASE_URL",
     "api_key_env": "HARNESS_LLM_API_KEY",
-    "timeout_s": 30,
+    "timeout_s": 60,
     "max_tokens": 1024,
     "temperature": 0.0,
     "mode": "auto"

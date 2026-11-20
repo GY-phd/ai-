@@ -7,13 +7,60 @@ environment exposes (``HARNESS_LLM_BASE_URL``), and the model id is pinned in
 the config (``Qwen3.8-27B``; a PyTRiO post-trained 4B/27B checkpoint is selected
 by changing only that id).
 
-Everything the model returns is treated as untrusted: the JSON is validated
+    10|Everything the model returns is treated as untrusted: the JSON is validated
 against a strict schema, the action name must be in the allowed set, and any
 parse/transport failure makes the caller fall back to the deterministic policy
 (``harness.policy``).  That fallback is what lets the same image run offline.
+
+The model id and the platform's id
+----------------------------------
+The platform's dropdown lists the models under their **PyTRiO** ids, which
+use a slash::
+
+    Qwen/Qwen3.8-27B
+    Qwen/Qwen3.5-4B
+
+while the short form used in this project's configuration and in the
+competition's own text uses a dot::
+
+    Qwen3.8-27B
+
+An endpoint that speaks the PyTRiO protocol will reject the short form,
+and an endpoint that expects the short form will reject the slashed one.
+So the planner resolves the id against the two known aliases before it
+speaks: ``MODEL_ALIASES`` maps the short form onto the platform's id,
+and a model that is already slashed is left alone.  The alias table is
+the single place where the two spellings meet, so a future model only
+has to be added once.
 """
 import json
 import time
+
+
+#: The platform's model ids, and the short forms the competition's text
+#: uses for them.  The platform's spelling is the one that is sent.
+MODEL_ALIASES = {
+    "qwen3.8-27b": "Qwen/Qwen3.8-27B",
+    "qwen3.5-4b": "Qwen/Qwen3.5-4B",
+    "qwen3.5-4b-instruct": "Qwen/Qwen3.5-4B",
+}
+
+
+def resolve_model_id(model_id):
+    """Map a model id onto the spelling the endpoint expects.
+
+    An id that already carries the platform's slash is returned
+    unchanged; a short form is mapped through ``MODEL_ALIASES``.  An
+    unknown id is returned as it came in - the whitelist check in
+    ``evo`` decides whether it may be used at all, and this function
+    only answers "which spelling".
+    """
+    text = str(model_id or "").strip()
+    if not text:
+        return text
+    if "/" in text:
+        return text
+    return MODEL_ALIASES.get(text.lower(), text)
 
 
 class LLMUnavailable(RuntimeError):
@@ -63,7 +110,11 @@ action (one of the five), params (object), hypothesis (<=200 chars), expected_ga
 
 class QwenPlanner:
     def __init__(self, settings, skills=None):
-        self.model_id = settings["model_id"]
+        # The config carries the short form; the endpoint expects the
+        # platform's spelling.  The resolution happens once, here, so
+        # every request carries the same id.
+        self.model_id = resolve_model_id(settings["model_id"])
+        self.configured_model_id = str(settings["model_id"])
         self.base_url = (settings.get("base_url") or "").rstrip("/")
         self.api_key = settings.get("api_key") or ""
         self.timeout = float(settings.get("timeout_s", 30))

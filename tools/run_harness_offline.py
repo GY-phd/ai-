@@ -97,15 +97,28 @@ class _HistoryHost(OfflineHost):
             process.stdin.flush()
 
 
-def _run_round(dataset_key, round_index, history, work):
-    """Run one round and return the host's view of it."""
-    frame = start_frame(dataset_key, round_index)
+def _run_round(dataset_key, round_index, history, work, parent=None):
+    """Run one round and return the host's view of it.
+
+    ``parent`` is the checkpoint the round continues from.  When it is
+    ``None`` the round starts from the package's own baseline, which is
+    what the platform does for the first round.
+    """
+    parent_root, parent_checkpoint, parent_id = parent or (None, None, None)
+    frame = start_frame(dataset_key, round_index,
+                        parent_root=parent_root,
+                        parent_checkpoint=parent_checkpoint,
+                        parent_artifact_id=parent_id)
     env = os.environ.copy()
     env["PYTHONPATH"] = str(ROOT)
     env["CONTEST_SUBMISSION"] = "contest_submission"
     env["CONTEST_WORK"] = str(work)
     env["CONTEST_APP_ROOT"] = str(ROOT)
-    env["CONTEST_PARENT_ROOT"] = str(package_root(dataset_key))
+    # The platform mounts the parent artefact at ``/previous``.  The
+    # offline harness points that mount at wherever the current parent
+    # lives - the package for the first round, and the last adopted
+    # candidate for every round after that.
+    env["CONTEST_PARENT_ROOT"] = str(parent_root or package_root(dataset_key))
     env["PYTHONUTF8"] = "1"
     env["PYTHONIOENCODING"] = "utf-8"
 
@@ -173,15 +186,41 @@ def main(argv=None):
     for key in keys:
         history = []
         rounds = []
+        # The parent the next round continues from.  The platform advances
+        # the parent to the **adopted** candidate and keeps the old parent
+        # when a candidate is rejected; the rehearsal does the same, so
+        # its numbers describe the loop the platform actually runs rather
+        # than ten repetitions from one fixed baseline.
+        #
+        # ``parent`` is ``(root, checkpoint, artifact_id)`` or ``None`` for
+        # the first round, which starts from the package's own baseline.
+        parent = None
+        # The work directories that must survive the round, because they
+        # hold the checkpoint the next round continues from.
+        keep = set()
         for round_index in range(1, args.rounds + 1):
             work = Path(tempfile.mkdtemp(prefix="harness-%s-r%d-" % (key, round_index)))
             started = time.monotonic()
-            host = _run_round(key, round_index, history, work / "work")
+            host = _run_round(key, round_index, history, work / "work", parent=parent)
             if host.failure is not None:
                 raise SystemExit("round %d of %s failed: %s\n%s"
                                  % (round_index, key, host.failure, host.stderr_text))
             entry = _ledger_entry(host, key, round_index)
             history.append(entry)
+
+            # Advance the parent when the round's candidate was adopted.
+            candidate_dir = work / "work" / ("candidate-round-%d" % round_index)
+            candidate_checkpoint = candidate_dir / "checkpoint.npz"
+            advanced = False
+            if entry["adopted"] and candidate_checkpoint.is_file():
+                # The adopted artefact becomes the next round's parent,
+                # exactly as the platform would.  Its directory has to
+                # survive until then.
+                parent = (str(candidate_dir), str(candidate_checkpoint),
+                          entry["selected_artifact_id"] or ("offline-artifact-r%d" % round_index))
+                keep.add(work)
+                advanced = True
+
             rounds.append({
                 "round": round_index,
                 "exit_code": host.exit_code,
@@ -193,11 +232,27 @@ def main(argv=None):
                 "model_call_ids": entry["model_call_ids"],
                 "seconds": round(time.monotonic() - started, 2),
                 "submitted": host.candidate is not None,
+                # The parent this round continued from, so the report
+                # shows what each round actually built on.  ``None`` means
+                # the package baseline.
+                "parent_advanced": advanced,
             })
+            # Collect the round's SwanLab record before the work directory
+            # is removed: it is the round's own experiment log and belongs
+            # with the evidence.
+            record = work / "work" / "swanlab.jsonl"
+            if record.is_file():
+                collected = out / "swanlab" / ("%s-round-%d.jsonl" % (key, round_index))
+                collected.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(record, collected)
             print("%s round %d: %s adopted=%s %s"
                   % (key, round_index, entry["hypothesis"], entry["adopted"],
                      _delta(entry)))
-            shutil.rmtree(work, ignore_errors=True)
+            if work not in keep:
+                shutil.rmtree(work, ignore_errors=True)
+        # The last adopted parent is no longer needed.
+        for path in keep:
+            shutil.rmtree(path, ignore_errors=True)
         report["datasets"][key] = {"rounds": rounds}
 
     path = out / "run_report.json"

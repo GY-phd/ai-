@@ -56,6 +56,17 @@ def check_layout(app: Path) -> list:
     for required in ("harness.py", "contest_submission.py"):
         if not (app / required).is_file():
             problems.append("missing /app/%s" % required)
+    # The plugin layer: one adapter per dataset profile.  Without them the
+    # submission would fall back to a generic regression and fail every
+    # profile but one.
+    for required in ("contest_baselines/adapters/__init__.py",
+                     "contest_baselines/adapters/base.py",
+                     "contest_baselines/adapters/registry.py",
+                     "contest_baselines/adapters/profile_a.py",
+                     "contest_baselines/adapters/profile_b.py",
+                     "contest_baselines/adapters/profile_c.py"):
+        if not (app / required).is_file():
+            problems.append("missing /app/%s" % required)
     # A package that shadows an entry file makes the submission ambiguous.
     for shadow in ("harness",):
         if (app / shadow).is_dir():

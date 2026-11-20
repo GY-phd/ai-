@@ -65,7 +65,8 @@ RUN pip install --no-cache-dir /opt/contest-harness-sdk \
 
 # ---- 2. the participant's code ---------------------------------------------
 # Only the submission travels: the fixed entry point, the participant
-# module and the continuation baseline that serves A / B / C.
+# module, the continuation baseline that serves A / B / C, and the
+# adapter plugin layer that carries each profile's specifics.
 COPY harness.py /app/harness.py
 COPY contest_submission.py /app/contest_submission.py
 COPY contest_baselines/ /app/contest_baselines/
