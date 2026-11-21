@@ -1,4 +1,4 @@
-# Tasks
+﻿# Tasks
 
 ## 1. 模型身份统一（model-identity-resolution）
 
@@ -34,6 +34,6 @@
 
 ## 5. 发布
 
-- [ ] 5.1 构建干净发布仓库并核对清单。**验证**：`python tools/build_github_repo.py` 成功且产物体积在预算内。
-- [ ] 5.2 提交并推送到 `origin/main`。**验证**：`git push` 成功且 `git log origin/main -1` 与本地 HEAD 一致。
-- [ ] 5.3 归档 OpenSpec 变更：`openspec archive industrial-self-evolution-v2`，规格并入 `openspec/specs/`。**验证**：`openspec list --specs` 列出四个能力。
+- [x] 5.1 构建干净发布仓库并核对清单。**验证**：`python tools/build_github_repo.py` 成功且产物体积在预算内。**实测**：367 文件 / 4390.0 KB / 0 权重；`openspec/` 已纳入发布清单。
+- [x] 5.2 提交并推送到 `origin/main`。**验证**：`git push` 成功且 `git log origin/main -1` 与本地 HEAD 一致。**实测**：提交 `5faca30`，推送 `faf4cba..5faca30 main -> main`，本地与远端 SHA 一致。
+- [x] 5.3 归档 OpenSpec 变更：`openspec archive industrial-self-evolution-v2`，规格并入 `openspec/specs/`。**验证**：`openspec list --specs` 列出四个能力。**实测**：18 条需求并入 `openspec/specs/`（acceptance-benchmark 5 / model-identity-resolution 5 / spec-lifecycle-governance 4 / view-layer-contract 4），变更归档为 `2026-11-21-industrial-self-evolution-v2`。

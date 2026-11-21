@@ -1,8 +1,8 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 3465928,
-  "file_count": 321,
+  "total_bytes": 3482530,
+  "file_count": 325,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "files": {
     ".dockerignore": {
@@ -517,41 +517,41 @@
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
-    "openspec/changes/industrial-self-evolution-v2/.openspec.yaml": {
+    "openspec/changes/archive/2026-11-21-industrial-self-evolution-v2/.openspec.yaml": {
       "bytes": 40,
       "sha256": "5354b7028230e74b1f9295986352ad4a8253375220377f8a7a98bdbaf9251dc9"
     },
-    "openspec/changes/industrial-self-evolution-v2/README.md": {
+    "openspec/changes/archive/2026-11-21-industrial-self-evolution-v2/README.md": {
       "bytes": 148,
       "sha256": "ae442b7acd2fdcf9f4b0ec5052962667600d751fad5841faca60d14b635d0b28"
     },
-    "openspec/changes/industrial-self-evolution-v2/design.md": {
+    "openspec/changes/archive/2026-11-21-industrial-self-evolution-v2/design.md": {
       "bytes": 10471,
       "sha256": "61ca1f988206ad2c6c257bf10442d5bd2258d1fa3ec09e6b81d5653b96d35f98"
     },
-    "openspec/changes/industrial-self-evolution-v2/proposal.md": {
+    "openspec/changes/archive/2026-11-21-industrial-self-evolution-v2/proposal.md": {
       "bytes": 5009,
       "sha256": "522807160231fce9158f183bfd1bfc35f180e01252f5ba6ab33c21c806c99ebd"
     },
-    "openspec/changes/industrial-self-evolution-v2/specs/acceptance-benchmark/spec.md": {
+    "openspec/changes/archive/2026-11-21-industrial-self-evolution-v2/specs/acceptance-benchmark/spec.md": {
       "bytes": 4461,
       "sha256": "103ac09314b688f2f8480c8de574ad8f9cc1bb496a04fce04170222575c4315c"
     },
-    "openspec/changes/industrial-self-evolution-v2/specs/model-identity-resolution/spec.md": {
+    "openspec/changes/archive/2026-11-21-industrial-self-evolution-v2/specs/model-identity-resolution/spec.md": {
       "bytes": 3733,
       "sha256": "36cd397d8c0d1dadeb74a9be78ecc5d79684b675b28cec4a1fca7de355aea6dd"
     },
-    "openspec/changes/industrial-self-evolution-v2/specs/spec-lifecycle-governance/spec.md": {
+    "openspec/changes/archive/2026-11-21-industrial-self-evolution-v2/specs/spec-lifecycle-governance/spec.md": {
       "bytes": 3733,
       "sha256": "a6bb30453fc5987fcad6864ec1fa5209f38f82f89ab187b10de587b102b5d6fb"
     },
-    "openspec/changes/industrial-self-evolution-v2/specs/view-layer-contract/spec.md": {
+    "openspec/changes/archive/2026-11-21-industrial-self-evolution-v2/specs/view-layer-contract/spec.md": {
       "bytes": 3483,
       "sha256": "7b9c10566a5a57e11a15607e8afc411892b02dfa454406b52472d3a3bcd9d096"
     },
-    "openspec/changes/industrial-self-evolution-v2/tasks.md": {
-      "bytes": 6048,
-      "sha256": "5ed71607dd2f723d9930e572d5051c4cf26ce590ef67d0270863996d9980bfb5"
+    "openspec/changes/archive/2026-11-21-industrial-self-evolution-v2/tasks.md": {
+      "bytes": 7248,
+      "sha256": "f51ee24127f42767af06c97fd97d38a6b1b6625cda829283f9b70bbf5677c7ee"
     },
     "openspec/config.yaml": {
       "bytes": 768,
@@ -560,6 +560,22 @@
     "openspec/specs/.gitkeep": {
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "openspec/specs/acceptance-benchmark/spec.md": {
+      "bytes": 4369,
+      "sha256": "74a84c32c9c6f789c5b4c133db7a2e6f8e61e2323a59c3b77fb3139e150902e9"
+    },
+    "openspec/specs/model-identity-resolution/spec.md": {
+      "bytes": 3649,
+      "sha256": "fb0cfc0d87a167b5547497fa46fabeeb2e44a7c4f28f735f177cb5cfb48eeeb2"
+    },
+    "openspec/specs/spec-lifecycle-governance/spec.md": {
+      "bytes": 3648,
+      "sha256": "bddf4cb095f34777d3a07a782ad5af167dc4613db422584e2cad7d2b9828fd4e"
+    },
+    "openspec/specs/view-layer-contract/spec.md": {
+      "bytes": 3408,
+      "sha256": "5f0fd0d0998c7163af9d02873f572f820368ba6977248b41b383fa67fdc70dbc"
     },
     "requirements.txt": {
       "bytes": 19,
@@ -1190,8 +1206,8 @@
       "sha256": "dcbb786886fd01d27d64653cd7e0b7ec85ae5ec28a093a7693dc706eccb973e0"
     },
     "tools/build_github_repo.py": {
-      "bytes": 17592,
-      "sha256": "96777b23494c54be2b41fb5a17ac5c97c0064f2773988fa9bbeaad1da5f94301"
+      "bytes": 17920,
+      "sha256": "d80ba68259b7fb7e882a2c34b6531844c2cd7a8fa3c2f7268881bc393ebbff99"
     },
     "tools/demo_safety.py": {
       "bytes": 3120,
