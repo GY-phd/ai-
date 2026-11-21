@@ -83,6 +83,12 @@ CODE_DIRS = ("harness", "rulkit", "tracks", "tools", "research", "tests",
              ".github", "runs", "figureuse", "contest_baselines",
              "contest_harness_sdk")
 DOC_DIRS = ("docs",)
+# ``openspec`` is the specification baseline: the requirements, the
+# designs and the acceptance criteria that the code is written against.
+# It travels with the repository because a reviewer who reads the
+# change has to be able to see **what was required** and not only
+# what was built.
+SPEC_DIRS = ("openspec",)
 # ``artifacts`` is **not** copied wholesale: the working folder also holds the
 # early single-task sweep (246 MB of LightGBM checkpoints under ``sweep/``,
 # ``es2_*``, ``rul_tune15/`` and friends), none of which belongs to the
@@ -210,7 +216,7 @@ def collect() -> list:
         path = ROOT / name
         if path.is_file():
             files.append((path, Path(name)))
-    for directory in CODE_DIRS + DOC_DIRS:
+    for directory in CODE_DIRS + DOC_DIRS + SPEC_DIRS:
         base = ROOT / directory
         if not base.is_dir():
             continue

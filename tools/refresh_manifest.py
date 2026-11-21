@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # The directories and files the project ships.
 TREES = ("harness", "rulkit", "tracks", "tools", "research", "tests",
          "evidence", "docs", "runs", "figureuse", "contest_baselines",
-         "contest_harness_sdk")
+         "contest_harness_sdk", "openspec")
 FILES = ("requirements.txt", "run_harness.sh", "run_all.ps1", "run_harness.ps1",
          "README.md", "LICENSE", "MANIFEST.json", "harness.py",
          "contest_submission.py", "Dockerfile", "Dockerfile.research",
@@ -38,7 +38,7 @@ FILES = ("requirements.txt", "run_harness.sh", "run_all.ps1", "run_harness.ps1",
 # Files that must never be listed: the manifest itself, the caches and
 # the version control metadata.
 SKIP_DIRS = {"__pycache__", ".pytest_cache", ".git", ".venv", "node_modules",
-             ".pytest_tmp", "dist", "_tmp_rm"}
+             ".pytest_tmp", "dist", "_tmp_rm", ".ruff_cache"}
 SKIP_NAMES = {"MANIFEST.json"}
 
 # Developer-only helpers that are kept out of the shipped image (see

@@ -32,6 +32,31 @@ speaks: ``MODEL_ALIASES`` maps the short form onto the platform's id,
 and a model that is already slashed is left alone.  The alias table is
 the single place where the two spellings meet, so a future model only
 has to be added once.
+
+This module is the **single authority** on model identity
+----------------------------------------------------------
+There are two questions about a model id, and they are different
+questions:
+
+**Which spelling?**  ``resolve_model_id`` answers that: it turns the
+competition's short form into the platform's spelling.  It is a pure
+spelling question and it never decides whether a model may be used.
+
+**Is it allowed?**  ``is_allowed_model`` answers that: it compares an id
+against the competition's allow-list and the platform's post-training
+derivatives.  It never rewrites the id.
+
+The split matters.  Rewriting an unknown id into an allowed one would
+hide a misconfiguration behind a tidy request, and then the call would
+carry a model the operator never chose.  So the two never share a
+function, and neither one does the other's job.
+
+``normalize_model_id`` is the shared rule underneath both: it strips
+every separator and folds the case, so ``Qwen3.8-27B``,
+``Qwen3-8-27B``, ``qwen3_8_27b`` and ``Qwen/Qwen3.8-27B`` all reduce
+to the same text.  That is what makes a post-training derivative such
+as ``qwen3.8-27b-ft-20261115`` recognisable as a derivative rather
+than as an unknown model.
 """
 import json
 import time
@@ -44,6 +69,34 @@ MODEL_ALIASES = {
     "qwen3.5-4b": "Qwen/Qwen3.5-4B",
     "qwen3.5-4b-instruct": "Qwen/Qwen3.5-4B",
 }
+
+
+def normalize_model_id(model_id):
+    """Fold an id to its comparison form.
+
+    The rule is deliberately blunt: every separator is dropped and the
+    case is folded.  Two ids that differ only in spelling - a dot for a
+    dash, a slash for a dash, an upper case letter for a lower case
+    one - compare equal, because the platform's own naming has moved
+    between those spellings before, and the competition's allow-list
+    is written in the short form while the platform serves the long one.
+
+    A **vendor prefix** is dropped before the folding.  The platform
+    serves ``Qwen/Qwen3.8-27B`` while the competition writes
+    ``Qwen3.8-27B``, so the two spellings of one model differ by a
+    segment as well as by punctuation.  Without dropping it, the
+    platform's own spelling would not match the allow-list entry it is
+    supposed to match.
+
+    An empty id normalises to an empty string, so a caller can compare
+    it without a special case.
+    """
+    text = str(model_id or "").strip()
+    if "/" in text:
+        # The platform's form is ``vendor/model``: the vendor segment is
+        # a namespace, not part of the model's own name.
+        text = text.rsplit("/", 1)[-1]
+    return "".join(ch for ch in text.lower() if ch.isalnum())
 
 
 def resolve_model_id(model_id):
@@ -61,6 +114,44 @@ def resolve_model_id(model_id):
     if "/" in text:
         return text
     return MODEL_ALIASES.get(text.lower(), text)
+
+
+def is_allowed_model(model_id, allowed, derived=()):
+    """Is this model id one the competition permits?
+
+    The judgement has three layers, in this order:
+
+    1. **An explicit exemption.**  An id the configuration names as a
+       platform post-training derivative is allowed outright.  This
+       layer comes first because a derivative's name is rewritten by
+       the platform, and a literal comparison would call a compliant
+       model a violation.
+
+    2. **A compliant base.**  The normalised id *contains* one of the
+       allowed bases.  This is what lets ``qwen3.8-27b-ft-20261115``
+       through on the strength of its ``qwen3.8-27b`` base without
+       maintaining a long list of suffixes.
+
+    3. **Otherwise, refused.**  A model outside the allow-list is not
+       permitted, and the caller must not issue the request.
+
+    The containment in layer 2 is a **substring** test on the
+    normalised text, so a separator variant of an allowed base is
+    accepted as well.
+    """
+    normalised = normalize_model_id(model_id)
+    if not normalised:
+        return False
+
+    # 1) The platform's post-training derivatives (the second route).
+    for name in derived or ():
+        candidate = normalize_model_id(name)
+        if candidate and candidate in normalised:
+            return True
+
+    # 2) A compliant base.
+    return any(normalize_model_id(name) in normalised
+               for name in allowed or () if normalize_model_id(name))
 
 
 class LLMUnavailable(RuntimeError):

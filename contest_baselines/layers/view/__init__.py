@@ -47,6 +47,33 @@ endpoint                   what it answers
 ``hypothesis``             the hypotheses and how each turned out
 ``predict``                one prediction, from the mounted artefact
 =========================  ===================================================
+
+How the View is deployed
+------------------------
+**The View is a library, not a service.**  It is used **in process**:
+the caller constructs a ``View`` on a state directory and calls the
+queries.  The image does **not** start an HTTP server for it, and the
+image's entry point does **not** derive a background process or a
+daemon thread to answer View queries.
+
+That is a deliberate choice, not an omission.  The image's entry point
+has to be the **only** entry point and has to exit cleanly when the
+round is over - that is what the platform's trial run checks.  A
+service that outlives the round would make the entry point ambiguous
+about when it was finished, and a service that has to be killed is a
+service that might not be.
+
+``layers/view/server.py`` therefore stays an **optional** helper: it
+is a standard-library HTTP wrapper for the same queries, for a
+dashboard or a review page that wants HTTP.  Nothing in the image
+starts it.
+
+So the View is reachable in exactly one way from inside the image::
+
+    from contest_baselines.layers.view import View
+
+    view = View("/workspace/state")
+    print(view.to_json(view.overview()))
 """
 from __future__ import annotations
 

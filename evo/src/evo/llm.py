@@ -13,11 +13,43 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 import time
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from .config import Config
+
+
+def _load_model_identity():
+    """The repository's single authority on model identity.
+
+    ``harness.llm`` holds the only allow-list in this repository, so
+    the rule has to come from there rather than from a second copy
+    here.  It lives at the repository root while this package lives
+    under ``evo/src``, so the root is put on the path when the package
+    was installed without the repository beside it.
+
+    There is deliberately **no fallback copy** of the rule.  A second
+    implementation is exactly the defect this change removes: two
+    copies drift, and the copy nobody reads is the one that decides
+    whether a model is permitted.  If the authority cannot be reached
+    the import fails loudly, which is the correct outcome for a
+    compliance rule.
+    """
+    try:
+        from harness.llm import is_allowed_model as _is_allowed_model
+    except ImportError:
+        root = Path(__file__).resolve().parent.parent.parent.parent
+        if root.is_dir() and str(root) not in sys.path:
+            sys.path.insert(0, str(root))
+        from harness.llm import is_allowed_model as _is_allowed_model
+    return _is_allowed_model
+
+
+#: The one rule for "is this model permitted?", from ``harness.llm``.
+is_allowed_model = _load_model_identity()
 
 
 @dataclass
@@ -108,7 +140,10 @@ class LLMClient:
     def _check_model_allowed(self, model: str) -> bool:
         """校验模型是否在赛题允许的白名单内。
 
-        三层判定 (按顺序):
+        判定规则由 ``harness.llm`` 独家持有 —— 本仓库关于"哪个模型是
+        合规的"只有**一处**真源。本方法只负责把配置里的两个名单交给它。
+
+        三层判定 (由 harness.llm.is_allowed_model 按序执行):
           1) **显式豁免**: 命中 `llm.derived_models` (平台后训练派生模型, 路线二)
              → 直接允许。这层放在最前, 因为后训练模型名通常带后缀,
              字面匹配会误判违规。
@@ -121,16 +156,7 @@ class LLMClient:
         "qwen3.8-27b" / "Qwen3-8-27B" / "qwen3_8_27b" 等变体,
         直接字符串相等会误判。
         """
-        norm = lambda s: "".join(ch for ch in s.lower() if ch.isalnum())
-        n = norm(model)
-
-        # 1) 平台后训练派生模型 (路线二) —— 显式豁免
-        for d in self.derived_models:
-            if norm(d) and norm(d) in n:
-                return True
-
-        # 2) 基座合规
-        return any(norm(m) in n for m in self.allowed_models)
+        return is_allowed_model(model, self.allowed_models, self.derived_models)
 
     def chat(self, messages: List[Dict[str, str]], max_tokens: int | None = None) -> str:
         """调用大模型; 失败时返回空串并计数 (由上层触发降级)。"""

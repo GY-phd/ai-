@@ -28,7 +28,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 5.06,
+          "seconds": 4.09,
           "submitted": true,
           "parent_advanced": true
         },
@@ -55,7 +55,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 3.98,
+          "seconds": 5.56,
           "submitted": false,
           "parent_advanced": false
         },
@@ -82,7 +82,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 4.36,
+          "seconds": 4.05,
           "submitted": false,
           "parent_advanced": false
         },
@@ -109,7 +109,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 4.14,
+          "seconds": 4.69,
           "submitted": false,
           "parent_advanced": false
         },
@@ -136,7 +136,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 4.47,
+          "seconds": 4.19,
           "submitted": false,
           "parent_advanced": false
         },
@@ -163,7 +163,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 4.02,
+          "seconds": 4.17,
           "submitted": false,
           "parent_advanced": false
         },
@@ -190,7 +190,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 3.95,
+          "seconds": 4.59,
           "submitted": false,
           "parent_advanced": false
         },
@@ -217,7 +217,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 4.72,
+          "seconds": 4.81,
           "submitted": false,
           "parent_advanced": false
         },
@@ -244,7 +244,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 5.0,
+          "seconds": 4.66,
           "submitted": false,
           "parent_advanced": false
         },
@@ -271,7 +271,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 4.61,
+          "seconds": 4.75,
           "submitted": false,
           "parent_advanced": false
         }
@@ -302,7 +302,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 6.3,
+          "seconds": 5.98,
           "submitted": true,
           "parent_advanced": true
         },
@@ -329,7 +329,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 6.8,
+          "seconds": 5.84,
           "submitted": true,
           "parent_advanced": true
         },
@@ -356,7 +356,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 6.5,
+          "seconds": 6.02,
           "submitted": false,
           "parent_advanced": false
         },
@@ -383,7 +383,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 6.48,
+          "seconds": 6.64,
           "submitted": true,
           "parent_advanced": true
         },
@@ -410,7 +410,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 6.69,
+          "seconds": 6.27,
           "submitted": true,
           "parent_advanced": true
         },
@@ -437,7 +437,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 6.89,
+          "seconds": 6.19,
           "submitted": true,
           "parent_advanced": true
         },
@@ -464,7 +464,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 7.16,
+          "seconds": 6.7,
           "submitted": true,
           "parent_advanced": true
         },
@@ -491,7 +491,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 7.75,
+          "seconds": 6.67,
           "submitted": true,
           "parent_advanced": true
         },
@@ -518,7 +518,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 6.83,
+          "seconds": 6.69,
           "submitted": true,
           "parent_advanced": true
         },
@@ -545,7 +545,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 7.91,
+          "seconds": 7.39,
           "submitted": true,
           "parent_advanced": true
         }
@@ -586,7 +586,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 21.66,
+          "seconds": 18.61,
           "submitted": true,
           "parent_advanced": true
         },
@@ -623,7 +623,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 23.81,
+          "seconds": 21.56,
           "submitted": true,
           "parent_advanced": true
         },
@@ -660,7 +660,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 24.42,
+          "seconds": 23.34,
           "submitted": false,
           "parent_advanced": false
         },
@@ -697,7 +697,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 25.89,
+          "seconds": 23.48,
           "submitted": false,
           "parent_advanced": false
         },
@@ -734,7 +734,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 23.0,
+          "seconds": 23.28,
           "submitted": true,
           "parent_advanced": true
         },
@@ -771,7 +771,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 23.55,
+          "seconds": 23.56,
           "submitted": false,
           "parent_advanced": false
         },
@@ -808,7 +808,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 23.16,
+          "seconds": 23.44,
           "submitted": true,
           "parent_advanced": true
         },
@@ -845,7 +845,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 23.3,
+          "seconds": 23.94,
           "submitted": true,
           "parent_advanced": true
         },
@@ -882,7 +882,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 24.81,
+          "seconds": 23.33,
           "submitted": true,
           "parent_advanced": true
         },
@@ -919,7 +919,7 @@
           "model_call_ids": [
             "offline-call-1"
           ],
-          "seconds": 24.88,
+          "seconds": 26.3,
           "submitted": false,
           "parent_advanced": false
         }

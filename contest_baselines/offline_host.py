@@ -230,7 +230,12 @@ def run_entrypoint(command, dataset_key, work, *, round_index=1, entry=None):
     thread = host.serve(process)
     thread.join(timeout=1800)
     stdout = "".join(host.stdout_lines)
-    code = process.wait(timeout=60)
+    # The exit wait is generous on purpose: the host thread has already
+    # seen the ``round_complete`` frame, so the participant only needs a
+    # moment to unwind.  Profile C's rows outnumber profile B's
+    # sixteenfold, and a tight wait discarded a round that had already
+    # finished.
+    code = process.wait(timeout=600)
     stderr_handle.close()
     stderr = stderr_path.read_text(encoding="utf-8", errors="replace")
     return code, stdout, stderr, host

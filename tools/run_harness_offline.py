@@ -134,7 +134,13 @@ def _run_round(dataset_key, round_index, history, work, parent=None):
     thread = threading.Thread(target=host.serve, args=(process,), daemon=True)
     thread.start()
     thread.join(timeout=3600)
-    code = process.wait(timeout=60)
+    # The exit wait is **generous on purpose**.  The host thread has
+    # already seen the ``round_complete`` frame, so the participant is
+    # done writing and only needs a moment to unwind.  A tight wait
+    # still failed on profile C, whose rows outnumber profile B's
+    # sixteenfold and whose last round therefore outlived it - and a
+    # timeout there would discard a round that had already finished.
+    code = process.wait(timeout=600)
     stderr_handle.close()
     host.exit_code = code
     host.stderr_text = stderr_path.read_text(encoding="utf-8", errors="replace")

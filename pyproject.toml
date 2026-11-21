@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zhixun-engine"
+version = "0.2.0"
+description = "智训引擎 — 三方向工业模型自进化系统 (漂移监测-诊断归因-实验优化-评估上线-回滚闭环)"
+requires-python = ">=3.10"
+
+# The **three-track closed loop** (tracks/, rulkit/, harness/) runs on
+# numpy alone.  The heavier dependencies below are only needed by the
+# earlier ``evo`` implementation under ``evo/``, which is kept for
+# comparison and is not on the path of the submitted system.
+dependencies = [
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+# The evo comparison implementation.
+evo = [
+    "pandas>=2.0",
+    "scikit-learn>=1.3",
+    "scipy>=1.10",
+    "lightgbm>=4.0",
+    "pyyaml>=6.0",
+    "joblib>=1.3",
+    "swanlab>=0.4",
+]
+llm = ["openai>=1.30"]
+dev = ["pytest>=7.4", "ruff>=0.4"]
+
+[project.scripts]
+evo = "evo.cli:main"
+
+[tool.setuptools]
+# The evo package lives under ``evo/src``; the three-track runtime is
+# imported from the repository root (tracks/, rulkit/, harness/), so it
+# is not installed as a package.
+package-dir = {"" = "evo/src"}
+
+[tool.setuptools.packages.find]
+where = ["evo/src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
