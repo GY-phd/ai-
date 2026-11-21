@@ -39,6 +39,14 @@ jobs:
       - name: Byte-compile every module
         run: python -m compileall -q harness rulkit tools tests contest_baselines
 
+      # The interpreter has to be one the project supports: the SDK
+      # declares ``requires-python >=3.10`` and the image is built
+      # from ``python:3.12-slim-bookworm``.  Checking it here means a
+      # matrix entry that silently drifts off the supported range is
+      # red rather than silently different from what the graders run.
+      - name: The interpreter is one the project supports
+        run: python tools/check_env.py
+
       - name: Unit tests
         run: python -m unittest discover -s tests -t . -v
 

@@ -6,9 +6,15 @@
 > **基岩智序** 团队
 
 <p>
-  <code>Python 3.10+</code> · <code>NumPy only</code> · <code>CPU</code> ·
+  <code>Python 3.12</code> · <code>NumPy only</code> · <code>CPU</code> ·
   <code>no weights in the package</code>
 </p>
+
+> **Python 版本**：本项目**只在 3.12 上开发与验收**（镜像基线 `python:3.12-slim-bookworm`，
+> SDK 声明 `requires-python >=3.10`，CI 矩阵覆盖 3.10 / 3.12）。
+> 运行时请使用仓库自带的 `.venv`（3.12），或自行创建 3.10–3.13 的虚拟环境。
+> `python tools/check_env.py` 会检查当前解释器与 numpy 是否符合要求。
+> 3.14 等更新版本虽然能跑通全部测试，但**未经 CI 矩阵验证**，不建议作为验收环境。
 
 **一句话**：在漂移数据流上自动提出假设、用受控实验证伪、**只在门控通过时才上线**的闭源自进化系统。
 三个赛题方向由**同一套运行时**驱动，共用漂移检测、假设库、门控与账本，只在数据适配与模型配方上分叉。

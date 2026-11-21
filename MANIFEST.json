@@ -1,7 +1,7 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 4519038,
+  "total_bytes": 4520291,
   "file_count": 356,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "files": {
@@ -18,8 +18,8 @@
       "sha256": "efaaa83572b8c2c355f9ee687ca68cfa880fa7ab24848f3cda1b7618e690b025"
     },
     ".github/workflows/ci.yml": {
-      "bytes": 5426,
-      "sha256": "d5f67f9972781bafd514046b734a76fec18481cd415f6528360f3c41fe87c06e"
+      "bytes": 5868,
+      "sha256": "b82626212d0ae76877cfa45133f3b8c99c082d73432d9bb92e12151435037a34"
     },
     ".gitignore": {
       "bytes": 5369,
@@ -42,8 +42,8 @@
       "sha256": "d9a6d1b82f8f1ddab350783cf19b12ead89f9e395428d0e4a5e6dc9259da8e81"
     },
     "README.md": {
-      "bytes": 22316,
-      "sha256": "512790d9ebf4e2a12f5e25b672e28dd985663307ff3e157abdaad070d9c12ce9"
+      "bytes": 22806,
+      "sha256": "ef917e16f207651d0d1106df2b3fc3bcc922117b2d9deb0bdbb5fdcf8793b356"
     },
     "artifacts/comparison.json": {
       "bytes": 10227,
@@ -738,8 +738,8 @@
       "sha256": "e4b798969f871518633f8f0e846b3a33fb37b4f755036ef824aebe6e2df81ac9"
     },
     "requirements.txt": {
-      "bytes": 19,
-      "sha256": "e4bd060ac971f6bdcdca6d4f04492e71dc01941f320f18bfe780d40d27b9de5f"
+      "bytes": 340,
+      "sha256": "d7efa63ad22f500cb4e095a8a46aa111b3be8f04b9d7776468ab12406ff76b76"
     },
     "research/__init__.py": {
       "bytes": 0,

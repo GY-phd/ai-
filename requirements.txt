@@ -1,1 +1,7 @@
-﻿numpy>=1.26,<3
+﻿# The runtime dependency of the submitted system is numpy, and nothing else.
+#
+# The image is built from python:3.12-slim-bookworm and this range is
+# the one `tools/check_env.py` enforces: numpy 1.26 is the oldest that
+# carries the API the code uses, and numpy 3 is a major break that has
+# not been tested here.
+numpy>=1.26,<3
