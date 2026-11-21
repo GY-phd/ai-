@@ -45,6 +45,44 @@ jobs:
       - name: Verify the committed evidence ledger still chains
         run: python tools/verify_ledger.py --ledger evidence/ledger.jsonl
 
+      # The manifest is the inventory of what the repository ships.  It
+      # used to be generated from the working tree, so it named files
+      # git ignores and a fresh checkout failed the check below with
+      # "manifest lists a missing file" on every push.  This step asks
+      # the question directly: does the manifest agree with the
+      # checkout?
+      - name: Verify the manifest describes this checkout
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          root = Path(".")
+          manifest = json.loads((root / "MANIFEST.json").read_text(encoding="utf-8"))
+          tracked = set(
+              name for name in subprocess.run(
+                  ["git", "ls-files", "-z"], capture_output=True, check=True
+              ).stdout.decode("utf-8", "replace").split("\0") if name
+          )
+          listed = set(manifest.get("files") or {})
+          missing = sorted(listed - tracked)
+          if missing:
+              raise SystemExit(
+                  "FAIL  MANIFEST.json lists %d file(s) this checkout does "
+                  "not have; regenerate it with "
+                  "`python tools/refresh_manifest.py`: %s"
+                  % (len(missing), missing[:5]))
+          unlisted = sorted(tracked - listed)
+          if unlisted:
+              raise SystemExit(
+                  "FAIL  %d tracked file(s) are absent from MANIFEST.json; "
+                  "regenerate it with `python tools/refresh_manifest.py`: %s"
+                  % (len(unlisted), unlisted[:5]))
+          print("OK  the manifest describes this checkout (%d files)" % len(listed))
+          PY
+
       - name: Verify the repository ships no model weights
         run: python tools/verify_repo.py --dir .
 

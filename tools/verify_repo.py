@@ -157,14 +157,30 @@ def main() -> int:
         if manifest.get("contains_model_weights") is not False:
             problems.append("manifest does not declare contains_model_weights=false")
         if not args.weights_only and not args.working_tree:
+            missing = []
+            mismatched = []
             for rel, entry in (manifest.get("files") or {}).items():
                 target = root / rel
                 if not target.is_file():
-                    problems.append(f"manifest lists a missing file: {rel}")
+                    missing.append(rel)
                     continue
                 actual = canonical_digest(target.read_bytes())
                 if actual != entry.get("sha256"):
-                    problems.append(f"digest mismatch: {rel}")
+                    mismatched.append(rel)
+            # A manifest that names files the tree does not have is
+            # **stale**, not broken: it was generated from a working tree
+            # that held files the repository does not ship.  The remedy
+            # is to regenerate it, and saying so is far more useful than
+            # printing one line per missing file.
+            if missing:
+                problems.append(
+                    "manifest lists %d file(s) the repository does not "
+                    "ship; it is stale - regenerate it with "
+                    "`python tools/refresh_manifest.py` (first %d: %s)"
+                    % (len(missing), min(len(missing), 5),
+                       ", ".join(sorted(missing)[:5])))
+            for rel in sorted(mismatched):
+                problems.append(f"digest mismatch: {rel}")
 
     # The evidence trail is the whole point of the repository; check it is present.
     for rel in ("evidence/ledger.jsonl", "evidence/run_report.json"):
