@@ -16,12 +16,27 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from text_canonical import canonical_digest  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# The manifest describes **what the repository ships**, and the only
+# definition of that is the set of files git tracks.  A file that is
+# gitignored - a local research run, a ``pip install`` build directory,
+# a scratch ``evidence/`` folder - is on the developer's disk but is
+# not in the repository the reviewers clone.  Listing such a file made
+# ``MANIFEST.json`` disagree with a fresh checkout, and the CI check
+# ``tools/verify_repo.py --dir .`` failed on every push with
+# "manifest lists a missing file".
+#
+# So the manifest is built from git's index, not from the working tree.
+# The one exception is a tree that is not a git repository at all (the
+# prepared ``dist/github`` folder), where the filesystem is the only
+# source of truth and the old behaviour is kept.
 
 # The directories and files the project ships.
 TREES = ("harness", "rulkit", "tracks", "tools", "research", "tests",
@@ -58,6 +73,25 @@ WEIGHT_SUFFIXES = {
 }
 
 
+def _tracked_paths():
+    """The files git tracks under ``ROOT``, as POSIX relative paths.
+
+    Returns ``None`` when ``ROOT`` is not a git repository.  The names
+    are read with ``-z`` so that a CJK file name survives; a name
+    mangled by a newline split would not match any path on disk and the
+    file would silently drop out of the manifest.
+    """
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(ROOT), "ls-files", "-z"],
+            capture_output=True, check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    names = result.stdout.decode("utf-8", "replace").split("\0")
+    return [name for name in names if name]
+
+
 def collect():
     """Every shipped file, as ``(relative path, size, digest)``."""
     items = []
@@ -76,6 +110,18 @@ def collect():
         items.append((relative, len(data),
                       canonical_digest(data)))
 
+    tracked = _tracked_paths()
+    if tracked is not None:
+        # The tracked set is the shipped set.  Walk it instead of the
+        # working tree so that a gitignored research run never leaks
+        # into the manifest.
+        for relative in tracked:
+            path = ROOT / relative
+            if path.is_file():
+                add(path)
+        return items
+
+    # Not a git repository: the filesystem is the only source of truth.
     for tree in TREES:
         base = ROOT / tree
         if not base.is_dir():
@@ -96,18 +142,31 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     items = collect()
+    # A weight that is **tracked** is a defect.  A weight that is
+    # gitignored is a local research artefact and never reaches the
+    # repository, so it must not turn the manifest's declaration into a
+    # false alarm.
+    #
+    # ``collect()`` deliberately leaves weight files out of the
+    # inventory, so the tracked set is scanned separately for them.
     weights = []
-    for tree in TREES:
-        base = ROOT / tree
-        if not base.is_dir():
-            continue
-        for path in base.rglob("*"):
+    tracked = _tracked_paths()
+    if tracked is not None:
+        for relative in tracked:
+            if Path(relative).suffix.lower() in WEIGHT_SUFFIXES:
+                weights.append(relative)
+    else:
+        for tree in TREES:
+            base = ROOT / tree
+            if not base.is_dir():
+                continue
+            for path in base.rglob("*"):
+                if path.is_file() and path.suffix.lower() in WEIGHT_SUFFIXES:
+                    weights.append(path.relative_to(ROOT).as_posix())
+        for name in FILES:
+            path = ROOT / name
             if path.is_file() and path.suffix.lower() in WEIGHT_SUFFIXES:
-                weights.append(path.relative_to(ROOT).as_posix())
-    for name in FILES:
-        path = ROOT / name
-        if path.is_file() and path.suffix.lower() in WEIGHT_SUFFIXES:
-            weights.append(name)
+                weights.append(name)
 
     manifest = {
         "name": "zhixun-engine-b",
