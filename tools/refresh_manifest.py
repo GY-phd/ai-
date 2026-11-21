@@ -20,7 +20,7 @@ import subprocess
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from text_canonical import canonical_digest  # noqa: E402
+from text_canonical import canonical_bytes, canonical_digest  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -115,7 +115,17 @@ def collect():
         if path.suffix.lower() in WEIGHT_SUFFIXES:
             return
         data = path.read_bytes()
-        items.append((relative, len(data),
+        # The recorded size is the size of the **canonical** form, not
+        # of the bytes on this disk.  Git converts LF to CRLF in a
+        # Windows working tree and back again on a Linux clone, so the
+        # raw byte count is a property of the machine, not of the
+        # repository.  The digest is already computed over the
+        # canonical form, and the size has to agree with it - otherwise
+        # the manifest says one thing on Windows and another on the
+        # machine that clones it, and the two disagree on every text
+        # file in the repository.
+        canonical = canonical_bytes(data)
+        items.append((relative, len(canonical),
                       canonical_digest(data)))
 
     tracked = _tracked_paths()
@@ -183,6 +193,9 @@ def main(argv=None):
         "file_count": len(items),
         "note": "Weights are intentionally absent; the harness regenerates them "
                 "from the data package at evaluation time.",
+        "digest_form": "sha256 over the canonical form of the file (LF line "
+                       "endings, binary payloads untouched), so the digest and "
+                       "the recorded size are the same on every platform.",
         "files": {
             relative: {"bytes": size, "sha256": digest}
             for relative, size, digest in sorted(items)

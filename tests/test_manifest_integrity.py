@@ -78,6 +78,29 @@ class TestManifestDescribesTheRepository(unittest.TestCase):
         """The explicit statement the CI checks reads false."""
         self.assertIs(False, self.manifest.get("contains_model_weights"))
 
+    def test_the_recorded_size_is_the_canonical_size(self):
+        """The recorded size must not depend on the platform.
+
+        Git converts LF to CRLF in a Windows working tree and back
+        again on a Linux clone.  A manifest that records the raw byte
+        count therefore says one thing on the machine that generated it
+        and another on the machine that clones it, and the two disagree
+        on every text file in the repository.  The digest is computed
+        over the canonical form, so the size has to be as well.
+        """
+        from text_canonical import canonical_bytes
+
+        for rel, entry in list(self.manifest["files"].items())[:40]:
+            path = ROOT / rel
+            if not path.is_file():
+                continue
+            data = path.read_bytes()
+            self.assertEqual(
+                len(canonical_bytes(data)), entry["bytes"],
+                "%s: the recorded size is not the canonical size, so the "
+                "manifest differs between a Windows working tree and a "
+                "Linux checkout" % rel)
+
     def test_regenerating_the_manifest_is_idempotent(self):
         """Running the generator must not change the committed file.
 
