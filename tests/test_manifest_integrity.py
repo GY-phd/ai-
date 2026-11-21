@@ -27,10 +27,16 @@ from refresh_manifest import collect  # noqa: E402
 
 
 def _tracked_paths(root: Path):
-    """The files git tracks under ``root``, as POSIX relative paths."""
+    """The files git tracks under ``root``, as POSIX relative paths.
+
+    The set is the tracked files plus the new files that are not
+    gitignored - a file the developer has just written is part of the
+    next commit, so the manifest has to know about it now.
+    """
     try:
         result = subprocess.run(
-            ["git", "-C", str(root), "ls-files", "-z"],
+            ["git", "-C", str(root), "ls-files", "-z", "--cached", "--others",
+             "--exclude-standard"],
             capture_output=True, check=True,
         )
     except (OSError, subprocess.CalledProcessError):
@@ -76,7 +82,13 @@ class TestManifestDescribesTheRepository(unittest.TestCase):
         """Running the generator must not change the committed file.
 
         A generator whose output drifts on every run is a generator
-        nobody can trust, and a drift here is exactly what breaks CI.
+        nobody can trust, and a drift here is exactly what breaks CI:
+        the digest of a file that changed but was not regenerated is a
+        "digest mismatch" on every push.
+
+        The comparison is on the whole inventory, digests included, and
+        not only on the file names - a file whose content changed under
+        a name that did not is the same defect.
         """
         items = collect()
         self.assertTrue(items, "the generator produced no files at all")
@@ -87,6 +99,10 @@ class TestManifestDescribesTheRepository(unittest.TestCase):
         self.assertEqual(
             sorted(regenerated), sorted(self.manifest["files"]),
             "regenerating the manifest produced a different file set")
+        self.assertEqual(
+            regenerated, self.manifest["files"],
+            "regenerating the manifest produced a different inventory; "
+            "the committed MANIFEST.json is stale")
 
 
 class TestManifestGeneratorUsesTheTrackedSet(unittest.TestCase):

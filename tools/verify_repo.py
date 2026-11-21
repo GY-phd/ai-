@@ -41,10 +41,15 @@ def _tracked_weights(root: Path):
     The names are read with ``-z`` so that a CJK file name survives; a
     name mangled by a newline split would be checked against the wrong
     suffix and a real weight would slip through.
+
+    The set is the tracked files **plus** the new files that are not
+    gitignored, because a weight that is about to be committed is just
+    as much of a defect as one that already is.
     """
     try:
         result = subprocess.run(
-            ["git", "-C", str(root), "ls-files", "-z"],
+            ["git", "-C", str(root), "ls-files", "-z", "--cached", "--others",
+             "--exclude-standard"],
             capture_output=True, check=True,
         )
     except (OSError, subprocess.CalledProcessError):

@@ -74,7 +74,9 @@ jobs:
               Path("MANIFEST.json").read_text(encoding="utf-8"))
           tracked = set(
               name for name in subprocess.run(
-                  ["git", "ls-files", "-z"], capture_output=True, check=True
+                  ["git", "ls-files", "-z", "--cached", "--others",
+                   "--exclude-standard"],
+                  capture_output=True, check=True
               ).stdout.decode("utf-8", "replace").split("\0") if name
           )
           listed = set(manifest.get("files") or {})

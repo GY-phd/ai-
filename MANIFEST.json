@@ -1,8 +1,8 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 4520291,
-  "file_count": 356,
+  "total_bytes": 4531514,
+  "file_count": 358,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "files": {
     ".dockerignore": {
@@ -18,8 +18,8 @@
       "sha256": "efaaa83572b8c2c355f9ee687ca68cfa880fa7ab24848f3cda1b7618e690b025"
     },
     ".github/workflows/ci.yml": {
-      "bytes": 5868,
-      "sha256": "b82626212d0ae76877cfa45133f3b8c99c082d73432d9bb92e12151435037a34"
+      "bytes": 5951,
+      "sha256": "4f7f00376046307ce0654a2b40bf00a202fec048dc85d3a2aec2b3cccc48a30e"
     },
     ".gitignore": {
       "bytes": 5369,
@@ -1245,6 +1245,10 @@
       "bytes": 5485,
       "sha256": "046fe17bfd3192accf7a8e3e2a301e14a579d48537ea6c3e2f9f4180fdb21a88"
     },
+    "tests/test_environment.py": {
+      "bytes": 2699,
+      "sha256": "f089e3a012c69c4178d199e07bf75b92692a6e5198d9090e874ea96112f0878a"
+    },
     "tests/test_features.py": {
       "bytes": 3038,
       "sha256": "c4e3731cae64d7b1bebc9546bec629cde9d52fcded4a77fa90aa53b44411b7d5"
@@ -1270,8 +1274,8 @@
       "sha256": "2c265caed69532221de3c42eeae0c8af7e836c488fb1096d4a0297ff728ca229"
     },
     "tests/test_manifest_integrity.py": {
-      "bytes": 4235,
-      "sha256": "716d86426adf1b9c8fd647e6f5f39e9571eb7f64cbf21abaea016a6ad541238c"
+      "bytes": 5015,
+      "sha256": "b20f813f48156173a9a91d4808b71f8cca8a885ee744f0c67d346cc45b4b8daa"
     },
     "tests/test_migration.py": {
       "bytes": 6394,
@@ -1333,13 +1337,17 @@
       "bytes": 17920,
       "sha256": "d80ba68259b7fb7e882a2c34b6531844c2cd7a8fa3c2f7268881bc393ebbff99"
     },
+    "tools/check_env.py": {
+      "bytes": 4924,
+      "sha256": "82c068a362052156adba952ee0c1d17f1fee25b774195bc73828cb776822e0d7"
+    },
     "tools/demo_safety.py": {
       "bytes": 3120,
       "sha256": "62d44819114460dc737009db14566b400b42f5de3d51e9725d69fc85a38b0333"
     },
     "tools/git_hooks/pre-commit": {
-      "bytes": 3353,
-      "sha256": "4f069a470b6edf04dcd482637c47f39bdd3d177a83f6951db945d34e47bf96a4"
+      "bytes": 5397,
+      "sha256": "e7565c6c6e15b269e36c40a10de92c17e337bf1d0581c2665a6165b339a56239"
     },
     "tools/install_git_hooks.py": {
       "bytes": 3359,
@@ -1354,8 +1362,8 @@
       "sha256": "c910035e664062086635dbaf5fb1927a828b90575f2601b3211bd1d0fc3fa9a1"
     },
     "tools/refresh_manifest.py": {
-      "bytes": 7714,
-      "sha256": "ab607a9729eec78f6fb969f46b934cdbe338bcfde595ba300215e480bd2a09d9"
+      "bytes": 8159,
+      "sha256": "ff4642800c32a02dd8121be66272a6ae936c5f1977bb8b857f3aa6ea49f902f9"
     },
     "tools/run_harness_offline.py": {
       "bytes": 13918,
@@ -1390,8 +1398,8 @@
       "sha256": "05ad952256676afb1d08cb41870b14759c69b2460ff69980177be384858f89f8"
     },
     "tools/verify_repo.py": {
-      "bytes": 8942,
-      "sha256": "9a2057aae6703a1908ac26ea6c91e907a188c6e2202786d6174f9b5cccf36182"
+      "bytes": 9190,
+      "sha256": "2175ea987280cb100dce2b2352ef1702355305866bb3270e722a857d771ed559"
     },
     "tracks/__init__.py": {
       "bytes": 0,

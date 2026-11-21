@@ -37,6 +37,13 @@ ROOT = Path(__file__).resolve().parent.parent
 # The one exception is a tree that is not a git repository at all (the
 # prepared ``dist/github`` folder), where the filesystem is the only
 # source of truth and the old behaviour is kept.
+#
+# "The index" means the tracked files **plus** the new files that are
+# not gitignored.  A file the developer has just written is part of the
+# next commit, so it has to be in the manifest now; otherwise the
+# manifest would be one commit stale and the check would fail on the
+# file that was just added.  The files git ignores are still excluded,
+# which is the whole point.
 
 # The directories and files the project ships.
 TREES = ("harness", "rulkit", "tracks", "tools", "research", "tests",
@@ -83,7 +90,8 @@ def _tracked_paths():
     """
     try:
         result = subprocess.run(
-            ["git", "-C", str(ROOT), "ls-files", "-z"],
+            ["git", "-C", str(ROOT), "ls-files", "-z", "--cached", "--others",
+             "--exclude-standard"],
             capture_output=True, check=True,
         )
     except (OSError, subprocess.CalledProcessError):
