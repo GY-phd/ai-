@@ -201,3 +201,13 @@ tmp/
 temp/
 *.tmp
 *.bak
+
+# ---- 11. 本次排查 GitHub 账单锁时产生的临时文档 ----
+# These are the notes for one support ticket, not part of the
+# submission.  They stay in the working tree so they can be pasted
+# into the ticket, and they are ignored so that an untracked file
+# never changes what MANIFEST.json has to describe.
+GITHUB_ACTIONS_BILLING_LOCK.md
+github-support-ticket.md
+github-support-body.txt
+

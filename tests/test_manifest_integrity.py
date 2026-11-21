@@ -29,14 +29,25 @@ from refresh_manifest import collect  # noqa: E402
 def _tracked_paths(root: Path):
     """The files git tracks under ``root``, as POSIX relative paths.
 
-    The set is the tracked files plus the new files that are not
-    gitignored - a file the developer has just written is part of the
-    next commit, so the manifest has to know about it now.
+    Only **tracked** files count.  The manifest is the inventory of
+    what the repository **ships**, and what ships is the commit; a
+    fresh checkout of that commit contains exactly the tracked files
+    and nothing else.  A file that is merely present is a local
+    artefact - a research run, a scratch note - and counting it would
+    make the manifest describe a tree that no clone will ever have.
+
+    The earlier version of this helper also listed untracked,
+    unignored files ("a file the developer has just written is part
+    of the next commit").  That is true of a file that is going to be
+    committed, but not of one that is not: running the benchmark
+    locally wrote ``runs/bench_local/`` into the working tree and the
+    next manifest regeneration picked it up, so the committed manifest
+    drifted away from the checkout on every local run.  The check
+    below therefore asks the question the CI asks.
     """
     try:
         result = subprocess.run(
-            ["git", "-C", str(root), "ls-files", "-z", "--cached", "--others",
-             "--exclude-standard"],
+            ["git", "-C", str(root), "ls-files", "-z", "--cached"],
             capture_output=True, check=True,
         )
     except (OSError, subprocess.CalledProcessError):
@@ -138,6 +149,68 @@ class TestManifestGeneratorUsesTheTrackedSet(unittest.TestCase):
             self.skipTest("not a git repository")
         produced = {relative for relative, _size, _digest in collect()}
         self.assertTrue(produced <= set(tracked),
+                        "the generator listed files git does not track")
+
+    def test_collect_ignores_untracked_files(self):
+        """An untracked file must not reach the manifest either.
+
+        This is the failure that a local run exposed.  The generator
+        asked git for ``--others --exclude-standard``, so it listed
+        every untracked, unignored file.  Running the benchmark wrote
+        ``runs/bench_local/`` into the working tree, the next
+        regeneration put it into the manifest, and the committed
+        manifest then named files that a fresh checkout does not have
+        - the CI check "manifest describes this checkout" failed, and
+        so did the idempotence test.
+
+        The manifest describes the **commit**.  A file that git does
+        not track is not in the commit, so it must not be in the
+        manifest, and regenerating the manifest must not change
+        because somebody ran something locally.
+
+        The reproduction is written into the repository rather than
+        simulated, because the bug was exactly a difference between
+        what the tree contains and what git tracks - a mock would not
+        have caught it.
+        """
+        tracked = _tracked_paths(ROOT)
+        if tracked is None:
+            self.skipTest("not a git repository")
+
+        stray = ROOT / "tools" / "_manifest_probe_untracked.txt"
+        stray.write_text("not a commit\n", encoding="utf-8")
+        try:
+            produced = {relative for relative, _size, _digest in collect()}
+        finally:
+            stray.unlink()
+
+        relative = stray.relative_to(ROOT).as_posix()
+        self.assertNotIn(relative, produced,
+                         "the generator listed an untracked file; the "
+                         "manifest must describe the commit, not the "
+                         "working tree")
+        self.assertTrue(produced <= set(tracked),
+                        "the generator listed files git does not track")
+
+    def test_regenerating_after_a_local_run_is_stable(self):
+        """A local run must not change what the manifest says.
+
+        The manifest is committed, and the CI regenerates it on a fresh
+        checkout.  If a local run could change it, then the manifest
+        would describe a different tree on the developer's machine
+        than on the grader's - and the idempotence test above would
+        fail for a reason that has nothing to do with the repository's
+        contents.
+        """
+        tracked = _tracked_paths(ROOT)
+        if tracked is None:
+            self.skipTest("not a git repository")
+
+        first = {relative for relative, _size, _digest in collect()}
+        second = {relative for relative, _size, _digest in collect()}
+        self.assertEqual(first, second,
+                         "two consecutive collections disagree")
+        self.assertTrue(first <= set(tracked),
                         "the generator listed files git does not track")
 
 

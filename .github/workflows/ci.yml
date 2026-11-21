@@ -72,10 +72,17 @@ jobs:
 
           manifest = json.loads(
               Path("MANIFEST.json").read_text(encoding="utf-8"))
+          # Only **tracked** files count.  The manifest describes the
+          # commit, and a fresh checkout of that commit contains
+          # exactly the tracked files - so a file that is merely
+          # present in some developer's working tree (a research run,
+          # a scratch note) must not decide whether this check
+          # passes.  Asking for untracked files too made the check
+          # answer a different question on a laptop than it answers
+          # here.
           tracked = set(
               name for name in subprocess.run(
-                  ["git", "ls-files", "-z", "--cached", "--others",
-                   "--exclude-standard"],
+                  ["git", "ls-files", "-z", "--cached"],
                   capture_output=True, check=True
               ).stdout.decode("utf-8", "replace").split("\0") if name
           )

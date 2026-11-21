@@ -87,11 +87,23 @@ def _tracked_paths():
     are read with ``-z`` so that a CJK file name survives; a name
     mangled by a newline split would not match any path on disk and the
     file would silently drop out of the manifest.
+
+    Only **tracked** files are returned.  A file that is present but
+    untracked is a local artefact: a research run the developer just
+    made, a scratch note, an export.  The manifest describes the
+    **commit** - it is the inventory of what the repository ships - so
+    an untracked file has no business in it.  Listing one would make
+    the manifest disagree with a fresh checkout, which is exactly the
+    defect the CI check reports as "manifest lists a file this checkout
+    does not have".
+
+    This is why the earlier ``--others --exclude-standard`` was wrong:
+    it pulled every untracked, unignored file into the inventory, so
+    running the benchmark locally silently changed the manifest.
     """
     try:
         result = subprocess.run(
-            ["git", "-C", str(ROOT), "ls-files", "-z", "--cached", "--others",
-             "--exclude-standard"],
+            ["git", "-C", str(ROOT), "ls-files", "-z", "--cached"],
             capture_output=True, check=True,
         )
     except (OSError, subprocess.CalledProcessError):

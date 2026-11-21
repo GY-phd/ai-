@@ -1,8 +1,8 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 4471695,
-  "file_count": 358,
+  "total_bytes": 4485077,
+  "file_count": 359,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
   "files": {
@@ -19,12 +19,12 @@
       "sha256": "efaaa83572b8c2c355f9ee687ca68cfa880fa7ab24848f3cda1b7618e690b025"
     },
     ".github/workflows/ci.yml": {
-      "bytes": 5951,
-      "sha256": "4f7f00376046307ce0654a2b40bf00a202fec048dc85d3a2aec2b3cccc48a30e"
+      "bytes": 6384,
+      "sha256": "2227a873f163a09b58e2c34fadc387ca14724288f8aea8851a6f17b84aca774e"
     },
     ".gitignore": {
-      "bytes": 5369,
-      "sha256": "cb3b67e3af64652da672495c3034f14b3b77b41f2fc0f76ca9e50a7ac25b8379"
+      "bytes": 5768,
+      "sha256": "616b9f30e31006360a8e2cbabfef23685da1d528c4d2409bc4f6457ac424da1b"
     },
     "Dockerfile": {
       "bytes": 4330,
@@ -1275,8 +1275,8 @@
       "sha256": "2c265caed69532221de3c42eeae0c8af7e836c488fb1096d4a0297ff728ca229"
     },
     "tests/test_manifest_integrity.py": {
-      "bytes": 5970,
-      "sha256": "821abde979ce8c43c42019dae83597989beaa611e6b1e6bebbee0759fce2c432"
+      "bytes": 9548,
+      "sha256": "494ff0029f319c503eb3b53fb77a44835390019b934cb7c605baaf92119b8ffd"
     },
     "tests/test_migration.py": {
       "bytes": 6245,
@@ -1363,8 +1363,12 @@
       "sha256": "c910035e664062086635dbaf5fb1927a828b90575f2601b3211bd1d0fc3fa9a1"
     },
     "tools/refresh_manifest.py": {
-      "bytes": 8830,
-      "sha256": "599186805292a5764e81b809790749d127b0c1cbfd442634c944cdc6600b3f13"
+      "bytes": 9495,
+      "sha256": "42936933b419c11b761187eece136ebae87c466c6b8c6df8c1373c95838a421a"
+    },
+    "tools/run_ci_local.py": {
+      "bytes": 8307,
+      "sha256": "d364aa004b6a6ae99e4295c1b6437a25a81457d798dafde209893e5aee2fc4a3"
     },
     "tools/run_harness_offline.py": {
       "bytes": 13620,
