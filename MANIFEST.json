@@ -1,8 +1,8 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 4511789,
-  "file_count": 355,
+  "total_bytes": 4519038,
+  "file_count": 356,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "files": {
     ".dockerignore": {
@@ -18,8 +18,8 @@
       "sha256": "efaaa83572b8c2c355f9ee687ca68cfa880fa7ab24848f3cda1b7618e690b025"
     },
     ".github/workflows/ci.yml": {
-      "bytes": 3226,
-      "sha256": "50522b238e8663dfdbd2ed00582eef64129df80011169d91e47ea78479f5a1bf"
+      "bytes": 5426,
+      "sha256": "d5f67f9972781bafd514046b734a76fec18481cd415f6528360f3c41fe87c06e"
     },
     ".gitignore": {
       "bytes": 5369,
@@ -1269,6 +1269,10 @@
       "bytes": 3028,
       "sha256": "2c265caed69532221de3c42eeae0c8af7e836c488fb1096d4a0297ff728ca229"
     },
+    "tests/test_manifest_integrity.py": {
+      "bytes": 4235,
+      "sha256": "716d86426adf1b9c8fd647e6f5f39e9571eb7f64cbf21abaea016a6ad541238c"
+    },
     "tests/test_migration.py": {
       "bytes": 6394,
       "sha256": "267f9f4ae70c1ad3f8c2e8267c52c898538217053962365b39505f5705f76c39"
@@ -1386,8 +1390,8 @@
       "sha256": "05ad952256676afb1d08cb41870b14759c69b2460ff69980177be384858f89f8"
     },
     "tools/verify_repo.py": {
-      "bytes": 8128,
-      "sha256": "c1c3ce76c36b0d511c47e43d096968c81c22a34aba6c7988a59cdf70271b33ed"
+      "bytes": 8942,
+      "sha256": "9a2057aae6703a1908ac26ea6c91e907a188c6e2202786d6174f9b5cccf36182"
     },
     "tracks/__init__.py": {
       "bytes": 0,

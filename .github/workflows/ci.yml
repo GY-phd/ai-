@@ -59,14 +59,26 @@ jobs:
           import sys
           from pathlib import Path
 
-          root = Path(".")
-          manifest = json.loads((root / "MANIFEST.json").read_text(encoding="utf-8"))
+          sys.path.insert(0, "tools")
+          from refresh_manifest import SKIP_DIRS, SKIP_FILES, SKIP_NAMES
+
+          manifest = json.loads(
+              Path("MANIFEST.json").read_text(encoding="utf-8"))
           tracked = set(
               name for name in subprocess.run(
                   ["git", "ls-files", "-z"], capture_output=True, check=True
               ).stdout.decode("utf-8", "replace").split("\0") if name
           )
           listed = set(manifest.get("files") or {})
+
+          def shipped(name):
+              # The generator's own skip lists decide what is shipped;
+              # reusing them here keeps the two in step.
+              parts = name.split("/")
+              return (name not in SKIP_NAMES
+                      and name not in SKIP_FILES
+                      and not any(part in SKIP_DIRS for part in parts))
+
           missing = sorted(listed - tracked)
           if missing:
               raise SystemExit(
@@ -74,7 +86,7 @@ jobs:
                   "not have; regenerate it with "
                   "`python tools/refresh_manifest.py`: %s"
                   % (len(missing), missing[:5]))
-          unlisted = sorted(tracked - listed)
+          unlisted = sorted(name for name in tracked - listed if shipped(name))
           if unlisted:
               raise SystemExit(
                   "FAIL  %d tracked file(s) are absent from MANIFEST.json; "
