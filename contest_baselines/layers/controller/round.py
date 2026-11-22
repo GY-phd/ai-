@@ -706,15 +706,27 @@ class RoundController:
     def finish(self):
         """Declare the round's outcome."""
         self.rnd.save_state(self.state_dir)
+        selection = self.candidate_record.selection_name
+        if selection != self.candidate_record.primary_name:
+            measured = ("%s moved from %.4f to %.4f; full %s moved from %.4f to %.4f"
+                        % (selection,
+                           self.parent_record.selection_value,
+                           self.candidate_record.selection_value,
+                           self.parent_record.primary_name,
+                           self.parent_record.primary_value,
+                           self.candidate_record.primary_value))
+        else:
+            measured = ("%s moved from %.4f to %.4f"
+                        % (self.parent_record.primary_name,
+                           self.parent_record.primary_value,
+                           self.candidate_record.primary_value))
         self.rnd.finish(
             selected_artifact_id=self.selected,
             hypothesis=self.hypothesis.claim,
-            change_summary="%s Applied: %s. Validation %s moved from %.4f to %.4f; adopted=%s."
+            change_summary="%s Applied: %s. Validation %s; adopted=%s."
                            % (self.hypothesis.change,
                               json.dumps(self.changed, ensure_ascii=False),
-                              self.parent_record.primary_name,
-                              self.parent_record.primary_value,
-                              self.candidate_record.primary_value,
+                              measured,
                               "yes" if self.adopted else "no"),
             reason="%s %s The model's review of this reading was: %s" % (
                 self.reason,

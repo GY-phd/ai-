@@ -245,6 +245,7 @@ class TruncatedTestWeightTest(unittest.TestCase):
         weights = model.sample_weight
         self.assertIn("sample_weight", changed)
         self.assertEqual(changed["horizon"], 200.0)
+        self.assertEqual(changed["weight_floor"], 0.20)
         self.assertEqual(len(weights), len(y))
         self.assertTrue(np.all(np.isfinite(weights)))
         self.assertTrue(np.all(weights >= 0))

@@ -94,7 +94,7 @@ def _oversample_indices(weights, count, seed):
     return rng.choice(count, size=count, replace=True, p=probability)
 
 
-def _bounded_prior_weights(y, horizon, *, bandwidth=8.0, power=0.5, floor=0.02):
+def _bounded_prior_weights(y, horizon, *, bandwidth=8.0, power=0.5, floor=0.20):
     """Importance weights for a truncated-test remaining-life prior.
 
     The training rows come from complete sequences, so the RUL density
@@ -103,6 +103,14 @@ def _bounded_prior_weights(y, horizon, *, bandwidth=8.0, power=0.5, floor=0.02):
     bounds the useful remaining-life range at ``horizon``.  The weight is
     the (tempered) ratio between a uniform prior over ``[0, horizon]``
     and the training rows' own smoothed RUL density.
+
+    ``floor`` keeps a minimum mass on the long-RUL rows.  A floor of 0.02
+    gives the largest hidden-protocol gain on the public C proxy
+    (39.9 -> 29.8 RMSE) but the full-validation RMSE rises to ~54.9,
+    above the static baseline 52.87.  At 0.20 the proxy is ~32.4 and the
+    full validation is ~52.5, below the static baseline; that is the
+    default because the private pack is a different dataset and a model
+    that only wins the bounded slice is fragile.
 
     Only the training labels are used; the horizon is the profile's
     protocol bound, not a hidden label.  The weights are a training-side
@@ -221,6 +229,7 @@ def prepare(hypothesis, model, train, profile_key, seed, adapter=None):
                 "sqrt importance: uniform RUL<=%g / training RUL density" % horizon)
             changed["horizon"] = float(horizon)
             changed["weight_power"] = 0.5
+            changed["weight_floor"] = 0.20
             changed["weight_mean"] = round(float(weights.mean()), 4)
             changed["weight_min"] = round(float(weights.min()), 4)
             changed["weight_max"] = round(float(weights.max()), 4)
@@ -330,7 +339,7 @@ def epoch_budget(hypothesis, round_index, wall_seconds=None, adapter=None):
     profile B, so its budget is smaller.
     """
     base = {"more-data-helps": 30, "the-parent-was-left-unconverged": 30,
-            "the-tail-is-underweighted": 40, "the-test-is-truncated": 30,
+            "the-tail-is-underweighted": 40, "the-test-is-truncated": 40,
             "the-unit-is-the-confounder": 40,
             "capacity-is-overfitting": 40, "rare-class-is-underweighted": 30,
             "the-batch-is-mixing-scales": 30}

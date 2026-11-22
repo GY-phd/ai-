@@ -167,6 +167,9 @@ class AdapterContractTest(unittest.TestCase):
         expected = float(np.sqrt(np.mean((predicted[:4] - data["y"][:4]) ** 2)))
         self.assertAlmostEqual(view["value"], expected)
         self.assertEqual(view["horizon"], 200.0)
+        # The full split is a safety reading, not a blank cheque: C allows
+        # at most a 5% regression there.
+        self.assertEqual(c.selection_guard(), 0.05)
 
     def test_a_and_b_have_no_selection_view(self):
         for key in ("A", "B"):

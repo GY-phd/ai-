@@ -81,8 +81,8 @@ class CmapssAdapter(Adapter):
         return [
             MORE_DATA_HELPS,
             UNCONVERGED,
-            TAIL_UNDERWEIGHTED,
             THE_TEST_IS_TRUNCATED,
+            TAIL_UNDERWEIGHTED,
             UNIT_IS_CONFOUNDER,
             CAPACITY,
         ]
@@ -128,6 +128,17 @@ class CmapssAdapter(Adapter):
         return {"name": "late_rmse",
                 "value": float(np.sqrt(np.mean((pred[mask] - y[mask]) ** 2))),
                 "n": int(mask.sum()), "horizon": float(horizon)}
+
+    def selection_guard(self):
+        """C may give up at most 5% of the full-split RMSE.
+
+        The default 10% is too loose here: a late-life oversampling
+        candidate that improves the bounded slice by 12% drove the full
+        RMSE from 52.2 to 56.0 (+7.3%) and was still adopted.  The
+        private pack is a different dataset, so the round keeps the
+        candidate only when the full split stays close to its parent.
+        """
+        return 0.05
 
     def extra_metrics(self, true, pred):
         """NASA's asymmetric score, as extra evidence.
