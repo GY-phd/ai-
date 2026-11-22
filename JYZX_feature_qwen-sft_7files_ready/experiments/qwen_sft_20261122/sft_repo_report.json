@@ -1,0 +1,92 @@
+{
+  "WARNING": "Six examples from same public offline rehearsal; NOT independent benchmark or competition result.",
+  "IMPORTANT": "Answer labels and next_test were constructed by templates; review them before official SFT.",
+  "model": "Qwen/Qwen3.5-4B",
+  "adapter_path": "trio://run_rru8f96z583a/sampler_weights/jyzx-review-sft-20261122135410",
+  "train": 24,
+  "eval": 6,
+  "losses": [
+    2.9368659125434027,
+    2.3465293702625094,
+    1.8373159781393855,
+    1.2855404445103236,
+    1.0589452328889266,
+    0.5544903144407808
+  ],
+  "base_verdict_match": 0.6666666666666666,
+  "tuned_verdict_match": 1.0,
+  "cases": [
+    {
+      "case": 1,
+      "task": "A",
+      "hypothesis": "rare-class-is-underweighted",
+      "expected_verdict": "not_supported",
+      "base_valid_json": true,
+      "tuned_valid_json": true,
+      "base_verdict": "not_supported",
+      "tuned_verdict": "not_supported",
+      "base_reply": "{\n  \"verdict\": \"not_supported\",\n  \"reason\": \"假设预测的是宏观 F1 损失（Macro-F1 loss）会因类别不平衡而主导，且通过过采样应能提升稀有类别的 F1。然而，公开指标显示候选模型（0.5737）的宏观 F1 显著低于父模型（0.7140）。根据证伪条件，若稀有类别 F1 未提升，则说明过采样未生效。由于整体性能下降且未观察到稀有类别 F1 的改善，数据不支持‘过采样能解决该特定分布问题’的假设。\",\n  \"next_test\": \"在保持训练集类别分布不变的前提下，仅对部署数据中稀有类别进行针对性增强（如数据增强或合成样本），并重新评估稀有类别的 F1 及整体 Macro-F1，以验证是否因数据质量而非单纯采样比例导致性能下降。\"\n}<|im_end|>",
+      "tuned_reply": "{\"verdict\":\"not_supported\",\"reason\":\"Macro-F1 loss 从 0.7140 升至 0.5737，方向变差；本轮记录保留父模型，不能据此改判。本轮改动未给出分组指标，无法确认是否真正缓解类别不平衡。\",\"next_test\":\"在部署分布上按类别做分组评估，比较各类 F1 变化；若稀有类 F1 提升而整体指标改善，再考虑调整本轮结论。\"}<|im_end|>"
+    },
+    {
+      "case": 2,
+      "task": "A",
+      "hypothesis": "the-batch-is-mixing-scales",
+      "expected_verdict": "not_supported",
+      "base_valid_json": true,
+      "tuned_valid_json": true,
+      "base_verdict": "not_supported",
+      "tuned_verdict": "not_supported",
+      "base_reply": "{\n  \"verdict\": \"not_supported\",\n  \"reason\": \"公开验证集指标显示候选模型（0.6589）显著低于父模型（0.7140）。若假设成立（即过采样能解决因批次时间差异导致的尺度偏移问题），过采样后的候选模型性能应至少接近或优于父模型。指标下降直接证伪了该机制是主要损失来源且过采样能修复该问题的观点。\",\n  \"next_test\": \"在保持过采样策略不变的前提下，将父模型在验证集上的表现作为基准，重新训练候选模型但移除过采样操作，并引入一个仅针对稀有批次进行针对性数据增强（而非过采样）的对照组，以区分‘数据量不足’与‘特征分布偏移’对性能的具体影响。\"\n}<|im_end|>",
+      "tuned_reply": "{\"verdict\":\"not_supported\",\"reason\":\"公开指标方向变差（0.7140→0.6589），本轮记录未给出分组/子集指标，无法据此确认具体机制。\",\"next_test\":\"固定其他设置，仅保留/移除该轮改动，在相同验证集上比较指标，确认改动是否带来可重复的改善。\"}<|im_end|>"
+    },
+    {
+      "case": 3,
+      "task": "B",
+      "hypothesis": "the-tail-is-underweighted",
+      "expected_verdict": "not_supported",
+      "base_valid_json": true,
+      "tuned_valid_json": true,
+      "base_verdict": "not_supported",
+      "tuned_verdict": "not_supported",
+      "base_reply": "{\n  \"verdict\": \"not_supported\",\n  \"reason\": \"候选模型在公开验证集上的主指标（RMSE）从父模型的 681.1598 恶化至 722.5069，表明整体泛化能力下降。假设声称通过过采样长尾单位能改善拟合，但全局指标的恶化直接证伪了该改动的有效性，且未观察到预期的指标改善。\",\n  \"next_test\": \"在保持当前过采样策略不变的前提下，引入一个仅针对‘短寿命单位’的局部验证集，专门测量该子集上的 RMSE 变化，以隔离全局指标恶化是否由短寿命单位拟合不足引起。\"\n}<|im_end|>",
+      "tuned_reply": "{\"verdict\":\"not_supported\",\"reason\":\"RMSE 从 681.1598 → 722.5069，指标变差；本轮记录保留父模型，不能据此支持假设。本轮未给出分组/对照指标，无法确认具体机制。\",\"next_test\":\"固定其他设置，仅对比是否对短寿命单位过采样，并报告分组 RMSE 分布与整体 RMSE 变化。\"}<|im_end|>"
+    },
+    {
+      "case": 4,
+      "task": "B",
+      "hypothesis": "the-unit-is-the-confounder",
+      "expected_verdict": "partial_support",
+      "base_valid_json": true,
+      "tuned_valid_json": true,
+      "base_verdict": "not_supported",
+      "tuned_verdict": "partial_support",
+      "base_reply": "{\n  \"verdict\": \"not_supported\",\n  \"reason\": \"The hypothesis posits that the model predicts a population average due to a lack of unit identification, leading to high error driven by the spread of lifetimes. The proposed fix (equalizing total mass) targets this specific mechanism. However, the global RMSE improvement (681.1598 -> 670.8637) is a scalar aggregate that masks the internal error structure. A global improvement could result from other factors (e.g., regularization effects, noise reduction) rather than the model successfully learning unit-specific patterns. To confirm the hypothesis, we must verify that the error variance *within* units has decreased relative to the error variance *between* units. The current data lacks the per-unit RMSE breakdown required to check if the 'spread of lifetimes' is the primary source of error.\",\n  \"next_test\": \"Compute the per-unit RMSE for the candidate model and compare the variance of these per-unit errors against the variance of the per-unit errors of the parent model. Specifically, check if the within-unit RMSE variance has decreased significantly while the between-unit RMSE variance remains stable or increases, indicating the model has moved away from predicting a single population average.\"\n}<|im_end|>",
+      "tuned_reply": "{\"verdict\":\"partial_support\",\"reason\":\"RMSE 从 681.1598 → 670.8637，方向改善；本轮采纳候选。本轮改动仅训练分布，未做分组对比，故不能据此断言特定机制。\",\"next_test\":\"固定数据集与任务，固定随机种子，对比不同改动下的分组指标（如按单位/批次分组的 RMSE），确认收益是否可复现。\"}<|im_end|>"
+    },
+    {
+      "case": 5,
+      "task": "C",
+      "hypothesis": "the-tail-is-underweighted",
+      "expected_verdict": "not_supported",
+      "base_valid_json": true,
+      "tuned_valid_json": true,
+      "base_verdict": "not_supported",
+      "tuned_verdict": "not_supported",
+      "base_reply": "{\n  \"verdict\": \"not_supported\",\n  \"reason\": \"候选模型在公开验证集上的主指标（RMSE）从父模型的 52.8686 恶化至 56.0498，表明整体泛化能力下降。根据假设，若该改动有效，应能改善对短寿命单元（最难拟合部分）的拟合，从而提升整体指标。指标恶化直接证伪了该改动能解决核心问题的假设。\",\n  \"next_test\": \"在保持当前 Oversampling 策略的基础上，引入一个控制组，该组对长寿命单元进行同等程度的过采样，以隔离‘短寿命单元过采样’这一特定因素对验证集指标的影响。\"\n}<|im_end|>",
+      "tuned_reply": "{\"verdict\":\"not_supported\",\"reason\":\"RMSE 从 52.8686 → 56.0498，方向变差；本轮记录保留父模型，不能据此改判。本轮未给出分组/对照指标，无法确认具体机制。\",\"next_test\":\"固定其他设置，对比不同过采样策略下的 RMSE 分布与尾部误差变化，并做对照实验。\"}<|im_end|>"
+    },
+    {
+      "case": 6,
+      "task": "C",
+      "hypothesis": "the-unit-is-the-confounder",
+      "expected_verdict": "partial_support",
+      "base_valid_json": true,
+      "tuned_valid_json": true,
+      "base_verdict": "not_supported",
+      "tuned_verdict": "partial_support",
+      "base_reply": "{\n  \"verdict\": \"not_supported\",\n  \"reason\": \"The global RMSE improvement (52.8686 -> 51.3958) indicates the model's overall prediction error decreased. However, the hypothesis posits that the model fails to distinguish units and predicts a population average, leading to errors driven by the spread of lifetimes. If this were true, equalizing the total mass per unit (the proposed fix) should have significantly reduced the error variance associated with unit differences. The fact that the global metric improved suggests the model may have learned other features or the mass constraint altered the optimization landscape in a way that benefited generalization, rather than specifically resolving the 'unit confusion' mechanism. Crucially, the provided data lacks the specific 'per-unit RMSE spread' vs 'within-unit RMSE' comparison required by the falsification condition to confirm or deny the specific mechanism.\",\n  \"next_test\": \"Compute the per-unit RMSE spread and the within-unit RMSE for the candidate model on the validation set. If the per-unit RMSE spread is significantly larger than the within-unit RMSE, the hypothesis is supported; otherwise, the hypothesis is rejected.\"\n}<|im_end|>",
+      "tuned_reply": "{\"verdict\":\"partial_support\",\"reason\":\"RMSE 从 52.8686 → 51.3958，方向改善；本轮采纳候选。本轮改动仅训练分布，无法直接证伪假设。\",\"next_test\":\"固定分组，比较组内 RMSE 与跨组 RMSE；若组内波动显著更大，则支持该假设。\"}<|im_end|>"
+    }
+  ]
+}

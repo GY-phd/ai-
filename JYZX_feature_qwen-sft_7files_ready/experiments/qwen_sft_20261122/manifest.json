@@ -1,0 +1,55 @@
+{
+  "repo": "https://github.com/GY-phd/ai-",
+  "commit": "26bbeed2f08c5dcfb3de2cde87420f848b9db439",
+  "source_paths": [
+    "runs/harness-offline-10/ledger.jsonl",
+    "contest_baselines/layers/controller/round.py",
+    "contest_baselines/adapters/hypotheses.py"
+  ],
+  "source_type": "single_offline_rehearsal—not independent production or hidden-stream evaluation",
+  "derived_count": 30,
+  "train_count": 24,
+  "eval_count": 6,
+  "split": {
+    "method": "held-out task-round pairs",
+    "eval_task_round": [
+      [
+        "A",
+        4
+      ],
+      [
+        "A",
+        5
+      ],
+      [
+        "B",
+        3
+      ],
+      [
+        "B",
+        4
+      ],
+      [
+        "C",
+        3
+      ],
+      [
+        "C",
+        4
+      ]
+    ],
+    "limitation": "Same offline rehearsal and public data; related experiments and one baseline repeated; NOT generalization test"
+  },
+  "labels": "Measured metric & adopted decision copied from ledger; verdict labels and next tests constructed by assistant, not observed human annotations.",
+  "safety": "No secret/API key required in files. Review proposed labels with teammates before spending training credits.",
+  "counts_train": {
+    "A": 8,
+    "B": 8,
+    "C": 8
+  },
+  "counts_eval": {
+    "A": 2,
+    "B": 2,
+    "C": 2
+  }
+}
