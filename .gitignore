@@ -144,6 +144,10 @@ zhixun-engine-linux-amd64.tar.sha256
 .venv/
 venv/
 env/
+# The local cross-version CI matrix environments (tools/run_ci_matrix.py).
+# They are named .venv-<version> rather than .venv so that each
+# interpreter's environment can live beside the primary one.
+.venv-py*/
 .env
 .env.*
 

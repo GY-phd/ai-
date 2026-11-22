@@ -35,8 +35,19 @@ ROOT = Path(__file__).resolve().parent.parent
 # only after it has been run through the matrix, so the list is the
 # short one and anything else is reported as untested rather than
 # broken.
-SUPPORTED = ("3.10", "3.11", "3.12", "3.13")
-TESTED = ("3.10", "3.12")
+#
+# 3.13 and 3.14 are here because the local matrix
+# (``tools/run_ci_matrix.py``) ran the whole suite on them: the same
+# checks, the same tests, green on each.  That is the condition this
+# comment describes - "run through the matrix" - and it is why they
+# may be listed without having been in the hosted workflow from the
+# start.
+SUPPORTED = ("3.10", "3.11", "3.12", "3.13", "3.14")
+
+# The versions the CI matrix runs on both platforms.  These are the
+# ones a claim of "tested" is made about, and they are the ones the
+# workflow's ``matrix.python`` lists.
+TESTED = ("3.10", "3.12", "3.13", "3.14")
 
 # The interpreter the submitted image is built from.  The local
 # interpreter does not have to be this one, but it has to be a

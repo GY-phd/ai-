@@ -1,8 +1,8 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 4485077,
-  "file_count": 359,
+  "total_bytes": 4504601,
+  "file_count": 362,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
   "files": {
@@ -19,12 +19,12 @@
       "sha256": "efaaa83572b8c2c355f9ee687ca68cfa880fa7ab24848f3cda1b7618e690b025"
     },
     ".github/workflows/ci.yml": {
-      "bytes": 6384,
-      "sha256": "2227a873f163a09b58e2c34fadc387ca14724288f8aea8851a6f17b84aca774e"
+      "bytes": 6799,
+      "sha256": "6e8c351b368d18e66465c20e4aa11f6b98f4758da53375a9d52cd4ddc2372b34"
     },
     ".gitignore": {
-      "bytes": 5768,
-      "sha256": "616b9f30e31006360a8e2cbabfef23685da1d528c4d2409bc4f6457ac424da1b"
+      "bytes": 5979,
+      "sha256": "3bc401150a18d81f5bad2004158fceee19f7a1859d824a479e97049e772ed244"
     },
     "Dockerfile": {
       "bytes": 4330,
@@ -43,8 +43,8 @@
       "sha256": "d9a6d1b82f8f1ddab350783cf19b12ead89f9e395428d0e4a5e6dc9259da8e81"
     },
     "README.md": {
-      "bytes": 22806,
-      "sha256": "ef917e16f207651d0d1106df2b3fc3bcc922117b2d9deb0bdbb5fdcf8793b356"
+      "bytes": 24405,
+      "sha256": "3df32ebd003e0a7b73b24a1378e01c028d58cc6ad80a144c46b29974a84f348c"
     },
     "artifacts/comparison.json": {
       "bytes": 9854,
@@ -738,6 +738,10 @@
       "bytes": 1344,
       "sha256": "e4b798969f871518633f8f0e846b3a33fb37b4f755036ef824aebe6e2df81ac9"
     },
+    "requirements-dev.txt": {
+      "bytes": 1363,
+      "sha256": "94e195483ec67bb0e001419245ad5838093b1a511e9631e8063858cb9e212869"
+    },
     "requirements.txt": {
       "bytes": 333,
       "sha256": "d7efa63ad22f500cb4e095a8a46aa111b3be8f04b9d7776468ab12406ff76b76"
@@ -1339,8 +1343,8 @@
       "sha256": "d80ba68259b7fb7e882a2c34b6531844c2cd7a8fa3c2f7268881bc393ebbff99"
     },
     "tools/check_env.py": {
-      "bytes": 4786,
-      "sha256": "82c068a362052156adba952ee0c1d17f1fee25b774195bc73828cb776822e0d7"
+      "bytes": 5320,
+      "sha256": "4e0981cbc03002bed96f796dd2f17b7c655908b7403ea2dfb17bacbd41834917"
     },
     "tools/demo_safety.py": {
       "bytes": 3120,
@@ -1370,9 +1374,17 @@
       "bytes": 8307,
       "sha256": "d364aa004b6a6ae99e4295c1b6437a25a81457d798dafde209893e5aee2fc4a3"
     },
+    "tools/run_ci_matrix.py": {
+      "bytes": 12465,
+      "sha256": "15b4e6da485b9ca82bb6869a4f186011dd98d024bad49d5f5336bbf780a2a289"
+    },
     "tools/run_harness_offline.py": {
       "bytes": 13620,
       "sha256": "ec4249714e045c28741a7b3478ececd8c5437075c08df699c25f30c632736cc6"
+    },
+    "tools/run_matrix.ps1": {
+      "bytes": 2937,
+      "sha256": "014fb0e8d34f40853c8d695d183b0c3a50dd7ced3346fe7b666de7e55f1337bc"
     },
     "tools/scan_for_secrets.py": {
       "bytes": 4054,

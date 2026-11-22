@@ -10,11 +10,12 @@
   <code>no weights in the package</code>
 </p>
 
-> **Python 版本**：本项目**只在 3.12 上开发与验收**（镜像基线 `python:3.12-slim-bookworm`，
-> SDK 声明 `requires-python >=3.10`，CI 矩阵覆盖 3.10 / 3.12）。
-> 运行时请使用仓库自带的 `.venv`（3.12），或自行创建 3.10–3.13 的虚拟环境。
+> **Python 版本**：本项目**以 3.12 为验收基线**（镜像基线 `python:3.12-slim-bookworm`，
+> SDK 声明 `requires-python >=3.10`，CI 矩阵覆盖 3.10 / 3.12 / 3.13 / 3.14）。
+> 运行时请使用仓库自带的 `.venv`（3.12）。
 > `python tools/check_env.py` 会检查当前解释器与 numpy 是否符合要求。
-> 3.14 等更新版本虽然能跑通全部测试，但**未经 CI 矩阵验证**，不建议作为验收环境。
+> 3.13 / 3.14 已在本地矩阵（`tools/run_ci_matrix.py`）上跑通全部测试，故列入支持范围；
+> 但**镜像仍是 3.12**，提交物没有变。
 
 **一句话**：在漂移数据流上自动提出假设、用受控实验证伪、**只在门控通过时才上线**的闭源自进化系统。
 三个赛题方向由**同一套运行时**驱动，共用漂移检测、假设库、门控与账本，只在数据适配与模型配方上分叉。
@@ -365,7 +366,7 @@ python tools/verify_repo.py --dir .                # 零权重自检
 ## 九、质量保障
 
 ```bash
-python -m unittest discover -s tests -t . -v     # 124 tests, ~8 s
+python -m unittest discover -s tests -t . -v     # 194 tests, ~2 min
 python -m compileall -q harness rulkit tracks tools tests
 python tools/audit_readme_numbers.py              # 数字审计
 ```
@@ -383,10 +384,48 @@ python tools/audit_readme_numbers.py              # 数字审计
 | `test_fusion` | 四段式证据链的缺失阶段检测、**旧格式检查点仍可加载**、激活/目标缩放开关 |
 | `test_readme_integrity` | **本文每个数字都有产物支撑**，改数字忘了更新产物就红 |
 | `test_three_track_results` | 三方向的最终成绩与产物一致 |
+| `test_manifest_integrity` | 清单描述的是**该 commit**，且跨平台字节大小一致 |
+| `test_environment` | 当前解释器在支持范围内，numpy 版本合规 |
 
-CI（`.github/workflows/ci.yml`）在 **ubuntu + windows × Python 3.10/3.12** 上跑同一套，
+CI（`.github/workflows/ci.yml`）在 **ubuntu + windows × Python 3.10/3.12/3.13/3.14** 上跑同一套，
 并且每次 push 都会重新校验仓库内 `evidence/ledger.jsonl` 的哈希链、重新渲染决策表——
 **证据文件被改动，CI 就会红**。
+
+### 本地跑矩阵（不需要 GitHub）
+
+CI 矩阵是 `os × python`。**平台**那一半本机替代不了（Linux 与 runner 镜像仍由 workflow 负责），
+但**解释器**那一半可以完全本地复现，而这正是矩阵存在的意义——抓"依赖在最低支持的 Python 上装不上"
+和"API 只在最新版本上有"这类问题。
+
+```bash
+# 列出有哪些环境
+python tools/run_ci_matrix.py --list
+
+# 每个解释器跑一遍全部检查（跳过单元测试，约 30 秒）
+python tools/run_ci_matrix.py
+
+# 含 194 个单元测试，四个解释器约 15 分钟
+python tools/run_ci_matrix.py --with-tests
+```
+
+Windows PowerShell 前端（含首次自动建环境，用 `uv` 建，可重复）：
+
+```powershell
+.\tools\run_matrix.ps1 -Setup -WithTests
+```
+
+环境为 `.venv-py310` / `.venv`（3.12）/ `.venv-py313` / `.venv-py314`，均被 `.gitignore` 忽略。
+**本地全绿不等于 CI 会绿**——本地矩阵是证据，不是结论。
+
+### 依赖分两层
+
+- `requirements.txt` —— **运行时**依赖，只有 numpy。镜像只装它。
+- `requirements-dev.txt` —— **测试**依赖（pytest、pyyaml、scikit-learn、pandas、scipy、lightgbm、swanlab）。
+  测试套件在模块作用域 `import pytest`，只装运行时依赖的话会在 collection 阶段就失败。
+
+```bash
+python -m pip install -r requirements.txt -r requirements-dev.txt
+```
 
 ---
 
