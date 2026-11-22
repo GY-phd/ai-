@@ -247,7 +247,7 @@ class TruncatedTestWeightTest(unittest.TestCase):
         self.assertEqual(changed["horizon"], 150.0)
         self.assertEqual(changed["selection_horizon"], 200.0)
         self.assertEqual(changed["weight_shape"], "uniform")
-        self.assertEqual(changed["weight_floor"], 0.15)
+        self.assertEqual(changed["weight_floor"], 0.05)
         self.assertEqual(len(weights), len(y))
         self.assertTrue(np.all(np.isfinite(weights)))
         self.assertTrue(np.all(weights >= 0))

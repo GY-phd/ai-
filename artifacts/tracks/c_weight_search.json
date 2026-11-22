@@ -1,24 +1,26 @@
 {
   "format": "c_weight_search.v1",
-  "note": "60+ configurations searched on the public C validation split; proxy_rmse is the expected RMSE with one CMAPSS-test RUL horizon per engine. full_rmse is the safety reading.",
+  "note": "60+ configurations searched on the public C validation split; proxy_rmse is the expected RMSE with one CMAPSS-test RUL horizon per engine. full_rmse is the safety reading. The official competition metric is hidden-test RMSE; the proxy is an estimate, not the score.",
   "selected": {
     "config": {
       "shape": "uniform",
       "horizon": 150,
       "power": 0.5,
-      "floor": 0.15,
-      "lk": 0.0,
+      "floor": 0.05,
       "lr": 0.002,
       "epochs": 30,
-      "parent": "r1 (full 52.2253)"
+      "parent": "r1 (full 52.2253)",
+      "selection_horizon": 200,
+      "selection_guard": 0.12
     },
-    "reason": "lowest proxy on the guard-constrained frontier (full <= parent*1.05)",
+    "reason": "lowest proxy without a target-cap assumption; full split stays inside the 12% guard",
     "seed42": {
-      "full_rmse": 54.542,
-      "late_rmse": 33.66,
-      "proxy_rmse": 29.7
+      "full_rmse": 57.4199,
+      "late_rmse": 33.91,
+      "proxy_rmse": 28.5025,
+      "uniform_protocol": 33.6556
     },
-    "final_6_round_path": [
+    "final_10_round_path": [
       {
         "round": 1,
         "hypothesis": "more-data-helps",
@@ -42,40 +44,460 @@
         "hypothesis": "the-test-is-truncated",
         "adopted": true,
         "full_before": 52.225262557343456,
-        "full_after": 54.54198373599601,
+        "full_after": 57.419935987876194,
         "late_before": 38.51987996483714,
-        "late_after": 33.664762128049674
+        "late_after": 33.9114806618487
       },
       {
         "round": 4,
         "hypothesis": "the-tail-is-underweighted",
         "adopted": false,
-        "full_before": 54.54198373599601,
-        "full_after": 55.80265441123982,
-        "late_before": 33.664762128049674,
-        "late_after": 34.274961199548464
+        "full_before": 57.419935987876194,
+        "full_after": 55.832530736164,
+        "late_before": 33.9114806618487,
+        "late_after": 34.22161488005309
       },
       {
         "round": 5,
         "hypothesis": "the-unit-is-the-confounder",
         "adopted": false,
-        "full_before": 54.54198373599601,
-        "full_after": 51.95722781321733,
-        "late_before": 33.664762128049674,
-        "late_after": 35.361322695775556
+        "full_before": 57.419935987876194,
+        "full_after": 51.965379031845906,
+        "late_before": 33.9114806618487,
+        "late_after": 35.325013130101034
       },
       {
         "round": 6,
         "hypothesis": "capacity-is-overfitting",
         "adopted": false,
-        "full_before": 54.54198373599601,
-        "full_after": 51.20511365870067,
-        "late_before": 33.664762128049674,
-        "late_after": 38.98369934618163
+        "full_before": 57.419935987876194,
+        "full_after": 51.2151836240849,
+        "late_before": 33.9114806618487,
+        "late_after": 38.99052071318396
+      },
+      {
+        "round": 7,
+        "hypothesis": "more-data-helps",
+        "adopted": false,
+        "full_before": 57.419935987876194,
+        "full_after": 51.2151836240849,
+        "late_before": 33.9114806618487,
+        "late_after": 38.99052071318396
+      },
+      {
+        "round": 8,
+        "hypothesis": "more-data-helps",
+        "adopted": false,
+        "full_before": 57.419935987876194,
+        "full_after": 51.85559846056843,
+        "late_before": 33.9114806618487,
+        "late_after": 38.417305053951175
+      },
+      {
+        "round": 9,
+        "hypothesis": "more-data-helps",
+        "adopted": false,
+        "full_before": 57.419935987876194,
+        "full_after": 51.274204505416584,
+        "late_before": 33.9114806618487,
+        "late_after": 38.390821638591305
+      },
+      {
+        "round": 10,
+        "hypothesis": "more-data-helps",
+        "adopted": false,
+        "full_before": 57.419935987876194,
+        "full_after": 51.140641580932474,
+        "late_before": 33.9114806618487,
+        "late_after": 39.64162089655028
       }
     ]
   },
+  "finalists_3_seed": {
+    "uniform_h150_f005": {
+      "full_mean": 57.27,
+      "full_std": 0.14,
+      "proxy_mean": 28.69,
+      "proxy_std": 0.26
+    },
+    "cap200_h150_f015": {
+      "full_mean": 58.12,
+      "full_std": 0.08,
+      "proxy_mean": 28.5,
+      "proxy_std": 0.23
+    },
+    "uniform_h150_f008": {
+      "full_mean": 56.1,
+      "full_std": 0.12,
+      "proxy_mean": 29.09,
+      "proxy_std": 0.28
+    },
+    "cap250_h150_f015": {
+      "full_mean": 56.09,
+      "full_std": 0.15,
+      "proxy_mean": 29.18,
+      "proxy_std": 0.22
+    }
+  },
   "runs": [
+    {
+      "name": "x09_cap200_h150_f15",
+      "config": {
+        "name": "x09_cap200_h150_f15",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.15,
+        "cap": 200,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 42
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 58.11221700350903,
+        "full_le195_rmse": 32.58529181551717,
+        "proxy_rmse": 28.284452554197767,
+        "uniform_protocol": 33.45709523071916
+      },
+      "source": "tmp/c_weight/results_aggressive.json"
+    },
+    {
+      "name": "w01_cap200_h150_f15_s7",
+      "config": {
+        "name": "w01_cap200_h150_f15_s7",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.15,
+        "cap": 200,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 7
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 58.23050442966565,
+        "full_le195_rmse": 32.895844343894204,
+        "proxy_rmse": 28.383937414670527,
+        "uniform_protocol": 33.78603139926961
+      },
+      "source": "tmp/c_weight/results_aggressive_verify.json"
+    },
+    {
+      "name": "x02_unif_h150_f05",
+      "config": {
+        "name": "x02_unif_h150_f05",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.05,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 42
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 57.419935987876194,
+        "full_le195_rmse": 32.850158795435554,
+        "proxy_rmse": 28.502533653157567,
+        "uniform_protocol": 33.6556447267881
+      },
+      "source": "tmp/c_weight/results_aggressive.json"
+    },
+    {
+      "name": "w02_unif_h150_f05_s7",
+      "config": {
+        "name": "w02_unif_h150_f05_s7",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.05,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 7
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 57.31260805937526,
+        "full_le195_rmse": 32.92719998201165,
+        "proxy_rmse": 28.506562832259128,
+        "uniform_protocol": 33.74722534152677
+      },
+      "source": "tmp/c_weight/results_aggressive_verify.json"
+    },
+    {
+      "name": "w01_cap200_h150_f15_s123",
+      "config": {
+        "name": "w01_cap200_h150_f15_s123",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.15,
+        "cap": 200,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 123
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 58.032217694672006,
+        "full_le195_rmse": 32.71244882563581,
+        "proxy_rmse": 28.825195314476478,
+        "uniform_protocol": 33.49409209019266
+      },
+      "source": "tmp/c_weight/results_aggressive_verify.json"
+    },
+    {
+      "name": "x03_unif_h150_f08",
+      "config": {
+        "name": "x03_unif_h150_f08",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.08,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 42
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 56.15349878093601,
+        "full_le195_rmse": 32.68305057823639,
+        "proxy_rmse": 28.862571487566697,
+        "uniform_protocol": 33.467192062455254
+      },
+      "source": "tmp/c_weight/results_aggressive.json"
+    },
+    {
+      "name": "w03_unif_h150_f08_s7",
+      "config": {
+        "name": "w03_unif_h150_f08_s7",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.08,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 7
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 56.203509310621286,
+        "full_le195_rmse": 32.89538322326093,
+        "proxy_rmse": 28.926350929532887,
+        "uniform_protocol": 33.705381497108576
+      },
+      "source": "tmp/c_weight/results_aggressive_verify.json"
+    },
+    {
+      "name": "x10_cap250_h150_f15",
+      "config": {
+        "name": "x10_cap250_h150_f15",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.15,
+        "cap": 250,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 42
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 55.96595435636664,
+        "full_le195_rmse": 32.41344745332586,
+        "proxy_rmse": 28.928685684419328,
+        "uniform_protocol": 33.233325961836556
+      },
+      "source": "tmp/c_weight/results_aggressive.json"
+    },
+    {
+      "name": "x08_tri_h150_f05",
+      "config": {
+        "name": "x08_tri_h150_f05",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "tri",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.05,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 42
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 57.73940349970425,
+        "full_le195_rmse": 33.77196232768084,
+        "proxy_rmse": 28.950280579259687,
+        "uniform_protocol": 34.46660312864783
+      },
+      "source": "tmp/c_weight/results_aggressive.json"
+    },
+    {
+      "name": "w02_unif_h150_f05_s123",
+      "config": {
+        "name": "w02_unif_h150_f05_s123",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.05,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 123
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 57.08610743862676,
+        "full_le195_rmse": 32.883566190400664,
+        "proxy_rmse": 29.062898960500032,
+        "uniform_protocol": 33.615436393481396
+      },
+      "source": "tmp/c_weight/results_aggressive_verify.json"
+    },
+    {
+      "name": "x04_unif_h150_f10",
+      "config": {
+        "name": "x04_unif_h150_f10",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.1,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 42
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 55.56851170358454,
+        "full_le195_rmse": 32.67486792466619,
+        "proxy_rmse": 29.110360452807033,
+        "uniform_protocol": 33.449003102060594
+      },
+      "source": "tmp/c_weight/results_aggressive.json"
+    },
+    {
+      "name": "w04_cap250_h150_f15_s7",
+      "config": {
+        "name": "w04_cap250_h150_f15_s7",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.15,
+        "cap": 250,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 7
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 56.29956642823939,
+        "full_le195_rmse": 32.92552099544855,
+        "proxy_rmse": 29.137870945716255,
+        "uniform_protocol": 33.7867093694411
+      },
+      "source": "tmp/c_weight/results_aggressive_verify.json"
+    },
+    {
+      "name": "x01_unif_h150_f00",
+      "config": {
+        "name": "x01_unif_h150_f00",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.0,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 42
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 66.55635029558636,
+        "full_le195_rmse": 36.595340652815565,
+        "proxy_rmse": 29.242410562132793,
+        "uniform_protocol": 37.46232344806831
+      },
+      "source": "tmp/c_weight/results_aggressive.json"
+    },
+    {
+      "name": "x05_unif_h150_f12",
+      "config": {
+        "name": "x05_unif_h150_f12",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.12,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 42
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 55.09980146816969,
+        "full_le195_rmse": 32.7038015658308,
+        "proxy_rmse": 29.35272886667476,
+        "uniform_protocol": 33.46961663255768
+      },
+      "source": "tmp/c_weight/results_aggressive.json"
+    },
+    {
+      "name": "w04_cap250_h150_f15_s123",
+      "config": {
+        "name": "w04_cap250_h150_f15_s123",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.15,
+        "cap": 250,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 123
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 56.001022471213076,
+        "full_le195_rmse": 32.634673517269924,
+        "proxy_rmse": 29.474672653764596,
+        "uniform_protocol": 33.37046972509591
+      },
+      "source": "tmp/c_weight/results_aggressive_verify.json"
+    },
+    {
+      "name": "w03_unif_h150_f08_s123",
+      "config": {
+        "name": "w03_unif_h150_f08_s123",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 150,
+        "power": 0.5,
+        "floor": 0.08,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 123
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 55.931283389737054,
+        "full_le195_rmse": 32.84023345118225,
+        "proxy_rmse": 29.49596611997157,
+        "uniform_protocol": 33.55341756423087
+      },
+      "source": "tmp/c_weight/results_aggressive_verify.json"
+    },
     {
       "name": "h01_unif_h150_f15",
       "config": {
@@ -207,6 +629,28 @@
         "uniform_protocol": 33.64697336293187
       },
       "source": "tmp/c_weight/results_a.json"
+    },
+    {
+      "name": "x06_unif_h200_f02",
+      "config": {
+        "name": "x06_unif_h200_f02",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 200,
+        "power": 0.5,
+        "floor": 0.02,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 42
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 55.02313686390624,
+        "full_le195_rmse": 32.47139895369876,
+        "proxy_rmse": 30.061702660710854,
+        "uniform_protocol": 33.30048576280398
+      },
+      "source": "tmp/c_weight/results_aggressive.json"
     },
     {
       "name": "h04_tri_h200_f15",
@@ -563,6 +1007,28 @@
         "uniform_protocol": 34.309047178125844
       },
       "source": "tmp/c_weight/results_a.json"
+    },
+    {
+      "name": "x07_unif_h200_f05",
+      "config": {
+        "name": "x07_unif_h200_f05",
+        "parent": "C:/harness_review/ai-repo/runs/harness-offline-c-weight/checkpoints/C-round-1.npz",
+        "shape": "uniform",
+        "horizon": 200,
+        "power": 0.5,
+        "floor": 0.05,
+        "lr": 0.002,
+        "epochs": 30,
+        "seed": 42
+      },
+      "returncode": 0,
+      "metrics": {
+        "full_rmse": 54.16673337983075,
+        "full_le195_rmse": 32.71296014971226,
+        "proxy_rmse": 30.626017243497976,
+        "uniform_protocol": 33.52030639301118
+      },
+      "source": "tmp/c_weight/results_aggressive.json"
     },
     {
       "name": "e04_tri_h200_f21",

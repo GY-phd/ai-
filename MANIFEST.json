@@ -1,8 +1,8 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 6403107,
-  "file_count": 398,
+  "total_bytes": 6434159,
+  "file_count": 402,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
   "files": {
@@ -143,8 +143,8 @@
       "sha256": "f79d57c7223d0543e372950b7849192eec7909e6eaf2d99f6c57b1484f6489b7"
     },
     "artifacts/tracks/c_weight_search.json": {
-      "bytes": 59304,
-      "sha256": "33b42acc7de2d622931fb834373fe2f0074c1fb6175c4e594061c54aad40fcd1"
+      "bytes": 73174,
+      "sha256": "168cb3bb56c97dbdc99ef679b5995169d0ff95250e18af29fcd409b6c80e98a0"
     },
     "artifacts/tracks/c_weight_seeds.json": {
       "bytes": 603388,
@@ -239,8 +239,8 @@
       "sha256": "729648fdebe83fc9098b59df5331109dc2127299fb982d302f5db239ecbc9887"
     },
     "contest_baselines/adapters/profile_c.py": {
-      "bytes": 6446,
-      "sha256": "509737d02599904829ed15436ee065baf727768164799b48f9cb45c874d5cd31"
+      "bytes": 6619,
+      "sha256": "1ea0a102a7f654bf14984336cc4d4e68e9019dbab30e6550ac2056ea062bac25"
     },
     "contest_baselines/adapters/registry.py": {
       "bytes": 2518,
@@ -315,8 +315,8 @@
       "sha256": "324f6106df7e8bb2874435d975ec829b710133840c14f026f5b773eb402306c4"
     },
     "contest_baselines/strategies.py": {
-      "bytes": 18395,
-      "sha256": "21e1419c1d734ba016bd72a8e08fab89eb6eeb46185d6ff315617741c2d61265"
+      "bytes": 18515,
+      "sha256": "51b6c91ccc4eaf117d04db1a2c19ee4eeacca8f6d7ff724da927aac059a25335"
     },
     "contest_baselines/swanlab_log.py": {
       "bytes": 5547,
@@ -375,12 +375,12 @@
       "sha256": "2378a5d6648e5e6a9dcdff5a91045c78bd0c75aa3bc263daf669af01a54a5918"
     },
     "docs/ABC_OPTIMIZATION.md": {
-      "bytes": 12720,
-      "sha256": "0ec206e7267d77aa61fca576b3ffe92e62b689a5a1e7e7154a460dc896fa8859"
+      "bytes": 12724,
+      "sha256": "6b1763f3c33593922cb8bfd8fd2312ca60c0fdc85156945053f369b052bb6ccc"
     },
     "docs/C_WEIGHTING.md": {
-      "bytes": 13989,
-      "sha256": "c0ed4a743656aacfcaff9a532fb2a02f8e795075581fdb2fbd2809f182ca43f4"
+      "bytes": 15336,
+      "sha256": "df05c1816451b0dc3081f1afc7c2f4559f638f718d09b8dd770efba82cb0d88e"
     },
     "docs/DECISIONS.txt": {
       "bytes": 1752,
@@ -1171,36 +1171,52 @@
       "sha256": "df20471c7a4b9caeb58bb9e844c1570c6f73e32f0b6d5a4b2b81f0dd0ad3310b"
     },
     "runs/harness-offline-c-weight/ledger.jsonl": {
-      "bytes": 6053,
-      "sha256": "915473fdfd7d2d34ce9e16083126dbc7c4b5f584092f3608cdf8bff6da580a2f"
+      "bytes": 10059,
+      "sha256": "d0ce37ab8d44169651cb9d644c69d489e351003b28536ea1ee40d0e7d056d531"
     },
     "runs/harness-offline-c-weight/run_report.json": {
-      "bytes": 9501,
-      "sha256": "ec4f7d6fad88050e56e699817fa0755476469e2f74379fb9ded9a2e9c589d51d"
+      "bytes": 15606,
+      "sha256": "9504d3c6861f2f277fe8fb6da2e83434ae8d5ea3b9ca81ea0691b1281cffad98"
     },
     "runs/harness-offline-c-weight/swanlab/C-round-1.jsonl": {
-      "bytes": 1416,
-      "sha256": "6e5642324de21b03a92d0382c4b73fb9ea94b6de6003c4c077d3acf155a0e7e5"
+      "bytes": 1417,
+      "sha256": "feeea1c4e9a304d449ed38fa1b896c976e64608e6cf8ed924034dda373037ad0"
+    },
+    "runs/harness-offline-c-weight/swanlab/C-round-10.jsonl": {
+      "bytes": 1359,
+      "sha256": "86c46577e6042bb9b27f926909b055959d86a3588eb49a73a0e0d4e6edac2833"
     },
     "runs/harness-offline-c-weight/swanlab/C-round-2.jsonl": {
       "bytes": 1425,
-      "sha256": "a63d9e9162287d49d3f012c9c4002d591ba45679f0d83c58a003e35eb6291756"
+      "sha256": "988047ebbb00162e8737132eca0fab448c7628c0b67f2c60f6552fbd25ce32e4"
     },
     "runs/harness-offline-c-weight/swanlab/C-round-3.jsonl": {
-      "bytes": 2041,
-      "sha256": "792bbdf21944205d6b343b9fb3042385e74dcd25a3bb55c51dee0934bb876621"
+      "bytes": 2044,
+      "sha256": "f2386dac4a831719b30adbed9978ff7b26a050971ae005414b5b54abd04166a7"
     },
     "runs/harness-offline-c-weight/swanlab/C-round-4.jsonl": {
-      "bytes": 1521,
-      "sha256": "b89f04cdd9f442b2f8ee748d2582c88cf1677f789e30416a1b8013bab09563bf"
+      "bytes": 1517,
+      "sha256": "4918513ed073fe39fdf0e4b52e17d67d5b321b546e4e371438e71dbb7bae68cd"
     },
     "runs/harness-offline-c-weight/swanlab/C-round-5.jsonl": {
-      "bytes": 1748,
-      "sha256": "0420723e3046b3974877f56f1668170369b83bb7b83fc98b17a581afa96a060b"
+      "bytes": 1750,
+      "sha256": "1991357f2a0c9abdd0109cf1d6f0e3891ab6c06f72f77cf8a9878d5926ada4cd"
     },
     "runs/harness-offline-c-weight/swanlab/C-round-6.jsonl": {
-      "bytes": 1576,
-      "sha256": "1220b16e194a758baa3e77949d7dc5a5b38432f0ec4b8b3717407c007b3f1f4f"
+      "bytes": 1573,
+      "sha256": "03985aaab0e9bc7148f47ca7c6bb6427af1b8a09134675a6709a9c352fac050d"
+    },
+    "runs/harness-offline-c-weight/swanlab/C-round-7.jsonl": {
+      "bytes": 1354,
+      "sha256": "b2c25b74e571f6a4e451b96730565e6aefa78ee4843a8d0b950d4dec8491c951"
+    },
+    "runs/harness-offline-c-weight/swanlab/C-round-8.jsonl": {
+      "bytes": 1357,
+      "sha256": "3aa04c8be7e26f81eeccce3d8747cc824b3f26015e0345ffb39b5d4bb572bc27"
+    },
+    "runs/harness-offline-c-weight/swanlab/C-round-9.jsonl": {
+      "bytes": 1358,
+      "sha256": "1bdee43437ed286b3c41bc792bab9fc7e8fbf16c722bbbd50d648f9ae7d0c00a"
     },
     "runs/harness-offline-verify/ledger.jsonl": {
       "bytes": 5681,
@@ -1348,7 +1364,7 @@
     },
     "tests/test_adapters.py": {
       "bytes": 14073,
-      "sha256": "cae003041b9b28ceb883ade3b184c9ef64fab6e766c71d15f6a37c89c2182577"
+      "sha256": "f0af198f671192f56d4f742026a2acaed9b6a77cbd57ea8f367d3fc21f9db5fb"
     },
     "tests/test_benchmark.py": {
       "bytes": 7267,
@@ -1436,7 +1452,7 @@
     },
     "tests/test_strategies.py": {
       "bytes": 12675,
-      "sha256": "4a548d94ae15ea8320d1ae1185d538e5e431a01c02bdfec82e0f17ca5ab6d040"
+      "sha256": "0665fdc41d3b5d63e1eed129de2885a37db594277969d63ba0be6794c30497d4"
     },
     "tests/test_swanlab.py": {
       "bytes": 9397,
