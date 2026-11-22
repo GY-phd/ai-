@@ -200,6 +200,11 @@ selection 和 guard 结果，模型 review 的 brief 也会说明两者。
 
 ## 7. 加权参数搜索（2026-11-22）
 
+> 产物：`artifacts/tracks/c_weight_search.json`（86 条运行记录，含配置与四口径指标）
+> 单配置复现：`python -m research.tracks.c_weight_sweep --help`
+> 代码：`research/tracks/c_weight_sweep.py`；生产实现：
+> `contest_baselines/strategies._bounded_prior_weights()`
+
 ### 7.1 搜索空间
 
 在 `r1` 父检查点（full 52.23）上串行/分批训练了 60+ 个配置，覆盖：
