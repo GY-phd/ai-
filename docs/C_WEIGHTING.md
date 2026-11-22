@@ -103,14 +103,60 @@ h=0 附近两者都接近 7–10，差别很小。也就是说，隐藏 RUL 的�
 - 不重构评估路径，加权候选永远进不了 production；
 - 只把加权写进 hypothesis 而不改门控，等于重复上一轮结果。
 
-## 6. 下一步（本轮工作）
+## 6. 落地：评估路径重构
 
-1. **把代理口径变成一等公民**：为 C 增加“每台设备一条截断行”的验证视图，
-   在轮次记录里同时报告 `full` 与 `late/proxy`；采纳判决以 late 为主，
-   full 作为安全旁证（不得比父模型灾难性退化）。
-2. **落地通用先验，不落地经验直方图**：`uniform H=195, power=0.5` 作为默认
-   加权（H 由训练集寿命分布的分位数推导，避免硬编码）；`power` 可调。
-3. **优先验证 weight soup**：对照模型与加权模型的权重平均可能同时保住
-   全量与隐藏指标；它仍是一个合法的单 checkpoint。
-4. 重新跑 10 轮离线 C 路径，比较“旧门控 / 新门控”的最终 full、proxy 与
-   采纳次数，并把结果写回本文。
+这一节记录本轮已经落地到 `contest_baselines` 的改动。
+
+### 6.1 训练侧假设
+
+新增 `the-test-is-truncated`（`adapters/hypotheses.py`，仅 C）：
+
+- 权重 = `clip(p_target(RUL) / p_train(RUL), 0.02, 20) ** 0.5`，
+  `p_target` 为 `[0, H]` 上的均匀先验，`H = adapter.test_horizon() = 200`，
+  `p_train` 由训练标签的高斯平滑直方图估计（带宽 8）。
+- 只改逐行损失质量；不复制行、不改特征 schema、不改前向、不改检查点格式。
+- 用真实训练标签和通用协议上界，不读取任何隐藏标签或隐藏发动机名单。
+- 策略层实现：`strategies._bounded_prior_weights()`；
+  适配器契约：`Adapter.test_horizon()` / `selection_view()` /
+  `selection_guard()`。
+
+### 6.2 选型与门控
+
+`MetricRecord` 现在区分：
+
+- `primary_value`：平台主指标（全量验证 RMSE），继续完整记录；
+- `selection_value`：协议对齐切片的指标（C 为 `late_rmse`，即真实
+  RUL ≤ 200 的验证行上的 RMSE）。
+
+`compare()` 用 `selection_value` 做采纳判决；`RoundController.decide()`
+再加一道 **full-split guard**：全量 RMSE 相对父模型的回归不得超过
+`selection_guard()` 默认的 10%。SwanLab/ledger 同时记录 full、selection
+和 guard 结果，模型 review 的 brief 也会说明两者。
+
+### 6.3 6 轮离线 C 路径（第一次运行）
+
+| 轮 | 假设 | 采纳 | full RMSE | late RMSE |
+|---:|---|---|---:|---:|
+| 1 | more-data-helps | 是 | 52.87 → 52.23 | 39.92 → 38.52 |
+| 2 | the-parent-was-left-unconverged | 否 | 52.23 → 51.24 | 38.52 → 39.28 |
+| 3 | the-tail-is-underweighted | 是 | 52.23 → 56.04 | 38.52 → 34.52 |
+| 4 | **the-test-is-truncated** | 是 | 56.04 → 54.54 | 34.52 → 32.97 |
+| 5 | the-unit-is-the-confounder | 否 | 54.54 → 51.33 | 32.97 → 36.36 |
+| 6 | capacity-is-overfitting | 否 | 54.54 → 51.16 | 32.97 → 37.74 |
+
+可以看到旧口径下 r2 会被采纳（full 51.24），但它的 late 指标反而变差；
+新口径拒绝了它。r5/r6 是全量 RMSE 更好、late 更差的典型候选，也都被
+拒绝。最终 deployment 停在 r4（full 54.54，late 32.97）。**这是有意的
+取舍**：平台评分走隐藏截断协议，full 继续作为安全旁证，而不是目标。
+
+### 6.4 尚未完成
+
+1. 用保留的 round checkpoint 复算 §1 的 CMAPSS proxy，确认 late_rmse
+   与 proxy 的排序一致（`tools/run_harness_offline.py` 现在会把每轮
+   候选 checkpoint 复制到 `runs/<out>/checkpoints/`，便于复算）。
+2. 评估 weight soup：对照与加权模型按 λ 平均，在 full 与 proxy 之间取
+   Pareto 点，可能同时满足“full 不劣于官方静态基线”和隐藏增益。当前
+   单模型路径的 r4 full 54.54 高于静态基线 52.87，这一点需要在提交前
+   明确：若评审以全量公开验证作硬门槛，需要改用 soup 或 λ 折中。
+3. 10 轮完整路径与更多种子。
+

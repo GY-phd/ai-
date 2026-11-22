@@ -123,6 +123,30 @@ class CompareTest(unittest.TestCase):
         after = self._record("classification", "macro_f1", 0.70)
         self.assertEqual(compare(before, after, "classification"), THE_SAME)
 
+    def test_the_selection_slice_decides_when_it_differs(self):
+        """A profile with a protocol-aligned slice compares on that slice.
+
+        Profile C's full-split RMSE and its truncated-test slice can move
+        in opposite directions.  The comparison must follow the slice; the
+        full value stays in the record for the round's safety guard.
+        """
+        before = MetricRecord("regression", {"rmse": 10.0, "late_rmse": 8.0},
+                              "rmse", 10.0, selection_name="late_rmse",
+                              selection_value=8.0)
+        after = MetricRecord("regression", {"rmse": 11.0, "late_rmse": 7.0},
+                             "rmse", 11.0, selection_name="late_rmse",
+                             selection_value=7.0)
+        self.assertEqual(compare(before, after, "regression"), BETTER)
+        self.assertEqual(before.as_record()["primary_metric"], "rmse")
+        self.assertEqual(before.as_record()["selection_metric"], "late_rmse")
+
+    def test_without_a_selection_slice_the_primary_still_decides(self):
+        before = self._record("regression", "rmse", 10.0)
+        after = self._record("regression", "rmse", 11.0)
+        self.assertEqual(before.selection_name, "rmse")
+        self.assertEqual(before.selection_value, 10.0)
+        self.assertEqual(compare(before, after, "regression"), WORSE)
+
 
 class ViewTest(unittest.TestCase):
     """The View reads the state and answers questions about it."""

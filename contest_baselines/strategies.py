@@ -94,6 +94,39 @@ def _oversample_indices(weights, count, seed):
     return rng.choice(count, size=count, replace=True, p=probability)
 
 
+def _bounded_prior_weights(y, horizon, *, bandwidth=8.0, power=0.5, floor=0.02):
+    """Importance weights for a truncated-test remaining-life prior.
+
+    The training rows come from complete sequences, so the RUL density
+    they induce over-represents the long-life region.  The hidden C
+    protocol truncates each test sequence and scores one snapshot, which
+    bounds the useful remaining-life range at ``horizon``.  The weight is
+    the (tempered) ratio between a uniform prior over ``[0, horizon]``
+    and the training rows' own smoothed RUL density.
+
+    Only the training labels are used; the horizon is the profile's
+    protocol bound, not a hidden label.  The weights are a training-side
+    object: no row is duplicated, the feature schema is untouched, and
+    the forward pass and the save path never see them.
+    """
+    values = np.asarray(y, dtype=np.float64)
+    if values.size == 0:
+        return values
+    top = int(max(np.ceil(float(values.max())), np.ceil(float(horizon))))
+    grid = np.arange(0, top + 1, dtype=float)
+    counts = np.bincount(np.clip(np.round(values).astype(int), 0, top),
+                         minlength=top + 1).astype(np.float64)
+    kernel = np.exp(-0.5 * ((grid[:, None] - grid[None, :]) / float(bandwidth)) ** 2)
+    kernel /= kernel.sum(axis=1, keepdims=True)
+    density = kernel @ counts
+    density /= density.sum()
+    target = (grid <= float(horizon)).astype(np.float64)
+    target /= target.sum()
+    ratio = np.clip(target / (density + 1e-12), float(floor), 20.0)
+    weights = ratio[np.clip(np.round(values).astype(int), 0, top)] ** float(power)
+    return weights / weights.mean()
+
+
 def _unit_shortness(y, units):
     """How close each row's unit is to its end, as a weight.
 
@@ -169,6 +202,28 @@ def prepare(hypothesis, model, train, profile_key, seed, adapter=None):
         model.sample_weight = np.asarray(weights, dtype=np.float64)
         changed["sample_weight"] = "1 + unit-relative remaining life"
         changed["weight_mean"] = round(float(model.sample_weight.mean()), 4)
+
+    elif hypothesis.key == "the-test-is-truncated":
+        # The hidden C protocol scores one snapshot per engine at the
+        # truncation point; the public rows cover every cycle of complete
+        # sequences.  The long-RUL mass is therefore a region the hidden
+        # metric never visits.  The horizon is the adapter's protocol
+        # bound, and the weights are computed from the training labels
+        # alone, so nothing hidden is read.
+        horizon = adapter.test_horizon()
+        if task != "regression" or horizon is None:
+            changed["skipped"] = ("profile %s has no truncated-test horizon"
+                                  % adapter.key)
+        else:
+            weights = _bounded_prior_weights(y, float(horizon))
+            model.sample_weight = weights
+            changed["sample_weight"] = (
+                "sqrt importance: uniform RUL<=%g / training RUL density" % horizon)
+            changed["horizon"] = float(horizon)
+            changed["weight_power"] = 0.5
+            changed["weight_mean"] = round(float(weights.mean()), 4)
+            changed["weight_min"] = round(float(weights.min()), 4)
+            changed["weight_max"] = round(float(weights.max()), 4)
 
     elif hypothesis.key == "the-unit-is-the-confounder":
         # The unit's elapsed-observation count would be the natural way to
@@ -275,7 +330,8 @@ def epoch_budget(hypothesis, round_index, wall_seconds=None, adapter=None):
     profile B, so its budget is smaller.
     """
     base = {"more-data-helps": 30, "the-parent-was-left-unconverged": 30,
-            "the-tail-is-underweighted": 40, "the-unit-is-the-confounder": 40,
+            "the-tail-is-underweighted": 40, "the-test-is-truncated": 30,
+            "the-unit-is-the-confounder": 40,
             "capacity-is-overfitting": 40, "rare-class-is-underweighted": 30,
             "the-batch-is-mixing-scales": 30}
     count = base.get(hypothesis.key, 30)

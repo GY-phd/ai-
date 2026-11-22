@@ -37,11 +37,14 @@ from __future__ import annotations
 
 import re
 
+import numpy as np
+
 from .base import Adapter
 from .hypotheses import (
     CAPACITY,
     MORE_DATA_HELPS,
     TAIL_UNDERWEIGHTED,
+    THE_TEST_IS_TRUNCATED,
     UNCONVERGED,
     UNIT_IS_CONFOUNDER,
 )
@@ -79,6 +82,7 @@ class CmapssAdapter(Adapter):
             MORE_DATA_HELPS,
             UNCONVERGED,
             TAIL_UNDERWEIGHTED,
+            THE_TEST_IS_TRUNCATED,
             UNIT_IS_CONFOUNDER,
             CAPACITY,
         ]
@@ -90,6 +94,40 @@ class CmapssAdapter(Adapter):
         rows and the round would risk the platform's wall clock.
         """
         return 0.5
+
+    def test_horizon(self):
+        """The hidden C protocol is a truncated sequence, not a full life.
+
+        The public validation split contains every cycle of every complete
+        engine; the platform's hidden split is the C-MAPSS test protocol,
+        one snapshot per engine at the truncation point.  The public test
+        labels (`RUL_FD00x`) stay below ~200 cycles, so the selection view
+        is bounded there.  This is a protocol bound, not a hidden label:
+        the private pack is a different dataset, so the bound is kept
+        deliberately generic.
+        """
+        return 200.0
+
+    def selection_view(self, data, predicted):
+        """RMSE on the validation rows the hidden protocol can actually visit.
+
+        Every row at or below the horizon is used, not one sampled row per
+        engine.  That keeps the measurement stable with the 106 validation
+        engines, while still removing the long-RUL region the truncated
+        test never scores.  The full-split RMSE remains in the record and
+        the round applies a guard on it.
+        """
+        horizon = self.test_horizon()
+        if horizon is None:
+            return None
+        y = np.asarray(data["y"], dtype=np.float64).ravel()
+        pred = np.asarray(predicted, dtype=np.float64).ravel()
+        mask = y <= horizon
+        if not np.any(mask):
+            return None
+        return {"name": "late_rmse",
+                "value": float(np.sqrt(np.mean((pred[mask] - y[mask]) ** 2))),
+                "n": int(mask.sum()), "horizon": float(horizon)}
 
     def extra_metrics(self, true, pred):
         """NASA's asymmetric score, as extra evidence.

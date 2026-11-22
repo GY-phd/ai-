@@ -219,3 +219,48 @@ class DegradationWeightTest(unittest.TestCase):
         self.assertIn("sample_weight", changed)
         losses = model.fit(x, y, 1, sample_weight=weights)
         self.assertTrue(np.isfinite(losses[0]))
+
+
+class TruncatedTestWeightTest(unittest.TestCase):
+    """The C-only truncated-test hypothesis changes loss mass, nothing else."""
+
+    @staticmethod
+    def _sequence_train(units=4, length=500, features=5):
+        ids, x, y = [], [], []
+        rng = np.random.default_rng(3)
+        for unit in range(units):
+            for remaining in range(length, 0, -1):
+                ids.append("fd001_train_u%04d_c%05d" % (unit, length - remaining))
+                x.append(rng.normal(0, 1, features))
+                y.append(float(remaining))
+        return {"ids": ids, "x": np.asarray(x, dtype=np.float64),
+                "y": np.asarray(y, dtype=np.float64),
+                "paths": ["f%d" % i for i in range(features)]}
+
+    def test_long_rul_rows_lose_mass(self):
+        hypothesis = next(h for h in BANK if h.key == "the-test-is-truncated")
+        model = _model("regression")
+        train = self._sequence_train()
+        x, y, changed = prepare(hypothesis, model, train, "C", 42)
+        weights = model.sample_weight
+        self.assertIn("sample_weight", changed)
+        self.assertEqual(changed["horizon"], 200.0)
+        self.assertEqual(len(weights), len(y))
+        self.assertTrue(np.all(np.isfinite(weights)))
+        self.assertTrue(np.all(weights >= 0))
+        self.assertAlmostEqual(float(weights.mean()), 1.0, places=9)
+        inside = (y > 0) & (y <= 200)
+        outside = y > 400
+        self.assertLess(float(weights[outside].mean()),
+                        float(weights[inside].mean()),
+                        "the long-RUL region must carry less mass")
+        losses = model.fit(x, y, 1, sample_weight=weights)
+        self.assertTrue(np.isfinite(losses[0]))
+
+    def test_a_profile_without_a_horizon_skips_instead_of_weighting(self):
+        hypothesis = next(h for h in BANK if h.key == "the-test-is-truncated")
+        model = _model("classification")
+        train = _train("classification")
+        _x, _y, changed = prepare(hypothesis, model, train, "A", 42)
+        self.assertIn("skipped", changed)
+        self.assertFalse(hasattr(model, "sample_weight"))

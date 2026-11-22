@@ -251,6 +251,15 @@ def main(argv=None):
                 collected = out / "swanlab" / ("%s-round-%d.jsonl" % (key, round_index))
                 collected.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(record, collected)
+            # Keep the round's candidate checkpoint even when the round is
+            # rejected: the experiment record should be re-scorable after
+            # the run, and the adopted parent is deleted with its work dir
+            # at the end of the dataset anyway.
+            checkpoint = work / "work" / ("candidate-round-%d" % round_index) / "checkpoint.npz"
+            if checkpoint.is_file():
+                target = out / "checkpoints" / ("%s-round-%d.npz" % (key, round_index))
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(checkpoint, target)
             print("%s round %d: %s adopted=%s %s"
                   % (key, round_index, entry["hypothesis"], entry["adopted"],
                      _delta(entry)))

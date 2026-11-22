@@ -42,12 +42,21 @@ class MetricRecord:
     metric a bare number came from.
     """
 
-    def __init__(self, task, values, primary_name, primary_value, split="validation"):
+    def __init__(self, task, values, primary_name, primary_value, split="validation",
+                 selection_name=None, selection_value=None):
         self.task = task
         self.values = dict(values or {})
         self.primary_name = primary_name
         self.primary_value = float(primary_value)
         self.split = split
+        # The platform's primary metric is what the hidden evaluator scores.
+        # A profile may also expose a *selection* slice that is closer to
+        # the hidden protocol (profile C's truncated test is one snapshot
+        # per engine, not every cycle of a complete sequence).  The
+        # comparison uses the selection value; the primary value stays in
+        # the record and is guarded, so the full split is never abandoned.
+        self.selection_name = selection_name or primary_name
+        self.selection_value = float(primary_value if selection_value is None else selection_value)
 
     def as_record(self):
         """The JSON shape."""
@@ -56,12 +65,15 @@ class MetricRecord:
             "task": self.task,
             "primary_metric": self.primary_name,
             "primary_value": self.primary_value,
+            "selection_metric": self.selection_name,
+            "selection_value": self.selection_value,
             "values": dict(self.values),
         }
 
     def __repr__(self):
-        return "<MetricRecord %s=%s %s=%.6f>" % (
-            self.split, self.primary_name, self.primary_name, self.primary_value)
+        return "<MetricRecord %s=%s %s=%.6f selection=%s %.6f>" % (
+            self.split, self.primary_name, self.primary_name, self.primary_value,
+            self.selection_name, self.selection_value)
 
 
 def compare(before, after, task):
@@ -69,15 +81,16 @@ def compare(before, after, task):
 
     Classification: higher Macro-F1 wins.  Regression: lower RMSE wins.
 
-    The comparison is made on the **primary** metric only.  The extra
-    metrics a profile records (NASA's asymmetric score, say) are
-    evidence, and mixing them into the decision would mean optimising a
-    number the platform does not score.
+    The comparison is made on the **selection** metric only (which is the
+    primary metric unless the profile exposes a protocol-aligned slice).
+    The extra metrics a profile records (NASA's asymmetric score, say)
+    are evidence, and mixing them into the decision would mean optimising
+    a number the platform does not score.
     """
     if before is None or after is None:
         return THE_SAME
-    old = float(before.primary_value)
-    new = float(after.primary_value)
+    old = float(before.selection_value)
+    new = float(after.selection_value)
     if task == "classification":
         if new > old:
             return BETTER
@@ -101,4 +114,4 @@ def delta(before, after):
     """
     if before is None or after is None:
         return 0.0
-    return float(after.primary_value) - float(before.primary_value)
+    return float(after.selection_value) - float(before.selection_value)
