@@ -179,6 +179,16 @@ class Adapter:
         """
         return None
 
+    def weight_horizon(self):
+        """The remaining-life horizon the training weights target.
+
+        Defaults to the protocol/selection horizon.  A profile may target
+        a narrower training window than the one used to select the model;
+        the two are separate because the hidden truncation distribution
+        and the public selection slice need not be bounded the same way.
+        """
+        return self.test_horizon()
+
     def selection_view(self, data, predicted):
         """An optional protocol-aligned validation measurement.
 

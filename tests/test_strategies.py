@@ -244,8 +244,10 @@ class TruncatedTestWeightTest(unittest.TestCase):
         x, y, changed = prepare(hypothesis, model, train, "C", 42)
         weights = model.sample_weight
         self.assertIn("sample_weight", changed)
-        self.assertEqual(changed["horizon"], 200.0)
-        self.assertEqual(changed["weight_floor"], 0.20)
+        self.assertEqual(changed["horizon"], 150.0)
+        self.assertEqual(changed["selection_horizon"], 200.0)
+        self.assertEqual(changed["weight_shape"], "uniform")
+        self.assertEqual(changed["weight_floor"], 0.15)
         self.assertEqual(len(weights), len(y))
         self.assertTrue(np.all(np.isfinite(weights)))
         self.assertTrue(np.all(weights >= 0))
@@ -265,3 +267,30 @@ class TruncatedTestWeightTest(unittest.TestCase):
         _x, _y, changed = prepare(hypothesis, model, train, "A", 42)
         self.assertIn("skipped", changed)
         self.assertFalse(hasattr(model, "sample_weight"))
+
+
+class BoundedPriorShapeTest(unittest.TestCase):
+    """The prior shape is a knob, and every shape is a valid loss mass."""
+
+    def test_every_shape_is_finite_and_normalised(self):
+        from contest_baselines.strategies import _bounded_prior_weights
+
+        rng = np.random.default_rng(5)
+        y = np.concatenate([np.arange(400, 0, -1, dtype=np.float64) for _ in range(3)])
+        for shape in ("uniform", "tri", "exp"):
+            with self.subTest(shape=shape):
+                weights = _bounded_prior_weights(y, 200.0, shape=shape, floor=0.20)
+                self.assertEqual(len(weights), len(y))
+                self.assertTrue(np.all(np.isfinite(weights)))
+                self.assertTrue(np.all(weights > 0))
+                self.assertAlmostEqual(float(weights.mean()), 1.0, places=9)
+                inside = (y > 0) & (y <= 200)
+                outside = y > 300
+                self.assertLess(float(weights[outside].mean()),
+                                float(weights[inside].mean()))
+
+    def test_an_unknown_shape_is_refused(self):
+        from contest_baselines.strategies import _bounded_prior_weights
+
+        with self.assertRaises(ValueError):
+            _bounded_prior_weights(np.arange(1.0, 50.0), 200.0, shape="nope")

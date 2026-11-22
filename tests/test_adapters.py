@@ -170,6 +170,10 @@ class AdapterContractTest(unittest.TestCase):
         # The full split is a safety reading, not a blank cheque: C allows
         # at most a 5% regression there.
         self.assertEqual(c.selection_guard(), 0.05)
+        # C narrows the *training* window to 150 cycles while the
+        # selection view stays at the full 200-cycle protocol bound.
+        self.assertEqual(c.weight_horizon(), 150.0)
+        self.assertEqual(c.test_horizon(), 200.0)
 
     def test_a_and_b_have_no_selection_view(self):
         for key in ("A", "B"):

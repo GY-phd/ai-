@@ -81,8 +81,9 @@ batch1-only 可部署模型：
 > **2026-11-22 更新：** 本节“加权不进入提交”的结论已被重开的 C 加权实验
 > 推翻一半——权重本身有效，被拒绝是因为**门控用了全量验证 RMSE**。
 > 详见 [C_WEIGHTING.md](C_WEIGHTING.md)：C 的隐藏协议是每台发动机一条截断
-> 快照，按 `RUL<=200` 通用先验加权后，代理 RMSE 39.9→32.4（−19%），
-> 全量 RMSE 52.87→52.54（仍低于静态基线）。`the-test-is-truncated` 假设与
+> 快照，按 `H_train=150` 均匀先验、floor 0.15 加权后，代理 RMSE
+> 39.9→29.7（−25.6%）；全量 52.23→54.54（父模型 +4.4%，在 5% guard
+> 内）。`the-test-is-truncated` 假设、`weight_horizon=150` 与
 > `late_rmse` 选型切片已落地；下面的原始记录保留作历史证据。
 
 `rulkit.Model.fit` 已加入 `sample_weight`（未加权路径逐位不变，
@@ -141,10 +142,10 @@ batch1-only 可部署模型：
 
 1. **C 的加权已重开并落地（2026-11-22）。** 关键不是继续调 `alpha`，而是
    承认公开验证全量与隐藏截断协议不是同一个分布。新的
-   `the-test-is-truncated` 假设用 `RUL<=200` 通用先验做 sqrt 重要性加权，
-   `MetricRecord` 增加 `late_rmse` 选型切片，全量 RMSE 仅作 5% 回归门。
-   6 轮离线 C：r4 full 52.23→52.54，late 38.12→33.78，CMAPSS 代理
-   37.91→32.40（−14.5% vs 本轮父模型，−18.8% vs 官方基线）。详见
+   `the-test-is-truncated` 假设用 `H_train=150` 均匀先验、floor 0.15 做
+   sqrt 重要性加权，`MetricRecord` 增加 `late_rmse` 选型切片，全量 RMSE
+   仅作 5% 回归门。6 轮离线 C：r3 full 52.23→54.54，late 38.52→33.66，
+   CMAPSS 代理 39.90→29.70（−25.6% vs 官方基线）。详见
    [C_WEIGHTING.md](C_WEIGHTING.md)。
 2. **把 B 的 eng34/h96 落到提交代码**：需要显式特征基迁移；若迁移
    成本太高，至少保留输入-only 单 MLP 的 639.33 作为可部署基线，

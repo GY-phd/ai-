@@ -108,6 +108,17 @@ class CmapssAdapter(Adapter):
         """
         return 200.0
 
+    def weight_horizon(self):
+        """The training weights target a narrower window than selection.
+
+        The 2026-11-22 search found a 150-cycle training window with a
+        floor of 0.15 on the public C proxy (39.9 -> 29.7 RMSE) while
+        the full-split regression stayed inside the round's 5% guard.
+        The selection view stays at 200 so the model is still measured
+        over the full plausible truncated-test range.
+        """
+        return 150.0
+
     def selection_view(self, data, predicted):
         """RMSE on the validation rows the hidden protocol can actually visit.
 
