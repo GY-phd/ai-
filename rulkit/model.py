@@ -195,12 +195,27 @@ class Model:
     predict = predict_raw
 
     # --------------------------------------------------------------- training
-    def fit(self, x, y, epochs, *, learning_rate=None, weight_decay=0.0, cosine=True, log=print):
+    def fit(self, x, y, epochs, *, learning_rate=None, weight_decay=0.0, cosine=True,
+            log=print, sample_weight=None):
         if type(epochs) is not int or not 1 <= epochs <= 10000:
             raise ValueError("epochs must be between 1 and 10000")
         z = self.normalized(x)
         if y.shape != (len(z),) or not len(z):
             raise ValueError("target shape mismatch")
+        # Per-row loss weights.  This is the training-side lever for the
+        # degradation-stage experiments: a late-life row can carry more
+        # mass without changing the feature schema, so the checkpoint
+        # remains deployable on a request that only carries ``inputs``.
+        # ``None`` keeps the historical unweighted path bit-for-bit.
+        weights = None
+        if sample_weight is not None:
+            weights = np.asarray(sample_weight, dtype=np.float64).reshape(-1)
+            if weights.shape[0] != len(z):
+                raise ValueError("sample_weight length mismatch")
+            if not np.all(np.isfinite(weights)) or np.any(weights < 0):
+                raise ValueError("sample_weight must be finite and non-negative")
+            if float(weights.sum()) <= 0:
+                raise ValueError("sample_weight must have positive mass")
         if self.meta["task"] == "regression":
             if self.meta.get("target_scaling", True):
                 target = (y - self.meta["target_mean"]) / self.meta["target_scale"]
@@ -226,23 +241,37 @@ class Model:
             for start in range(0, len(order), self.meta["batch_size"]):
                 idx = order[start:start + self.meta["batch_size"]]
                 batch, expected = z[idx], target[idx]
+                w = None if weights is None else weights[idx]
+                mass = float(len(idx)) if w is None else float(w.sum())
+                if mass <= 0:
+                    continue
                 hidden, logits = self.forward(batch)
                 if self.meta["task"] == "classification":
                     logits = logits - logits.max(axis=1, keepdims=True)
                     prob = np.exp(logits)
                     prob /= prob.sum(axis=1, keepdims=True)
-                    loss_sum -= float(np.log(np.maximum(prob[np.arange(len(idx)), expected], 1e-300)).sum())
+                    picked = np.maximum(prob[np.arange(len(idx)), expected], 1e-300)
+                    if w is None:
+                        loss_sum -= float(np.log(picked).sum())
+                    else:
+                        loss_sum -= float((w * np.log(picked)).sum())
                     delta = prob
                     delta[np.arange(len(idx)), expected] -= 1
-                    delta /= len(idx)
+                    if w is None:
+                        delta /= len(idx)
+                    else:
+                        delta *= (w / mass)[:, None]
                 else:
                     error = logits[:, 0] - expected
-                    loss_sum += float(np.sum(error ** 2))
+                    if w is None:
+                        loss_sum += float(np.sum(error ** 2))
+                    else:
+                        loss_sum += float(np.sum(w * error ** 2))
                     # Half the mean squared error, matching the convention used by
                     # scikit-learn's MLPRegressor: the gradient carries a 1/2 factor,
                     # which keeps the effective step size stable regardless of the
                     # batch size.
-                    delta = (error / len(idx))[:, None]
+                    delta = (error / len(idx))[:, None] if w is None else (w * error / mass)[:, None]
                 grads = {"w2": hidden.T @ delta, "b2": delta.sum(axis=0)}
                 if self.meta.get("activation", "tanh") == "relu":
                     # d(relu)/dz is 1 where the pre-activation was positive.
@@ -282,7 +311,7 @@ class Model:
                 if not all(np.all(np.isfinite(p)) for p in self.params.values()):
                     raise ValueError("nonfinite model state")
             self.meta["epochs"] += 1
-            losses.append(loss_sum / len(z))
+            losses.append(loss_sum / (float(weights.sum()) if weights is not None else len(z)))
         self.validate()
         return losses
 

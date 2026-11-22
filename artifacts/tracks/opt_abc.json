@@ -1,0 +1,635 @@
+{
+  "C": {
+    "official_baseline": {
+      "full": {
+        "rmse": 52.86857256611151,
+        "mae": 38.89982982666355,
+        "nasa_asym_score": 49966.18977821033,
+        "nasa_asym_score_mean": 2.167824624851852,
+        "over_predict_rate": 0.5718686277061912
+      },
+      "last_cycle": {
+        "0": {
+          "rmse": 9.896192317360466,
+          "mae": 3.5946887181411413,
+          "nasa_asym_score": 1905.1850206148054,
+          "nasa_asym_score_mean": 17.97344359070571,
+          "over_predict_rate": 0.22641509433962265
+        },
+        "10": {
+          "rmse": 16.84905269251147,
+          "mae": 13.150984263966123,
+          "nasa_asym_score": 491.7891339343108,
+          "nasa_asym_score_mean": 4.639520131455763,
+          "over_predict_rate": 0.4339622641509434
+        },
+        "20": {
+          "rmse": 27.069317471995134,
+          "mae": 19.481121856887828,
+          "nasa_asym_score": 455.3083560748913,
+          "nasa_asym_score_mean": 4.295361849763125,
+          "over_predict_rate": 0.6792452830188679
+        },
+        "30": {
+          "rmse": 33.99133329132982,
+          "mae": 27.367954971027658,
+          "nasa_asym_score": 449.8545632897343,
+          "nasa_asym_score_mean": 4.243910974431456,
+          "over_predict_rate": 0.8301886792452831
+        },
+        "50": {
+          "rmse": 48.67697263022589,
+          "mae": 39.71319537660682,
+          "nasa_asym_score": 407.1594276534828,
+          "nasa_asym_score_mean": 3.841126675976253,
+          "over_predict_rate": 0.9056603773584906
+        },
+        "75": {
+          "rmse": 47.547282173667064,
+          "mae": 40.74080959803427,
+          "nasa_asym_score": 271.480796943241,
+          "nasa_asym_score_mean": 2.5611395938041603,
+          "over_predict_rate": 0.8773584905660378
+        },
+        "100": {
+          "rmse": 43.93507582611144,
+          "mae": 36.155283851196224,
+          "nasa_asym_score": 177.0025548363987,
+          "nasa_asym_score_mean": 1.6698354229848935,
+          "over_predict_rate": 0.8018867924528302
+        }
+      }
+    },
+    "input_only_h128_e200": {
+      "full": {
+        "rmse": 50.571167214776835,
+        "mae": 35.99478555541439,
+        "nasa_asym_score": 41043.92214967882,
+        "nasa_asym_score_mean": 1.7807246366297376,
+        "over_predict_rate": 0.5637120916308733
+      },
+      "last_cycle": {
+        "0": {
+          "rmse": 7.110617271718634,
+          "mae": 3.5358232182954255,
+          "nasa_asym_score": 1873.9863056965755,
+          "nasa_asym_score_mean": 17.679116091477127,
+          "over_predict_rate": 0.4528301886792453
+        },
+        "10": {
+          "rmse": 11.02095297684949,
+          "mae": 8.317727998249895,
+          "nasa_asym_score": 300.38336232427775,
+          "nasa_asym_score_mean": 2.8338053049460163,
+          "over_predict_rate": 0.5
+        },
+        "20": {
+          "rmse": 19.04348963321296,
+          "mae": 13.68521407077655,
+          "nasa_asym_score": 311.9511576261223,
+          "nasa_asym_score_mean": 2.942935449303041,
+          "over_predict_rate": 0.660377358490566
+        },
+        "30": {
+          "rmse": 23.88757253401282,
+          "mae": 17.0911214985683,
+          "nasa_asym_score": 272.659758804984,
+          "nasa_asym_score_mean": 2.5722618755187168,
+          "over_predict_rate": 0.7264150943396226
+        },
+        "50": {
+          "rmse": 42.23725802190796,
+          "mae": 32.36876907703064,
+          "nasa_asym_score": 320.35304311149685,
+          "nasa_asym_score_mean": 3.0221985199197814,
+          "over_predict_rate": 0.7641509433962265
+        },
+        "75": {
+          "rmse": 43.7977439851553,
+          "mae": 35.72174152544354,
+          "nasa_asym_score": 238.18818108121434,
+          "nasa_asym_score_mean": 2.247058312086928,
+          "over_predict_rate": 0.8867924528301887
+        },
+        "100": {
+          "rmse": 43.73750472820552,
+          "mae": 35.56936448147337,
+          "nasa_asym_score": 172.6966231420731,
+          "nasa_asym_score_mean": 1.6292134258686142,
+          "over_predict_rate": 0.7830188679245284
+        }
+      }
+    },
+    "weighted_alpha1": {
+      "full": {
+        "rmse": 50.678580420562824,
+        "mae": 35.6117400306213,
+        "nasa_asym_score": 38090.76516026219,
+        "nasa_asym_score_mean": 1.652599468968814,
+        "over_predict_rate": 0.5403705149898044
+      },
+      "last_cycle": {
+        "0": {
+          "rmse": 6.92989028505227,
+          "mae": 3.2152460313466316,
+          "nasa_asym_score": 1704.0803966137148,
+          "nasa_asym_score_mean": 16.076230156733157,
+          "over_predict_rate": 0.42452830188679247
+        },
+        "10": {
+          "rmse": 10.476922088772255,
+          "mae": 7.964703233054262,
+          "nasa_asym_score": 277.2796735927652,
+          "nasa_asym_score_mean": 2.615845977290238,
+          "over_predict_rate": 0.46226415094339623
+        },
+        "20": {
+          "rmse": 18.303458334472115,
+          "mae": 13.631506559749068,
+          "nasa_asym_score": 309.2890976115341,
+          "nasa_asym_score_mean": 2.91782167558051,
+          "over_predict_rate": 0.6792452830188679
+        },
+        "30": {
+          "rmse": 23.18059559150783,
+          "mae": 16.709637574063862,
+          "nasa_asym_score": 267.29255951165953,
+          "nasa_asym_score_mean": 2.5216279199213165,
+          "over_predict_rate": 0.7452830188679245
+        },
+        "50": {
+          "rmse": 40.315897174078735,
+          "mae": 30.900745717615234,
+          "nasa_asym_score": 302.9658753264447,
+          "nasa_asym_score_mean": 2.8581686351551387,
+          "over_predict_rate": 0.7641509433962265
+        },
+        "75": {
+          "rmse": 41.453588603145064,
+          "mae": 33.51774782745917,
+          "nasa_asym_score": 221.8768337660637,
+          "nasa_asym_score_mean": 2.093177677038337,
+          "over_predict_rate": 0.8584905660377359
+        },
+        "100": {
+          "rmse": 40.9175722035917,
+          "mae": 33.258773970203585,
+          "nasa_asym_score": 158.3643489761676,
+          "nasa_asym_score_mean": 1.4940032922279962,
+          "over_predict_rate": 0.7641509433962265
+        }
+      }
+    },
+    "bias_correction_holdout": {
+      "offset": -7.3464043471837,
+      "calibration_engines": 53,
+      "test_engines": 53,
+      "before": {
+        "rmse": 52.98635763265276,
+        "mae": 36.105010156302285,
+        "nasa_asym_score": 19286.136234439844,
+        "nasa_asym_score_mean": 1.6954845041265796,
+        "over_predict_rate": 0.5332747252747253
+      },
+      "after": {
+        "rmse": 54.24225526269456,
+        "mae": 36.13395165313735,
+        "nasa_asym_score": 13764.109897572143,
+        "nasa_asym_score_mean": 1.2100316393470016,
+        "over_predict_rate": 0.4334945054945055
+      }
+    }
+  },
+  "B": {
+    "input_only_eng34_h96_lobo": {
+      "mean_rmse": 639.3260526630743,
+      "mean_mae": 515.0592204278814,
+      "folds": [
+        {
+          "bearing": "Bearing1_1",
+          "rmse": 139.3612338335847,
+          "mae": 117.22004177267759
+        },
+        {
+          "bearing": "Bearing1_2",
+          "rmse": 241.8709598779443,
+          "mae": 137.63403305444857
+        },
+        {
+          "bearing": "Bearing1_3",
+          "rmse": 56.6895848258897,
+          "mae": 42.50253671056213
+        },
+        {
+          "bearing": "Bearing2_1",
+          "rmse": 316.17461184383376,
+          "mae": 259.84018640113226
+        },
+        {
+          "bearing": "Bearing2_2",
+          "rmse": 841.1687045779034,
+          "mae": 481.38562711809493
+        },
+        {
+          "bearing": "Bearing2_3",
+          "rmse": 286.309776873205,
+          "mae": 246.39970529499902
+        },
+        {
+          "bearing": "Bearing3_1",
+          "rmse": 1251.5180467316823,
+          "mae": 1025.7740170501909
+        },
+        {
+          "bearing": "Bearing3_2",
+          "rmse": 1321.5706810680756,
+          "mae": 1092.3036286342026
+        },
+        {
+          "bearing": "Bearing3_3",
+          "rmse": 1299.2708743355495,
+          "mae": 1232.4732078146246
+        }
+      ]
+    },
+    "input_only_eng34_h96_lobo_weighted": {
+      "mean_rmse": 642.1607066623482,
+      "mean_mae": 517.885069987683,
+      "folds": [
+        {
+          "bearing": "Bearing1_1",
+          "rmse": 139.15124546161817,
+          "mae": 123.92410848173974
+        },
+        {
+          "bearing": "Bearing1_2",
+          "rmse": 260.08363282232153,
+          "mae": 144.37257488755665
+        },
+        {
+          "bearing": "Bearing1_3",
+          "rmse": 55.71294241265994,
+          "mae": 33.50603113772379
+        },
+        {
+          "bearing": "Bearing2_1",
+          "rmse": 314.11867898829155,
+          "mae": 258.0655728318413
+        },
+        {
+          "bearing": "Bearing2_2",
+          "rmse": 831.328748019776,
+          "mae": 481.5179494778975
+        },
+        {
+          "bearing": "Bearing2_3",
+          "rmse": 278.0952199499285,
+          "mae": 242.4066422830755
+        },
+        {
+          "bearing": "Bearing3_1",
+          "rmse": 1244.0026916518927,
+          "mae": 1018.1655352436735
+        },
+        {
+          "bearing": "Bearing3_2",
+          "rmse": 1370.602702277415,
+          "mae": 1140.068339602065
+        },
+        {
+          "bearing": "Bearing3_3",
+          "rmse": 1286.3504983772302,
+          "mae": 1218.9388759435735
+        }
+      ]
+    },
+    "two_stage_reference_lobo": {
+      "official_mean": 761.2512194051699,
+      "engine_mean": 389.32118851234605,
+      "official_median": 878.8176048390624,
+      "engine_median": 182.57240713209262,
+      "official_worst": 1385.7974713070746,
+      "engine_worst": 1268.5065596335783,
+      "wins": 8,
+      "folds": 9,
+      "gain_pct": 48.86,
+      "per_fold": [
+        {
+          "bearing": "xjtu_Bearing1_1",
+          "official_rmse": 541.5378556262539,
+          "engine_rmse": 60.286258025648
+        },
+        {
+          "bearing": "xjtu_Bearing1_2",
+          "official_rmse": 228.71464012199942,
+          "engine_rmse": 79.46571274445948
+        },
+        {
+          "bearing": "xjtu_Bearing1_3",
+          "official_rmse": 1059.3485725908636,
+          "engine_rmse": 76.84411545911352
+        },
+        {
+          "bearing": "xjtu_Bearing2_1",
+          "official_rmse": 244.58298956213008,
+          "engine_rmse": 240.8602217574376
+        },
+        {
+          "bearing": "xjtu_Bearing2_2",
+          "official_rmse": 932.6380304593022,
+          "engine_rmse": 80.02733653314229
+        },
+        {
+          "bearing": "xjtu_Bearing2_3",
+          "official_rmse": 217.42483391740927,
+          "engine_rmse": 267.52702534118254
+        },
+        {
+          "bearing": "xjtu_Bearing3_1",
+          "official_rmse": 1385.7974713070746,
+          "engine_rmse": 1268.5065596335783
+        },
+        {
+          "bearing": "xjtu_Bearing3_2",
+          "official_rmse": 1362.3989762224335,
+          "engine_rmse": 1247.8010599844597
+        },
+        {
+          "bearing": "xjtu_Bearing3_3",
+          "official_rmse": 878.8176048390624,
+          "engine_rmse": 182.57240713209262
+        }
+      ]
+    },
+    "note": "two_stage needs unit grouping at prediction; input-only is the deployable path"
+  },
+  "A": {
+    "batch1_only_input_mlp": {
+      "full_batch2": {
+        "macro_f1": 0.7276598218463822,
+        "accuracy": 0.8890675241157556,
+        "confusion_matrix": [
+          [
+            157,
+            6,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            18,
+            315,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            100,
+            0,
+            0,
+            0
+          ],
+          [
+            107,
+            1,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            529,
+            3
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            5
+          ]
+        ],
+        "labels": [
+          "Ethanol",
+          "Ethylene",
+          "Ammonia",
+          "Acetaldehyde",
+          "Acetone",
+          "Toluene"
+        ]
+      },
+      "stratified_20pct": {
+        "macro_f1": 0.7754803675856308,
+        "accuracy": 0.8943089430894309,
+        "confusion_matrix": [
+          [
+            29,
+            3,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            64,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            20,
+            0,
+            0,
+            0
+          ],
+          [
+            21,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            106,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "labels": [
+          "Ethanol",
+          "Ethylene",
+          "Ammonia",
+          "Acetaldehyde",
+          "Acetone",
+          "Toluene"
+        ]
+      }
+    },
+    "official_baseline": {
+      "full_batch2": {
+        "macro_f1": 0.7140297220788709,
+        "accuracy": 0.8786173633440515,
+        "confusion_matrix": [
+          [
+            158,
+            5,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            32,
+            302,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            100,
+            0,
+            0,
+            0
+          ],
+          [
+            108,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            528,
+            4
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            5
+          ]
+        ],
+        "labels": [
+          "Ethanol",
+          "Ethylene",
+          "Ammonia",
+          "Acetaldehyde",
+          "Acetone",
+          "Toluene"
+        ]
+      },
+      "stratified_20pct": {
+        "macro_f1": 0.7686095505617977,
+        "accuracy": 0.8821138211382114,
+        "confusion_matrix": [
+          [
+            30,
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            6,
+            60,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            20,
+            0,
+            0,
+            0
+          ],
+          [
+            21,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            106,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "labels": [
+          "Ethanol",
+          "Ethylene",
+          "Ammonia",
+          "Acetaldehyde",
+          "Acetone",
+          "Toluene"
+        ]
+      }
+    },
+    "invalid_temporal_split": {
+      "reason": "batch 2 is class-ordered; the last 40% by source_index is a class split",
+      "late_40pct_class_counts": [
+        0,
+        0,
+        0,
+        0,
+        498,
+        0
+      ],
+      "late_40pct_macro_f1": 0.49899396378269617,
+      "late_40pct_accuracy": 0.9959839357429718
+    },
+    "note": "the research 0.9707 trains on 75% of batch 2 and scores a class-stratified held-out slice; it is an adaptation proxy, not a hidden later-batch guarantee. This is the batch-1-only deployable number."
+  },
+  "generated_at": "2026-11-21T19:49:10"
+}

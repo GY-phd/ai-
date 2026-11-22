@@ -261,7 +261,8 @@ class RoundController:
                                    self.rnd.wall_seconds, adapter=self.adapter)
         log("applying %r: %s" % (self.hypothesis.key,
                                  json.dumps(self.changed, ensure_ascii=False)))
-        model.fit(x, y, self.epochs)
+        model.fit(x, y, self.epochs,
+                  sample_weight=getattr(model, "sample_weight", None))
         self.candidate = Checkpoint(model)
         return self.candidate
 

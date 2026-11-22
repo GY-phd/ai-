@@ -8,6 +8,12 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# Production host: four cores, no GPU.  Pin BLAS before Python imports numpy.
+export BASELINE_CPU_THREADS="${BASELINE_CPU_THREADS:-4}"
+export OMP_NUM_THREADS="${OMP_NUM_THREADS:-$BASELINE_CPU_THREADS}"
+export OPENBLAS_NUM_THREADS="${OPENBLAS_NUM_THREADS:-$BASELINE_CPU_THREADS}"
+export MKL_NUM_THREADS="${MKL_NUM_THREADS:-$BASELINE_CPU_THREADS}"
+
 PYTHON="${PYTHON:-python}"
 WORKSPACE="${WORKSPACE:-runs/harness-b}"
 BATCH_SIZE="${BATCH_SIZE:-200}"

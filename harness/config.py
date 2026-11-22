@@ -27,12 +27,20 @@ DEFAULTS = {
     },
     "llm": {
         "model_id": "Qwen3.8-27B",
+        "model_env": "HARNESS_LLM_MODEL",
         "base_url_env": "HARNESS_LLM_BASE_URL",
         "api_key_env": "HARNESS_LLM_API_KEY",
         "timeout_s": 30,
         "max_tokens": 1024,
         "temperature": 0.0,
         "mode": "auto",
+        # 4-core production tuning: cache the endpoint probe, reuse plans
+        # for identical states, and ask a reasoning model with its trace
+        # disabled before falling back to a plain request.
+        "probe_ttl_s": 30.0,
+        "retries": 3,
+        "backoff_s": 1.5,
+        "cache": True,
     },
     "budget": {
         "max_experiments": 5,
@@ -110,4 +118,10 @@ def load(path=None, overrides=None):
     config["stream"]["path"] = resolve_data(config["stream"]["path"])
     config["llm"]["base_url"] = os.environ.get(config["llm"]["base_url_env"], "").strip()
     config["llm"]["api_key"] = os.environ.get(config["llm"]["api_key_env"], "").strip()
+    # The evaluator's container gets environment variables, not edited files:
+    # this is how the same image is pointed at a base model or at a PyTRIO
+    # sampler checkpoint without a rebuild.
+    model_override = os.environ.get(config["llm"].get("model_env") or "HARNESS_LLM_MODEL", "").strip()
+    if model_override:
+        config["llm"]["model_id"] = model_override
     return config

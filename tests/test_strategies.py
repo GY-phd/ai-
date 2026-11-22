@@ -188,3 +188,34 @@ class PlanTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DegradationWeightTest(unittest.TestCase):
+    """The weighted-loss hypothesis must stay deployable and directional."""
+
+    def test_unweighted_fit_is_bit_identical_with_unit_weights(self):
+        model_a = _model("regression")
+        model_b = _model("regression")
+        train = _train("regression")
+        losses_a = model_a.fit(train["x"], train["y"], 3)
+        losses_b = model_b.fit(train["x"], train["y"], 3,
+                               sample_weight=np.ones(len(train["y"])))
+        self.assertEqual(losses_a, losses_b)
+        for name in model_a.params:
+            self.assertTrue(np.array_equal(model_a.params[name], model_b.params[name]))
+
+    def test_tail_weighted_sets_late_life_weights(self):
+        hypothesis = next(h for h in BANK
+                          if h.key == "the-tail-is-underweighted-by-weight")
+        model = _model("regression")
+        train = _train("regression")
+        # RUL decreases within a unit; the last row of each unit is the
+        # one the asymmetric penalty punishes hardest.
+        train["y"] = np.asarray([200.0 - (i % 16) for i in range(len(train["y"]))])
+        x, y, changed = prepare(hypothesis, model, train, "C", 42)
+        weights = model.sample_weight
+        self.assertEqual(len(weights), len(y))
+        self.assertGreater(weights[-1], weights[0])
+        self.assertIn("sample_weight", changed)
+        losses = model.fit(x, y, 1, sample_weight=weights)
+        self.assertTrue(np.isfinite(losses[0]))

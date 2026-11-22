@@ -159,18 +159,32 @@ class Model:
     predict = predict_raw
 
     # --------------------------------------------------------------- training
-    def fit(self, x, y, epochs, *, learning_rate=None):
+    def fit(self, x, y, epochs, *, learning_rate=None, sample_weight=None):
         """Fit for ``epochs`` epochs.  One epoch per call, like the reference.
 
         The epoch-indexed shuffling makes a resumed run reproduce one
         continuous run: the permutation depends on the *epoch counter*, not
         on how many epochs this call asked for.
+
+        ``sample_weight`` is the degradation-stage lever: it changes the
+        loss mass of the training rows only, never the feature schema or
+        the prediction path, so the candidate stays deployable.  ``None``
+        keeps the reference behaviour exactly.
         """
         if type(epochs) is not int or not 1 <= epochs <= 10000:
             raise ValueError("epochs must be between 1 and 10000")
         x = self.normalized(x)
         if y.shape != (len(x),) or not len(x):
             raise ValueError("target shape mismatch")
+        weights = None
+        if sample_weight is not None:
+            weights = np.asarray(sample_weight, dtype=np.float64).reshape(-1)
+            if weights.shape[0] != len(x):
+                raise ValueError("sample_weight length mismatch")
+            if not np.all(np.isfinite(weights)) or np.any(weights < 0):
+                raise ValueError("sample_weight must be finite and non-negative")
+            if float(weights.sum()) <= 0:
+                raise ValueError("sample_weight must have positive mass")
         if self.meta["task"] == "regression":
             if self.meta.get("target_scale", 1.0) == 1.0 and self.meta.get("target_mean", 0.0) == 0.0:
                 # Direct fit in the target's own unit.
@@ -190,19 +204,34 @@ class Model:
             for start in range(0, len(order), self.meta["batch_size"]):
                 indices = order[start:start + self.meta["batch_size"]]
                 batch, expected = x[indices], target[indices]
+                w = None if weights is None else weights[indices]
+                mass = float(len(indices)) if w is None else float(w.sum())
+                if mass <= 0:
+                    continue
                 hidden, logits = self.forward(batch)
                 if self.meta["task"] == "classification":
                     logits = logits - logits.max(axis=1, keepdims=True)
                     probabilities = np.exp(logits)
                     probabilities /= probabilities.sum(axis=1, keepdims=True)
-                    loss_sum -= float(np.log(np.maximum(probabilities[np.arange(len(indices)), expected], 1e-300)).sum())
+                    picked = np.maximum(probabilities[np.arange(len(indices)), expected], 1e-300)
+                    if w is None:
+                        loss_sum -= float(np.log(picked).sum())
+                    else:
+                        loss_sum -= float((w * np.log(picked)).sum())
                     delta = probabilities
                     delta[np.arange(len(indices)), expected] -= 1
-                    delta /= len(indices)
+                    if w is None:
+                        delta /= len(indices)
+                    else:
+                        delta *= (w / mass)[:, None]
                 else:
                     error = logits[:, 0] - expected
-                    loss_sum += float(np.sum(error ** 2))
-                    delta = (2 * error / len(indices))[:, None]
+                    if w is None:
+                        loss_sum += float(np.sum(error ** 2))
+                        delta = (2 * error / len(indices))[:, None]
+                    else:
+                        loss_sum += float(np.sum(w * error ** 2))
+                        delta = (2 * w * error / mass)[:, None]
                 gradients = {"w2": hidden.T @ delta, "b2": delta.sum(axis=0)}
                 hidden_delta = (delta @ self.params["w2"].T) * (1 - hidden ** 2)
                 gradients.update(w1=batch.T @ hidden_delta, b1=hidden_delta.sum(axis=0))
@@ -220,7 +249,7 @@ class Model:
                 if not all(np.all(np.isfinite(p)) for p in self.params.values()):
                     raise ValueError("nonfinite model state")
             self.meta["epochs"] += 1
-            losses.append(loss_sum / len(x))
+            losses.append(loss_sum / (float(weights.sum()) if weights is not None else len(x)))
         self.validate()
         return losses
 

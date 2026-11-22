@@ -31,6 +31,9 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
+# Four-core production host: pin BLAS so numpy does not oversubscribe.
+ENV BASELINE_CPU_THREADS=4 OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4
+
 WORKDIR /app
 
 # numpy is the only hard dependency.  swanlab is deliberately *not* installed:
@@ -38,7 +41,8 @@ WORKDIR /app
 # SwanLab-shaped stream locally, and a cloud client would only add a failure
 # mode to a run that must never fail.
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+ARG PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install --no-cache-dir --index-url "${PIP_INDEX_URL}" -r requirements.txt
 
 COPY harness/ ./harness/
 COPY rulkit/ ./rulkit/
@@ -48,7 +52,6 @@ COPY research/ ./research/
 COPY tests/ ./tests/
 COPY evidence/ ./evidence/
 COPY docs/ ./docs/
-COPY runs/ ./runs/
 COPY figureuse/ ./figureuse/
 COPY run_harness.sh run_all.ps1 run_harness.ps1 ./
 COPY README.md LICENSE MANIFEST.json ./

@@ -215,3 +215,7 @@ GITHUB_ACTIONS_BILLING_LOCK.md
 github-support-ticket.md
 github-support-body.txt
 
+# ---- 12. SFT 生成数据与训练报告 ----
+# 脚本与 README 进版本库；生成的 JSONL 和 trio:// 报告留在本地。
+train/data/
+train/reports/

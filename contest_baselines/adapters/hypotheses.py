@@ -110,6 +110,21 @@ TAIL_UNDERWEIGHTED = Hypothesis(
     profiles={"B", "C"},
 )
 
+TAIL_WEIGHTED = Hypothesis(
+    key="the-tail-is-underweighted-by-weight",
+    claim="Late-life rows are a small fraction of the stream but carry "
+          "most of the asymmetric penalty, so an unweighted loss fits the "
+          "healthy rows at their expense.",
+    change="Weight every training row by its unit-relative remaining "
+           "life (1 + (1 - RUL/start)).  This is a loss-mass change only: "
+           "no row is duplicated, the feature schema is untouched, and "
+           "prediction still needs only ``inputs``.",
+    falsifier="If the late-life RMSE and the NASA asymmetric score do "
+              "not fall, the weighting did not reach the tail.",
+    expect="Late-life RMSE falls and the over-prediction rate falls.",
+    profiles={"B", "C"},
+)
+
 UNIT_IS_CONFOUNDER = Hypothesis(
     key="the-unit-is-the-confounder",
     claim="The model cannot tell which unit a row came from, so it "
@@ -160,6 +175,7 @@ BANK = (
     MORE_DATA_HELPS,
     UNCONVERGED,
     TAIL_UNDERWEIGHTED,
+    TAIL_WEIGHTED,
     UNIT_IS_CONFOUNDER,
     CAPACITY,
     RARE_CLASS_UNDERWEIGHTED,

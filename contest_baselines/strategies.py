@@ -159,6 +159,17 @@ def prepare(hypothesis, model, train, profile_key, seed, adapter=None):
         changed["units"] = int(len(np.unique(units)))
         x, y = x[indices], y[indices]
 
+    elif hypothesis.key == "the-tail-is-underweighted-by-weight":
+        # Same claim as the resampling hypothesis, tested through the
+        # loss instead of the sampler.  The weights are a training-time
+        # object only; the checkpoint and the prediction path are
+        # untouched, so the candidate remains deployable.
+        weight = _unit_shortness(y, units)
+        weights = 1.0 + weight
+        model.sample_weight = np.asarray(weights, dtype=np.float64)
+        changed["sample_weight"] = "1 + unit-relative remaining life"
+        changed["weight_mean"] = round(float(model.sample_weight.mean()), 4)
+
     elif hypothesis.key == "the-unit-is-the-confounder":
         # The unit's elapsed-observation count would be the natural way to
         # expose the unit's identity, but it **cannot be used as a model
