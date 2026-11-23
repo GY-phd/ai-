@@ -302,6 +302,14 @@ python tools/run_harness_offline.py --rounds 10 --live --out runs/harness-offlin
 接入过程、修复的四个真实缺陷与 30 轮离线演练结果见
 [`docs/HARNESS_INTEGRATION_RECORD.md`](docs/HARNESS_INTEGRATION_RECORD.md)。
 
+**当前仓库里的训练记录**（10 轮 x A/B/C，由 PyTRiO 的真实
+`Qwen/Qwen3.8-27B` 驱动，每轮带 `selection_*` 字段，
+每一次采纳都能被独立复算）：
+
+```
+https://raw.githubusercontent.com/GY-phd/ai-/main/runs/harness-offline/run_report.json
+```
+
 ---
 
 ## 六、架构
