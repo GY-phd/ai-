@@ -190,16 +190,30 @@ class Harness:
     def _plan(self, card, champion, history):
         budget = self.budget.state()
         budget["sweep_exhausted"] = self.runner.sweep_exhausted()
+        if budget.get("tokens_left", 0) <= 0:
+            self.planner_status = {"planner": "policy", "reason": "token budget exhausted",
+                                   "fallback": True, "tokens_used": self.qwen.tokens_used,
+                                   "calls": self.qwen.calls}
+            return self.policy.plan(card, champion["metrics"], budget, history)
         if self.qwen.mode != "policy" and self.qwen.available():
             try:
                 plan = self.qwen.plan(card, champion["metrics"], budget, history)
+                meta = plan.get("_meta", {})
                 self.planner_status = {"planner": "qwen", "model_id": self.qwen.model_id,
-                                       "tokens_used": self.qwen.tokens_used, "calls": self.qwen.calls}
-                self.budget.tokens += int(plan.get("_meta", {}).get("tokens", 0))
+                                       "tokens_used": self.qwen.tokens_used, "calls": self.qwen.calls,
+                                       "cache_hits": self.qwen.cache_hits,
+                                       "failures": self.qwen.failures,
+                                       "latency_s": meta.get("latency_s"),
+                                       "attempts": meta.get("attempts"),
+                                       "cache_hit": meta.get("cache_hit"),
+                                       "thinking_off": meta.get("thinking_off")}
+                self.budget.tokens += int(meta.get("tokens", 0))
                 return plan
             except (LLMUnavailable, ValueError) as exc:
                 self.planner_status = {"planner": "policy", "reason": f"model unavailable: {exc}",
-                                       "fallback": True}
+                                       "fallback": True, "tokens_used": self.qwen.tokens_used,
+                                       "calls": self.qwen.calls, "cache_hits": self.qwen.cache_hits,
+                                       "failures": self.qwen.failures}
         else:
             self.planner_status = {"planner": "policy",
                                    "reason": self.qwen.last_error or "no endpoint configured", "fallback": True}

@@ -15,8 +15,18 @@ Regression context:
 """
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 import numpy as np
 import pytest
+
+# ``evo`` is a source tree, not an installed package.  ``test_core`` adds
+# this path during collection, but a single-file run of this module does
+# not go through ``test_core``; add it here so the file is self-contained.
+_EVO_SRC = Path(__file__).resolve().parent.parent / "evo" / "src"
+if _EVO_SRC.is_dir() and str(_EVO_SRC) not in sys.path:
+    sys.path.insert(0, str(_EVO_SRC))
 
 
 def _tiny_data(n: int = 120, d: int = 6):
@@ -112,3 +122,40 @@ def test_target_scaling_is_off_by_default():
     est = factory.build("mlp")
     assert est.__class__.__name__ == "Pipeline"
     assert [name for name, _ in est.steps] == ["scaler", "model"]
+
+
+def test_rulkit_model_unweighted_path_is_bit_identical():
+    """Adding the weighted path must not change the historical unweighted fit."""
+    from rulkit.model import Model
+
+    rng = np.random.default_rng(0)
+    x = rng.normal(size=(320, 6))
+    y = x[:, 0] * 2.0 - x[:, 1] + 0.2 * rng.normal(size=320)
+
+    def fit(weights):
+        model = Model("regression", [f"f{i}" for i in range(6)], [], x, y,
+                      hidden=16, seed=7, learning_rate=0.01, batch_size=32,
+                      feature_transform="raw", target_scaling=False)
+        losses = model.fit(x, y, 25, sample_weight=weights)
+        return model, losses
+
+    plain, plain_losses = fit(None)
+    ones, one_losses = fit(np.ones(len(y)))
+    assert np.array_equal(plain_losses, one_losses)
+    assert all(np.array_equal(plain.params[k], ones.params[k]) for k in plain.params)
+
+
+def test_rulkit_model_accepts_degradation_weights():
+    """Late-life weights must run and produce a finite objective."""
+    from rulkit.model import Model
+
+    rng = np.random.default_rng(0)
+    x = rng.normal(size=(320, 6))
+    y = np.abs(x[:, 0] * 2.0 - x[:, 1]) + 1.0
+    weights = 1.0 + 1.0 * (1.0 - y / y.max())
+    model = Model("regression", [f"f{i}" for i in range(6)], [], x, y,
+                  hidden=16, seed=7, learning_rate=0.01, batch_size=32,
+                  feature_transform="raw", target_scaling=False)
+    losses = model.fit(x, y, 25, sample_weight=weights)
+    assert np.all(np.isfinite(losses))
+    assert np.all(np.isfinite(model.predict(x)))

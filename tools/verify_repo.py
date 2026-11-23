@@ -148,7 +148,10 @@ def main() -> int:
     tracked_weights = _tracked_weights(root)
     if tracked_weights is not None and tracked_weights:
         problems.append(f"weight files are tracked by git: {tracked_weights}")
-    elif tracked_weights is None and not args.working_tree:
+    elif tracked_weights is None and not args.working_tree and not args.weights_only:
+        # ``--weights-only`` is the mode used inside the runtime image, where
+        # ``.git`` is deliberately absent.  The on-disk weight check above is
+        # still active; the tracked-set question only makes sense in a clone.
         problems.append("the folder is not a git repository, so the tracked "
                         "set could not be checked")
 

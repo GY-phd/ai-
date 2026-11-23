@@ -110,6 +110,39 @@ TAIL_UNDERWEIGHTED = Hypothesis(
     profiles={"B", "C"},
 )
 
+TAIL_WEIGHTED = Hypothesis(
+    key="the-tail-is-underweighted-by-weight",
+    claim="Late-life rows are a small fraction of the stream but carry "
+          "most of the asymmetric penalty, so an unweighted loss fits the "
+          "healthy rows at their expense.",
+    change="Weight every training row by its unit-relative remaining "
+           "life (1 + (1 - RUL/start)).  This is a loss-mass change only: "
+           "no row is duplicated, the feature schema is untouched, and "
+           "prediction still needs only ``inputs``.",
+    falsifier="If the late-life RMSE and the NASA asymmetric score do "
+              "not fall, the weighting did not reach the tail.",
+    expect="Late-life RMSE falls and the over-prediction rate falls.",
+    profiles={"B", "C"},
+)
+
+THE_TEST_IS_TRUNCATED = Hypothesis(
+    key="the-test-is-truncated",
+    claim="The training rows come from complete life sequences, but the "
+          "hidden rows are one truncated snapshot per unit.  Most training "
+          "mass sits in the long-remaining-life region that the hidden "
+          "protocol never scores, so the model is fitted to the wrong part "
+          "of the target distribution.",
+    change="Re-weight every training row by the importance ratio between a "
+           "bounded uniform remaining-life prior (a training window narrower "
+           "than the selection view) and the training RUL density, tempered "
+           "by a square root.  No row is duplicated, the feature schema is "
+           "untouched, and prediction still needs only ``inputs``.",
+    falsifier="If the RMSE on the bounded-RUL validation view does not fall, "
+              "the long-RUL mass was not the problem.",
+    expect="Late-life RMSE falls; full-sequence RMSE may rise slightly.",
+    profiles={"C"},
+)
+
 UNIT_IS_CONFOUNDER = Hypothesis(
     key="the-unit-is-the-confounder",
     claim="The model cannot tell which unit a row came from, so it "
@@ -191,6 +224,8 @@ BANK = (
     MORE_DATA_HELPS,
     UNCONVERGED,
     TAIL_UNDERWEIGHTED,
+    TAIL_WEIGHTED,
+    THE_TEST_IS_TRUNCATED,
     UNIT_IS_CONFOUNDER,
     CAPACITY,
     RARE_CLASS_UNDERWEIGHTED,

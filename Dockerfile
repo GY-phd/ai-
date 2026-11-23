@@ -83,7 +83,8 @@ COPY contest_baselines/ /app/contest_baselines/
 
 # numpy is the only hard dependency.
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+ARG PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install --no-cache-dir --index-url "${PIP_INDEX_URL}" -r requirements.txt
 
 # ---- 3. the directories the platform mounts into ----------------------------
 # The mount points have to exist in the image for the mounts to be valid.

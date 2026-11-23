@@ -228,6 +228,49 @@ class Adapter:
         """
         return {}
 
+    # ----------------------------------------------------- selection protocol
+    def test_horizon(self):
+        """The remaining-life horizon the hidden test is bounded by.
+
+        ``None`` means "this profile's hidden protocol is the same as its
+        public validation split", in which case the full validation RMSE
+        is the right number to select on.  A profile whose hidden rows are
+        truncated snapshots returns the horizon (in the target's unit) so
+        the training and the selection views can both be bounded.
+        """
+        return None
+
+    def weight_horizon(self):
+        """The remaining-life horizon the training weights target.
+
+        Defaults to the protocol/selection horizon.  A profile may target
+        a narrower training window than the one used to select the model;
+        the two are separate because the hidden truncation distribution
+        and the public selection slice need not be bounded the same way.
+        """
+        return self.test_horizon()
+
+    def selection_view(self, data, predicted):
+        """An optional protocol-aligned validation measurement.
+
+        Returns ``{"name", "value", "n"}`` or ``None``.  When it is
+        present, the round decision compares this value instead of the
+        full-split primary metric, while the full metric stays in the
+        record as a safety reading.  The default has no such view.
+        """
+        return None
+
+    def selection_guard(self):
+        """How much the full-split primary metric may regress.
+
+        Only consulted when ``selection_view`` returns a measurement.
+        A small regression on the full split is acceptable when the
+        protocol-aligned slice improves, but the full split must not be
+        abandoned: the hidden pack is a different dataset, and a model
+        that is only good on the bounded slice is fragile.
+        """
+        return 0.10
+
     def resize_hidden(self, task):
         """The hidden width a capacity migration should target.
 

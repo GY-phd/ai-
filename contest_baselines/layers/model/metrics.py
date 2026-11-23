@@ -86,10 +86,12 @@ class MetricRecord:
         self.primary_name = primary_name
         self.primary_value = float(primary_value)
         self.split = split
+        # The platform's primary metric is what the hidden evaluator scores.
         # A profile may also expose a *selection* slice that is closer to
-        # the hidden protocol than the full split.  The comparison uses
-        # the selection value; the primary value stays in the record as
-        # the safety reading that the guard watches.
+        # the hidden protocol (profile C's truncated test is one snapshot
+        # per engine, not every cycle of a complete sequence).  The
+        # comparison uses the selection value; the primary value stays in
+        # the record and is guarded, so the full split is never abandoned.
         self.selection_name = selection_name or primary_name
         self.selection_value = float(primary_value if selection_value is None else selection_value)
 
@@ -116,15 +118,16 @@ def compare(before, after, task):
 
     80|    Classification: higher Macro-F1 wins.  Regression: lower RMSE wins.
 
-    The comparison is made on the **primary** metric only.  The extra
-    metrics a profile records (NASA's asymmetric score, say) are
-    evidence, and mixing them into the decision would mean optimising a
-    number the platform does not score.
+    The comparison is made on the **selection** metric only (which is the
+    primary metric unless the profile exposes a protocol-aligned slice).
+    The extra metrics a profile records (NASA's asymmetric score, say)
+    are evidence, and mixing them into the decision would mean optimising
+    a number the platform does not score.
     """
     if before is None or after is None:
         return THE_SAME
-    old = float(before.primary_value)
-    new = float(after.primary_value)
+    old = float(before.selection_value)
+    new = float(after.selection_value)
     if task == "classification":
         if new > old:
             return BETTER
@@ -168,7 +171,12 @@ def compare_joint(before, after, task):
     """
     if before is None or after is None:
         return THE_SAME
-    primary = compare(before, after, task)
+    # The conjunction compares the **full split** against itself, so the
+    # primary metric is compared here directly rather than through
+    # :func:`compare` - that helper judges the *selection* metric,
+    # which is the other half of the rule.
+    primary = _compare_values(
+        float(before.primary_value), float(after.primary_value), task)
     # No slice of its own: the two metrics are the same number, so the
     # conjunction is exactly the single-metric comparison.
     if before.selection_name == before.primary_name and \

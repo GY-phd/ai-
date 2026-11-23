@@ -188,3 +188,109 @@ class PlanTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DegradationWeightTest(unittest.TestCase):
+    """The weighted-loss hypothesis must stay deployable and directional."""
+
+    def test_unweighted_fit_is_bit_identical_with_unit_weights(self):
+        model_a = _model("regression")
+        model_b = _model("regression")
+        train = _train("regression")
+        losses_a = model_a.fit(train["x"], train["y"], 3)
+        losses_b = model_b.fit(train["x"], train["y"], 3,
+                               sample_weight=np.ones(len(train["y"])))
+        self.assertEqual(losses_a, losses_b)
+        for name in model_a.params:
+            self.assertTrue(np.array_equal(model_a.params[name], model_b.params[name]))
+
+    def test_tail_weighted_sets_late_life_weights(self):
+        hypothesis = next(h for h in BANK
+                          if h.key == "the-tail-is-underweighted-by-weight")
+        model = _model("regression")
+        train = _train("regression")
+        # RUL decreases within a unit; the last row of each unit is the
+        # one the asymmetric penalty punishes hardest.
+        train["y"] = np.asarray([200.0 - (i % 16) for i in range(len(train["y"]))])
+        x, y, changed = prepare(hypothesis, model, train, "C", 42)
+        weights = model.sample_weight
+        self.assertEqual(len(weights), len(y))
+        self.assertGreater(weights[-1], weights[0])
+        self.assertIn("sample_weight", changed)
+        losses = model.fit(x, y, 1, sample_weight=weights)
+        self.assertTrue(np.isfinite(losses[0]))
+
+
+class TruncatedTestWeightTest(unittest.TestCase):
+    """The C-only truncated-test hypothesis changes loss mass, nothing else."""
+
+    @staticmethod
+    def _sequence_train(units=4, length=500, features=5):
+        ids, x, y = [], [], []
+        rng = np.random.default_rng(3)
+        for unit in range(units):
+            for remaining in range(length, 0, -1):
+                ids.append("fd001_train_u%04d_c%05d" % (unit, length - remaining))
+                x.append(rng.normal(0, 1, features))
+                y.append(float(remaining))
+        return {"ids": ids, "x": np.asarray(x, dtype=np.float64),
+                "y": np.asarray(y, dtype=np.float64),
+                "paths": ["f%d" % i for i in range(features)]}
+
+    def test_long_rul_rows_lose_mass(self):
+        hypothesis = next(h for h in BANK if h.key == "the-test-is-truncated")
+        model = _model("regression")
+        train = self._sequence_train()
+        x, y, changed = prepare(hypothesis, model, train, "C", 42)
+        weights = model.sample_weight
+        self.assertIn("sample_weight", changed)
+        self.assertEqual(changed["horizon"], 150.0)
+        self.assertEqual(changed["selection_horizon"], 200.0)
+        self.assertEqual(changed["weight_shape"], "uniform")
+        self.assertEqual(changed["weight_floor"], 0.05)
+        self.assertEqual(len(weights), len(y))
+        self.assertTrue(np.all(np.isfinite(weights)))
+        self.assertTrue(np.all(weights >= 0))
+        self.assertAlmostEqual(float(weights.mean()), 1.0, places=9)
+        inside = (y > 0) & (y <= 200)
+        outside = y > 400
+        self.assertLess(float(weights[outside].mean()),
+                        float(weights[inside].mean()),
+                        "the long-RUL region must carry less mass")
+        losses = model.fit(x, y, 1, sample_weight=weights)
+        self.assertTrue(np.isfinite(losses[0]))
+
+    def test_a_profile_without_a_horizon_skips_instead_of_weighting(self):
+        hypothesis = next(h for h in BANK if h.key == "the-test-is-truncated")
+        model = _model("classification")
+        train = _train("classification")
+        _x, _y, changed = prepare(hypothesis, model, train, "A", 42)
+        self.assertIn("skipped", changed)
+        self.assertFalse(hasattr(model, "sample_weight"))
+
+
+class BoundedPriorShapeTest(unittest.TestCase):
+    """The prior shape is a knob, and every shape is a valid loss mass."""
+
+    def test_every_shape_is_finite_and_normalised(self):
+        from contest_baselines.strategies import _bounded_prior_weights
+
+        rng = np.random.default_rng(5)
+        y = np.concatenate([np.arange(400, 0, -1, dtype=np.float64) for _ in range(3)])
+        for shape in ("uniform", "tri", "exp"):
+            with self.subTest(shape=shape):
+                weights = _bounded_prior_weights(y, 200.0, shape=shape, floor=0.20)
+                self.assertEqual(len(weights), len(y))
+                self.assertTrue(np.all(np.isfinite(weights)))
+                self.assertTrue(np.all(weights > 0))
+                self.assertAlmostEqual(float(weights.mean()), 1.0, places=9)
+                inside = (y > 0) & (y <= 200)
+                outside = y > 300
+                self.assertLess(float(weights[outside].mean()),
+                                float(weights[inside].mean()))
+
+    def test_an_unknown_shape_is_refused(self):
+        from contest_baselines.strategies import _bounded_prior_weights
+
+        with self.assertRaises(ValueError):
+            _bounded_prior_weights(np.arange(1.0, 50.0), 200.0, shape="nope")

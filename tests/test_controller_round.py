@@ -32,6 +32,9 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from contest_baselines.adapters import get as get_adapter  # noqa: E402
+from contest_baselines.layers.controller.round import RoundController  # noqa: E402
+from contest_baselines.layers.model.metrics import MetricRecord  # noqa: E402
 from contest_baselines.layers.view import View  # noqa: E402
 from contest_baselines.offline_host import package_root, run_entrypoint  # noqa: E402
 
@@ -164,3 +167,49 @@ class ControllerHistoryTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FullSplitGuardTest(unittest.TestCase):
+    """The protocol-aligned selection never gets a blank cheque.
+
+    C's truncated-test slice can improve while the full-split RMSE gets
+    worse; the round accepts a small regression but not a collapse.  The
+    hidden pack is a different dataset, so a candidate that only wins the
+    slice is not automatically safe.
+    """
+
+    @staticmethod
+    def _controller(adapter_key, before_full, before_late, after_full, after_late):
+        controller = RoundController.__new__(RoundController)
+        controller.adapter = get_adapter(adapter_key)
+        controller.parent_record = MetricRecord(
+            "regression", {"rmse": before_full, "late_rmse": before_late},
+            "rmse", before_full, selection_name="late_rmse",
+            selection_value=before_late)
+        controller.candidate_record = MetricRecord(
+            "regression", {"rmse": after_full, "late_rmse": after_late},
+            "rmse", after_full, selection_name="late_rmse",
+            selection_value=after_late)
+        return controller
+
+    def test_a_small_full_regression_passes(self):
+        controller = self._controller("C", 51.0, 38.0, 53.0, 32.0)
+        guard = controller._full_split_guard()
+        self.assertTrue(guard["active"])
+        self.assertTrue(guard["passed"])
+        self.assertAlmostEqual(guard["rel"], 2.0 / 51.0)
+
+    def test_a_large_full_regression_is_refused(self):
+        controller = self._controller("C", 51.0, 38.0, 61.0, 28.0)
+        guard = controller._full_split_guard()
+        self.assertFalse(guard["passed"])
+
+    def test_profiles_without_a_selection_slice_are_not_guarded(self):
+        controller = self._controller("B", 600.0, 600.0, 900.0, 900.0)
+        # B's MetricRecord would not carry a late slice in the real round;
+        # the guard is driven by the name, so make that explicit here.
+        controller.parent_record.selection_name = "rmse"
+        controller.candidate_record.selection_name = "rmse"
+        guard = controller._full_split_guard()
+        self.assertFalse(guard["active"])
+        self.assertTrue(guard["passed"])

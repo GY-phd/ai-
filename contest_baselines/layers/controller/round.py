@@ -101,6 +101,10 @@ def log(message):
     print("[contest] %s" % message, file=os.sys.stderr, flush=True)
 
 
+def _fmt(value):
+    return "%.4f" % float(value)
+
+
 class RoundController:
     """One closed-loop round, as a sequence of steps."""
 
@@ -124,6 +128,7 @@ class RoundController:
         self.parent_record = None
         self.candidate_record = None
         self.verdict = THE_SAME
+        self.guard = None
         self.adopted = False
         self.reason = ""
         self.state = None
@@ -237,8 +242,8 @@ class RoundController:
         view = self.adapter.selection_view(data, predicted)
         selection_name = selection_value = None
         if view:
-            # A protocol-aligned slice: profile C's hidden test scores
-            # truncated snapshots, not every cycle of a complete
+            # A protocol-aligned slice: profile C's hidden test scores one
+            # truncated snapshot per engine, not every cycle of a complete
             # sequence.  The full-split primary metric stays in
             # ``values`` and the decision applies a guard on it.
             values[view["name"]] = view["value"]
@@ -287,7 +292,8 @@ class RoundController:
                                    self.rnd.wall_seconds, adapter=self.adapter)
         log("applying %r: %s" % (self.hypothesis.key,
                                  json.dumps(self.changed, ensure_ascii=False)))
-        model.fit(x, y, self.epochs)
+        model.fit(x, y, self.epochs,
+                  sample_weight=getattr(model, "sample_weight", None))
         self.candidate = Checkpoint(model)
         return self.candidate
 
@@ -433,6 +439,10 @@ class RoundController:
             expected_effect=self.hypothesis.expect,
             applied=self.changed,
             primary_metric=self.parent_record.primary_name,
+            selection_metric=self.candidate_record.selection_name,
+            selection_before=self.parent_record.selection_value,
+            selection_after=self.candidate_record.selection_value,
+            selection_guard=self.guard,
             epochs=self.epochs,
             learning_rate=float(self.candidate.model.meta["learning_rate"]),
             parent_checkpoint_sha256=self.rnd.parent.checkpoint_sha256,
@@ -449,12 +459,21 @@ class RoundController:
                     "hypothesis": self.hypothesis.key, "epochs": self.epochs},
         )
         name = self.parent_record.primary_name
-        self.tracker.log(
-            {
-                "val_%s_before" % name: self.parent_record.primary_value,
-                "val_%s_after" % name: self.candidate_record.primary_value,
-                "val_%s_delta" % name: (self.candidate_record.primary_value
-                                         - self.parent_record.primary_value),
+        metrics = {
+            "val_%s_before" % name: self.parent_record.primary_value,
+            "val_%s_after" % name: self.candidate_record.primary_value,
+            "val_%s_delta" % name: (self.candidate_record.primary_value
+                                     - self.parent_record.primary_value),
+        }
+        selection = self.candidate_record.selection_name
+        if selection != name:
+            metrics.update({
+                "val_%s_before" % selection: self.parent_record.selection_value,
+                "val_%s_after" % selection: self.candidate_record.selection_value,
+                "val_%s_delta" % selection: (self.candidate_record.selection_value
+                                              - self.parent_record.selection_value),
+            })
+        metrics.update({
                 "score_before": self.parent_record.values.get("score"),
                 "score_after": self.candidate_record.values.get("score"),
                 "epochs": self.epochs,
@@ -465,7 +484,9 @@ class RoundController:
                 "train_rows": len(self.train["ids"]),
                 "validation_rows": len(self.validation["ids"]),
                 "seconds": round(time.monotonic() - self.started, 2),
-            },
+            })
+        self.tracker.log(
+            metrics,
             context={
                 "stage": "round",
                 "dataset_key": self.dataset_key,
@@ -533,19 +554,29 @@ class RoundController:
         repeated here - the host attaches it to the request, and sending
         it again would duplicate it.
         """
+        measurement = (
+            "公开验证集上的主指标：父模型 %.4f -> 候选 %.4f。"
+            % (self.parent_record.primary_value,
+               self.candidate_record.primary_value))
+        if self.candidate_record.selection_name != self.candidate_record.primary_name:
+            measurement += (
+                "\n与隐藏截断协议更接近的选型切片（%s）：父模型 %.4f -> 候选 %.4f；"
+                "全量指标回归容忍度 +%.1f%%。"
+                % (self.parent_record.selection_name,
+                   self.parent_record.selection_value,
+                   self.candidate_record.selection_value,
+                   (self.guard or {}).get("limit", 0.0) * 100.0))
         return (
             "本轮实验记录（数据集 %s，第 %d 轮，任务 %s）。\n"
             "假设：%s\n"
             "所做的改动：%s\n"
             "证伪条件：%s\n"
-            "公开验证集上的主指标：父模型 %.4f -> 候选 %.4f。\n"
+            "%s\n"
             "当前决策：%s。\n"
             "请只依据以上真实测量，判断这个读数是否支持该假设，并指出下一步最值得验证的一个改动。"
             % (self.dataset_key, self.rnd.round_index, self.parent.task,
                self.hypothesis.claim, self.hypothesis.change,
-               self.hypothesis.falsifier,
-               self.parent_record.primary_value,
-               self.candidate_record.primary_value,
+               self.hypothesis.falsifier, measurement,
                "采纳候选" if self.adopted else "保留父模型")
         )
 
@@ -627,15 +658,28 @@ class RoundController:
         self._copy_record()
 
         if self.adopted:
+            selection = self.candidate_record.selection_name
+            if selection != self.candidate_record.primary_name:
+                measured = ("Validation %s (protocol-aligned) moved from %.4f to %.4f; "
+                            "full %s moved from %.4f to %.4f."
+                            % (selection,
+                               self.parent_record.selection_value,
+                               self.candidate_record.selection_value,
+                               self.parent_record.primary_name,
+                               self.parent_record.primary_value,
+                               self.candidate_record.primary_value))
+            else:
+                measured = ("Validation %s moved from %.4f to %.4f."
+                            % (self.parent_record.primary_name,
+                               self.parent_record.primary_value,
+                               self.candidate_record.primary_value))
             submitted = self.rnd.submit_candidate(
                 self.candidate_dir,
                 hypothesis=self.hypothesis.claim,
-                change_summary="%s Applied: %s. Validation %s moved from %.4f to %.4f."
+                change_summary="%s Applied: %s. %s"
                                % (self.hypothesis.change,
                                   json.dumps(self.changed, ensure_ascii=False),
-                                  self.parent_record.primary_name,
-                                  self.parent_record.primary_value,
-                                  self.candidate_record.primary_value),
+                                  measured),
                 configuration={
                     "epochs": self.epochs,
                     "learning_rate": float(self.candidate.model.meta["learning_rate"]),
@@ -687,15 +731,27 @@ class RoundController:
     def finish(self):
         """Declare the round's outcome."""
         self.rnd.save_state(self.state_dir)
+        selection = self.candidate_record.selection_name
+        if selection != self.candidate_record.primary_name:
+            measured = ("%s moved from %.4f to %.4f; full %s moved from %.4f to %.4f"
+                        % (selection,
+                           self.parent_record.selection_value,
+                           self.candidate_record.selection_value,
+                           self.parent_record.primary_name,
+                           self.parent_record.primary_value,
+                           self.candidate_record.primary_value))
+        else:
+            measured = ("%s moved from %.4f to %.4f"
+                        % (self.parent_record.primary_name,
+                           self.parent_record.primary_value,
+                           self.candidate_record.primary_value))
         self.rnd.finish(
             selected_artifact_id=self.selected,
             hypothesis=self.hypothesis.claim,
-            change_summary="%s Applied: %s. Validation %s moved from %.4f to %.4f; adopted=%s."
+            change_summary="%s Applied: %s. Validation %s; adopted=%s."
                            % (self.hypothesis.change,
                               json.dumps(self.changed, ensure_ascii=False),
-                              self.parent_record.primary_name,
-                              self.parent_record.primary_value,
-                              self.candidate_record.primary_value,
+                              measured,
                               "yes" if self.adopted else "no"),
             reason="%s %s The model's review of this reading was: %s" % (
                 self.reason,

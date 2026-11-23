@@ -66,6 +66,18 @@ class ConfigTest(unittest.TestCase):
         cfg = harness_config.load()
         self.assertEqual(cfg["llm"]["model_id"], "Qwen3.8-27B")
 
+    def test_model_env_overrides_the_configured_id(self):
+        """The container gets env vars, not edited files."""
+        path = "trio://run_x/sampler_weights/planner-27b-sft-v1"
+        with mock.patch.dict(os.environ, {"HARNESS_LLM_MODEL": path}):
+            cfg = harness_config.load()
+        self.assertEqual(cfg["llm"]["model_id"], path)
+
+    def test_an_empty_model_env_does_not_override(self):
+        with mock.patch.dict(os.environ, {"HARNESS_LLM_MODEL": "  "}):
+            cfg = harness_config.load()
+        self.assertEqual(cfg["llm"]["model_id"], "Qwen3.8-27B")
+
     def test_overrides_win_and_nested_sections_merge(self):
         cfg = harness_config.load(overrides={"budget": {"max_experiments": 2}, "run_name": "unit"})
         self.assertEqual(cfg["budget"]["max_experiments"], 2)

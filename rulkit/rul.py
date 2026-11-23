@@ -400,7 +400,8 @@ class LifeFractionModel:
     def fit(self, x, fraction, paths, groups, *, hidden=96, seed=42,
             learning_rate=0.003, batch_size=128, feature_transform="eng34",
             activation="tanh", epochs=400, weight_decay=0.0,
-            target_scaling=False, elapsed=None, y=None, order=None):
+            target_scaling=False, elapsed=None, y=None, order=None,
+            sample_weight=None):
         """Fit the fraction regressor on the normalised features.
 
         ``y`` and ``order`` are the raw target and the chronological
@@ -430,7 +431,7 @@ class LifeFractionModel:
                            batch_size=batch_size, feature_transform=inner_transform,
                            activation=activation, target_scaling=target_scaling)
         self.model.fit(matrix, fraction, epochs, learning_rate=learning_rate,
-                       weight_decay=weight_decay)
+                       weight_decay=weight_decay, sample_weight=sample_weight)
         # Remember the median lifetime of the training bearings.  It is the
         # fallback scale when no stream history is available, and it is far
         # better than the neutral 1.0 that would make every prediction

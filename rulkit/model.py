@@ -219,12 +219,27 @@ class Model:
     predict = predict_raw
 
     # --------------------------------------------------------------- training
-    def fit(self, x, y, epochs, *, learning_rate=None, weight_decay=0.0, cosine=True, log=print):
+    def fit(self, x, y, epochs, *, learning_rate=None, weight_decay=0.0, cosine=True,
+            log=print, sample_weight=None):
         if type(epochs) is not int or not 1 <= epochs <= 10000:
             raise ValueError("epochs must be between 1 and 10000")
         z = self.normalized(x)
         if y.shape != (len(z),) or not len(z):
             raise ValueError("target shape mismatch")
+        # Per-row loss weights.  This is the training-side lever for the
+        # degradation-stage experiments: a late-life row can carry more
+        # mass without changing the feature schema, so the checkpoint
+        # remains deployable on a request that only carries ``inputs``.
+        # ``None`` keeps the historical unweighted path bit-for-bit.
+        weights = None
+        if sample_weight is not None:
+            weights = np.asarray(sample_weight, dtype=np.float64).reshape(-1)
+            if weights.shape[0] != len(z):
+                raise ValueError("sample_weight length mismatch")
+            if not np.all(np.isfinite(weights)) or np.any(weights < 0):
+                raise ValueError("sample_weight must be finite and non-negative")
+            if float(weights.sum()) <= 0:
+                raise ValueError("sample_weight must have positive mass")
         if self.meta["task"] == "regression":
             if self.meta.get("target_scaling", True):
                 target = (y - self.meta["target_mean"]) / self.meta["target_scale"]
@@ -256,34 +271,62 @@ class Model:
             for start in range(0, len(order), self.meta["batch_size"]):
                 idx = order[start:start + self.meta["batch_size"]]
                 batch, expected = z[idx], target[idx]
+                w = None if weights is None else weights[idx]
+                mass = float(len(idx)) if w is None else float(w.sum())
+                if mass <= 0:
+                    continue
                 hidden, logits = self.forward(batch)
                 if self.meta["task"] == "classification":
                     logits = logits - logits.max(axis=1, keepdims=True)
                     prob = np.exp(logits)
                     prob /= prob.sum(axis=1, keepdims=True)
                     # The per-example loss, before it is summed.  It is
-                    # kept separate from the sum so that a **class
-                    # weight** can scale it: the plain cross-entropy
-                    # below would let a class with 18 rows be drowned
-                    # out by one with 247.
+                    # kept separate from the sum so that a **weight** can
+                    # scale it: the plain cross-entropy below would let a
+                    # class with 18 rows be drowned out by one with 247.
+                    #
+                    # Two weights meet here and they compose: ``w`` is the
+                    # per-**sample** weight of the weighted training rows,
+                    # ``class_weight`` the per-**class** weight of an
+                    # unbalanced problem.  A row's effective weight is
+                    # their product, and the gradient is divided by the
+                    # effective mass so the step size does not drift with
+                    # the weighting.
                     example_loss = -np.log(
                         np.maximum(prob[np.arange(len(idx)), expected], 1e-300))
                     if class_weight is not None:
                         example_loss = example_loss * class_weight[expected]
+                    if w is not None:
+                        example_loss = example_loss * w
                     loss_sum += float(example_loss.sum())
                     delta = prob
                     delta[np.arange(len(idx)), expected] -= 1
                     if class_weight is not None:
                         delta = delta * class_weight[expected][:, None]
-                    delta /= len(idx)
+                    if w is not None:
+                        delta = delta * w[:, None]
+                    delta /= (len(idx) if w is None else mass)
                 else:
                     error = logits[:, 0] - expected
-                    loss_sum += float(np.sum(error ** 2))
+                    # The same composition as the classification branch:
+                    # the per-sample weight and the per-class weight
+                    # multiply, and the gradient is divided by the
+                    # effective mass.
+                    row_weight = 1.0 if w is None else w
+                    if class_weight is not None:
+                        row_weight = row_weight * class_weight[expected]
+                    if w is None and class_weight is None:
+                        loss_sum += float(np.sum(error ** 2))
+                    else:
+                        loss_sum += float(np.sum(row_weight * error ** 2))
                     # Half the mean squared error, matching the convention used by
                     # scikit-learn's MLPRegressor: the gradient carries a 1/2 factor,
                     # which keeps the effective step size stable regardless of the
                     # batch size.
-                    delta = (error / len(idx))[:, None]
+                    if w is None and class_weight is None:
+                        delta = (error / len(idx))[:, None]
+                    else:
+                        delta = (row_weight * error / mass)[:, None]
                 grads = {"w2": hidden.T @ delta, "b2": delta.sum(axis=0)}
                 if self.meta.get("activation", "tanh") == "relu":
                     # d(relu)/dz is 1 where the pre-activation was positive.
@@ -323,7 +366,7 @@ class Model:
                 if not all(np.all(np.isfinite(p)) for p in self.params.values()):
                     raise ValueError("nonfinite model state")
             self.meta["epochs"] += 1
-            losses.append(loss_sum / len(z))
+            losses.append(loss_sum / (float(weights.sum()) if weights is not None else len(z)))
         self.validate()
         return losses
 

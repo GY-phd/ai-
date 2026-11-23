@@ -22,6 +22,11 @@ $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Push-Location $root
 try {
     $env:PYTHONIOENCODING = "utf-8"
+    # Production host: four cores, no GPU.  Set before Python imports numpy.
+    if (-not $env:BASELINE_CPU_THREADS) { $env:BASELINE_CPU_THREADS = "4" }
+    if (-not $env:OMP_NUM_THREADS) { $env:OMP_NUM_THREADS = $env:BASELINE_CPU_THREADS }
+    if (-not $env:OPENBLAS_NUM_THREADS) { $env:OPENBLAS_NUM_THREADS = $env:BASELINE_CPU_THREADS }
+    if (-not $env:MKL_NUM_THREADS) { $env:MKL_NUM_THREADS = $env:BASELINE_CPU_THREADS }
     if ($Data) { $env:RUL_DATA_ROOT = (Resolve-Path $Data).Path }
     Write-Host "data root: $env:RUL_DATA_ROOT" -ForegroundColor DarkGray
     if (Test-Path $Workspace) {

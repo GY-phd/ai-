@@ -1,0 +1,165 @@
+{
+  "B": {
+    "input_only_eng34_h96_lobo": {
+      "mean_rmse": 639.3260526630743,
+      "mean_mae": 515.0592204278814,
+      "folds": [
+        {
+          "bearing": "Bearing1_1",
+          "rmse": 139.3612338335847,
+          "mae": 117.22004177267759
+        },
+        {
+          "bearing": "Bearing1_2",
+          "rmse": 241.8709598779443,
+          "mae": 137.63403305444857
+        },
+        {
+          "bearing": "Bearing1_3",
+          "rmse": 56.6895848258897,
+          "mae": 42.50253671056213
+        },
+        {
+          "bearing": "Bearing2_1",
+          "rmse": 316.17461184383376,
+          "mae": 259.84018640113226
+        },
+        {
+          "bearing": "Bearing2_2",
+          "rmse": 841.1687045779034,
+          "mae": 481.38562711809493
+        },
+        {
+          "bearing": "Bearing2_3",
+          "rmse": 286.309776873205,
+          "mae": 246.39970529499902
+        },
+        {
+          "bearing": "Bearing3_1",
+          "rmse": 1251.5180467316823,
+          "mae": 1025.7740170501909
+        },
+        {
+          "bearing": "Bearing3_2",
+          "rmse": 1321.5706810680756,
+          "mae": 1092.3036286342026
+        },
+        {
+          "bearing": "Bearing3_3",
+          "rmse": 1299.2708743355495,
+          "mae": 1232.4732078146246
+        }
+      ]
+    },
+    "input_only_eng34_h96_lobo_weighted": {
+      "mean_rmse": 642.1607066623482,
+      "mean_mae": 517.885069987683,
+      "folds": [
+        {
+          "bearing": "Bearing1_1",
+          "rmse": 139.15124546161817,
+          "mae": 123.92410848173974
+        },
+        {
+          "bearing": "Bearing1_2",
+          "rmse": 260.08363282232153,
+          "mae": 144.37257488755665
+        },
+        {
+          "bearing": "Bearing1_3",
+          "rmse": 55.71294241265994,
+          "mae": 33.50603113772379
+        },
+        {
+          "bearing": "Bearing2_1",
+          "rmse": 314.11867898829155,
+          "mae": 258.0655728318413
+        },
+        {
+          "bearing": "Bearing2_2",
+          "rmse": 831.328748019776,
+          "mae": 481.5179494778975
+        },
+        {
+          "bearing": "Bearing2_3",
+          "rmse": 278.0952199499285,
+          "mae": 242.4066422830755
+        },
+        {
+          "bearing": "Bearing3_1",
+          "rmse": 1244.0026916518927,
+          "mae": 1018.1655352436735
+        },
+        {
+          "bearing": "Bearing3_2",
+          "rmse": 1370.602702277415,
+          "mae": 1140.068339602065
+        },
+        {
+          "bearing": "Bearing3_3",
+          "rmse": 1286.3504983772302,
+          "mae": 1218.9388759435735
+        }
+      ]
+    },
+    "two_stage_reference_lobo": {
+      "official_mean": 761.2512194051699,
+      "engine_mean": 389.32118851234605,
+      "official_median": 878.8176048390624,
+      "engine_median": 182.57240713209262,
+      "official_worst": 1385.7974713070746,
+      "engine_worst": 1268.5065596335783,
+      "wins": 8,
+      "folds": 9,
+      "gain_pct": 48.86,
+      "per_fold": [
+        {
+          "bearing": "xjtu_Bearing1_1",
+          "official_rmse": 541.5378556262539,
+          "engine_rmse": 60.286258025648
+        },
+        {
+          "bearing": "xjtu_Bearing1_2",
+          "official_rmse": 228.71464012199942,
+          "engine_rmse": 79.46571274445948
+        },
+        {
+          "bearing": "xjtu_Bearing1_3",
+          "official_rmse": 1059.3485725908636,
+          "engine_rmse": 76.84411545911352
+        },
+        {
+          "bearing": "xjtu_Bearing2_1",
+          "official_rmse": 244.58298956213008,
+          "engine_rmse": 240.8602217574376
+        },
+        {
+          "bearing": "xjtu_Bearing2_2",
+          "official_rmse": 932.6380304593022,
+          "engine_rmse": 80.02733653314229
+        },
+        {
+          "bearing": "xjtu_Bearing2_3",
+          "official_rmse": 217.42483391740927,
+          "engine_rmse": 267.52702534118254
+        },
+        {
+          "bearing": "xjtu_Bearing3_1",
+          "official_rmse": 1385.7974713070746,
+          "engine_rmse": 1268.5065596335783
+        },
+        {
+          "bearing": "xjtu_Bearing3_2",
+          "official_rmse": 1362.3989762224335,
+          "engine_rmse": 1247.8010599844597
+        },
+        {
+          "bearing": "xjtu_Bearing3_3",
+          "official_rmse": 878.8176048390624,
+          "engine_rmse": 182.57240713209262
+        }
+      ]
+    },
+    "note": "two_stage needs unit grouping at prediction; input-only is the deployable path"
+  }
+}

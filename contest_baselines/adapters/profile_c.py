@@ -44,6 +44,7 @@ from .hypotheses import (
     CAPACITY,
     MORE_DATA_HELPS,
     TAIL_UNDERWEIGHTED,
+    THE_TEST_IS_TRUNCATED,
     UNCONVERGED,
     UNIT_IS_CONFOUNDER,
 )
@@ -80,6 +81,7 @@ class CmapssAdapter(Adapter):
         return [
             MORE_DATA_HELPS,
             UNCONVERGED,
+            THE_TEST_IS_TRUNCATED,
             TAIL_UNDERWEIGHTED,
             UNIT_IS_CONFOUNDER,
             CAPACITY,
@@ -95,7 +97,7 @@ class CmapssAdapter(Adapter):
 
     # ------------------------------------------------- protocol alignment
     def test_horizon(self):
-        """The remaining-life horizon the hidden C protocol is bounded by.
+        """The hidden C protocol is a truncated sequence, not a full life.
 
         The public validation split contains every cycle of every complete
         engine; the platform's hidden split is the C-MAPSS test protocol,
@@ -104,17 +106,11 @@ class CmapssAdapter(Adapter):
         is bounded there.  This is a protocol bound, not a hidden label:
         the private pack is a different dataset, so the bound is kept
         deliberately generic.
-
-        The platform's 2026-11-22 run reported **9 687 hidden samples**
-        against C-MAPSS's 707 test engines, so the hidden pack samples
-        several cycles per engine.  The horizon is therefore a bound on
-        *which rows can be scored*, not an assumption of one row per
-        engine - the selection view uses every row at or below it.
         """
         return 200.0
 
     def weight_horizon(self):
-        """The remaining-life horizon the training weights target.
+        """The training weights target a narrower window than selection.
 
         The 2026-11-22 search found a 150-cycle training window with a
         floor of 0.15 on the public C proxy (39.9 -> 29.7 RMSE) while

@@ -149,6 +149,44 @@ class AdapterContractTest(unittest.TestCase):
             self.assertLessEqual(width, MAX_HIDDEN)
             self.assertGreaterEqual(width, 1)
 
+    def test_only_c_declares_a_truncated_test_horizon(self):
+        # C's hidden protocol is a truncated sequence; A and B keep the
+        # full validation split as their protocol, so their selection
+        # view is the primary metric.
+        self.assertIsNone(adapters.get("A").test_horizon())
+        self.assertIsNone(adapters.get("B").test_horizon())
+        self.assertEqual(adapters.get("C").test_horizon(), 200.0)
+
+    def test_c_selection_view_uses_only_rows_inside_the_horizon(self):
+        c = adapters.get("C")
+        data = {"y": np.asarray([0.0, 50.0, 100.0, 200.0, 201.0, 500.0])}
+        predicted = np.asarray([10.0, 40.0, 120.0, 180.0, 220.0, 400.0])
+        view = c.selection_view(data, predicted)
+        self.assertEqual(view["name"], "late_rmse")
+        self.assertEqual(view["n"], 4)
+        expected = float(np.sqrt(np.mean((predicted[:4] - data["y"][:4]) ** 2)))
+        self.assertAlmostEqual(view["value"], expected)
+        self.assertEqual(view["horizon"], 200.0)
+        # The full split is a safety reading, not a blank cheque: C allows
+        # at most a 5% regression there.
+        #
+        # The tolerance is 5%, not the 12% an earlier revision used.
+        # The platform's 2026-11-22 run deployed a candidate whose hidden
+        # RMSE was 56.25329 against a 52.8686 baseline - 6.40% *worse*
+        # than the baseline, which violates the platform's requirement
+        # that "效果不低于平台基线".  A 12% guard admits exactly that
+        # size of full-split regression; 5% does not.
+        self.assertEqual(c.selection_guard(), 0.05)
+        # C narrows the *training* window to 150 cycles while the
+        # selection view stays at the full 200-cycle protocol bound.
+        self.assertEqual(c.weight_horizon(), 150.0)
+        self.assertEqual(c.test_horizon(), 200.0)
+
+    def test_a_and_b_have_no_selection_view(self):
+        for key in ("A", "B"):
+            data = {"y": np.asarray([0.0, 1.0])}
+            self.assertIsNone(adapters.get(key).selection_view(data, data["y"]))
+
     def test_each_profile_has_its_own_bank(self):
         keys = {key: [h.key for h in for_profile(key)] for key in ("A", "B", "C")}
         self.assertIn("rare-class-is-underweighted", keys["A"])

@@ -233,18 +233,32 @@ class Model:
     predict = predict_raw
 
     # --------------------------------------------------------------- training
-    def fit(self, x, y, epochs, *, learning_rate=None):
+    def fit(self, x, y, epochs, *, learning_rate=None, sample_weight=None):
         """Fit for ``epochs`` epochs.  One epoch per call, like the reference.
 
         The epoch-indexed shuffling makes a resumed run reproduce one
         continuous run: the permutation depends on the *epoch counter*, not
         on how many epochs this call asked for.
+
+        ``sample_weight`` is the degradation-stage lever: it changes the
+        loss mass of the training rows only, never the feature schema or
+        the prediction path, so the candidate stays deployable.  ``None``
+        keeps the reference behaviour exactly.
         """
         if type(epochs) is not int or not 1 <= epochs <= 10000:
             raise ValueError("epochs must be between 1 and 10000")
         x = self.normalized(x)
         if y.shape != (len(x),) or not len(x):
             raise ValueError("target shape mismatch")
+        weights = None
+        if sample_weight is not None:
+            weights = np.asarray(sample_weight, dtype=np.float64).reshape(-1)
+            if weights.shape[0] != len(x):
+                raise ValueError("sample_weight length mismatch")
+            if not np.all(np.isfinite(weights)) or np.any(weights < 0):
+                raise ValueError("sample_weight must be finite and non-negative")
+            if float(weights.sum()) <= 0:
+                raise ValueError("sample_weight must have positive mass")
         if self.meta["task"] == "regression":
             if self.meta.get("target_scale", 1.0) == 1.0 and self.meta.get("target_mean", 0.0) == 0.0:
                 # Direct fit in the target's own unit.
@@ -269,31 +283,58 @@ class Model:
             for start in range(0, len(order), self.meta["batch_size"]):
                 indices = order[start:start + self.meta["batch_size"]]
                 batch, expected = x[indices], target[indices]
+                w = None if weights is None else weights[indices]
+                mass = float(len(indices)) if w is None else float(w.sum())
+                if mass <= 0:
+                    continue
                 hidden, logits = self.forward(batch)
                 if self.meta["task"] == "classification":
                     logits = logits - logits.max(axis=1, keepdims=True)
                     probabilities = np.exp(logits)
                     probabilities /= probabilities.sum(axis=1, keepdims=True)
                     # The per-example loss, kept separate from the sum
-                    # so a **class weight** can scale it.  On an
-                    # unbalanced problem the plain cross-entropy is not
-                    # a neutral choice: the majority's contribution to
-                    # the gradient dominates, and a minority class can
-                    # end up with a per-class F1 of exactly zero.
+                    # so a **weight** can scale it.  On an unbalanced
+                    # problem the plain cross-entropy is not a neutral
+                    # choice: the majority's contribution to the gradient
+                    # dominates, and a minority class can end up with a
+                    # per-class F1 of exactly zero.
+                    #
+                    # Two weights meet here and they compose: ``w`` is the
+                    # per-**sample** weight of the weighted training rows,
+                    # ``class_weight`` the per-**class** weight of an
+                    # unbalanced problem.  A row's effective weight is
+                    # their product, and the gradient is divided by the
+                    # effective mass so the step size does not drift with
+                    # the weighting.
                     example_loss = -np.log(
                         np.maximum(probabilities[np.arange(len(indices)), expected], 1e-300))
                     if class_weight is not None:
                         example_loss = example_loss * class_weight[expected]
+                    if w is not None:
+                        example_loss = example_loss * w
                     loss_sum += float(example_loss.sum())
                     delta = probabilities
                     delta[np.arange(len(indices)), expected] -= 1
                     if class_weight is not None:
                         delta = delta * class_weight[expected][:, None]
-                    delta /= len(indices)
+                    if w is not None:
+                        delta = delta * w[:, None]
+                    delta /= (len(indices) if w is None else mass)
                 else:
                     error = logits[:, 0] - expected
-                    loss_sum += float(np.sum(error ** 2))
-                    delta = (2 * error / len(indices))[:, None]
+                    # The same composition as the classification branch:
+                    # the per-sample weight and the per-class weight
+                    # multiply, and the gradient is divided by the
+                    # effective mass.
+                    row_weight = 1.0 if w is None else w
+                    if class_weight is not None:
+                        row_weight = row_weight * class_weight[expected]
+                    if w is None and class_weight is None:
+                        loss_sum += float(np.sum(error ** 2))
+                        delta = (2 * error / len(indices))[:, None]
+                    else:
+                        loss_sum += float(np.sum(row_weight * error ** 2))
+                        delta = (2 * row_weight * error / mass)[:, None]
                 gradients = {"w2": hidden.T @ delta, "b2": delta.sum(axis=0)}
                 hidden_delta = (delta @ self.params["w2"].T) * (1 - hidden ** 2)
                 gradients.update(w1=batch.T @ hidden_delta, b1=hidden_delta.sum(axis=0))
@@ -311,7 +352,7 @@ class Model:
                 if not all(np.all(np.isfinite(p)) for p in self.params.values()):
                     raise ValueError("nonfinite model state")
             self.meta["epochs"] += 1
-            losses.append(loss_sum / len(x))
+            losses.append(loss_sum / (float(weights.sum()) if weights is not None else len(x)))
         self.validate()
         return losses
 

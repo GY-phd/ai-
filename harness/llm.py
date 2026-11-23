@@ -58,7 +58,9 @@ to the same text.  That is what makes a post-training derivative such
 as ``qwen3.8-27b-ft-20261115`` recognisable as a derivative rather
 than as an unknown model.
 """
+import hashlib
 import json
+import re
 import time
 
 
@@ -195,8 +197,38 @@ RULES
 - If evidence is weak or the budget is nearly gone, choose do_nothing.
 
 Return JSON with keys:
-action (one of the five), params (object), hypothesis (<=200 chars), expected_gain_pct (number), risk (low|medium|high), reason (<=300 chars).
+action (one of the six), params (object), hypothesis (<=200 chars), expected_gain_pct (number), risk (low|medium|high), reason (<=300 chars).
 """
+
+
+def compact_history(history, limit=4):
+    """Project ledger records onto the fields the decision model needs.
+
+    ``Ledger.recent()`` returns full records.  Each one carries the whole
+    diagnosis, drift table, gate checks and candidate metrics, so four of
+    them can dominate the prompt.  The policy only reads ``action`` and
+    ``decision``; the model benefits from the hypothesis, the gate outcome
+    and the measured gain, and nothing else.  Keeping the projection here
+    means the runtime prompt and the SFT data are built by the same code.
+    """
+    compact = []
+    for row in (history or [])[-limit:]:
+        if not isinstance(row, dict):
+            continue
+        gate = row.get("gate") if isinstance(row.get("gate"), dict) else {}
+        checks = gate.get("checks") if isinstance(gate.get("checks"), dict) else {}
+        item = {
+            "cycle": row.get("cycle"),
+            "action": row.get("action"),
+            "decision": row.get("decision"),
+            "hypothesis": (str(row.get("hypothesis"))[:160] if row.get("hypothesis") else None),
+            "reason": (str(row.get("reason"))[:160] if row.get("reason") else None),
+            "gain_pct": checks.get("gain_pct"),
+            "gate": gate.get("decision") or gate.get("reason"),
+            "cost_seconds": row.get("cost_seconds"),
+        }
+        compact.append({key: value for key, value in item.items() if value is not None})
+    return compact
 
 
 class QwenPlanner:
@@ -213,23 +245,40 @@ class QwenPlanner:
         self.temperature = float(settings.get("temperature", 0.0))
         self.mode = settings.get("mode", "auto")
         self.skills = skills or ""
+        # A 4-core production host pays for every probe and every token.
+        # The probe is cached (the endpoint does not move between cycles),
+        # identical states reuse a plan, and a reasoning model is asked with
+        # its trace disabled first: with the trace on, a 27B can spend the
+        # whole token budget on reasoning and return an empty reply after
+        # minutes, which the gateway reports as "model unavailable".
+        self.probe_ttl_s = float(settings.get("probe_ttl_s", 30.0))
+        self.call_attempts = max(1, int(settings.get("retries", 3)))
+        self.backoff_s = max(0.0, float(settings.get("backoff_s", 1.5)))
+        self.cache_enabled = bool(settings.get("cache", True))
         self.tokens_used = 0
         self.calls = 0
         self.failures = 0
+        self.cache_hits = 0
         self.last_error = None
+        self._plan_cache = {}
+        self._probe_ok = False
+        self._probe_until = 0.0
         self._client = None
 
     # ------------------------------------------------------------------ status
     def available(self):
-        if self.mode == "policy":
+        if self.mode == "policy" or not self.base_url:
             return False
-        if not self.base_url:
-            return False
+        now = time.monotonic()
+        if now < self._probe_until:
+            return self._probe_ok
         try:
-            return self._http_ready()
+            self._probe_ok = self._http_ready()
         except Exception as exc:  # noqa: BLE001 - availability must never raise
             self.last_error = f"{type(exc).__name__}: {exc}"
-            return False
+            self._probe_ok = False
+        self._probe_until = now + self.probe_ttl_s
+        return self._probe_ok
 
     def _http_ready(self):
         import urllib.request
@@ -243,34 +292,94 @@ class QwenPlanner:
             headers["Authorization"] = "Bearer " + self.api_key
         return headers
 
+    def _cache_key(self, card, champion, budget, history):
+        payload = {"card": card, "champion": champion, "budget": budget,
+                   "history": history, "model": self.model_id,
+                   "temperature": self.temperature, "max_tokens": self.max_tokens}
+        text = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+    def _messages(self, card, champion, budget, history):
+        return [
+            {"role": "system", "content": SYSTEM_PROMPT + ("\n\n" + self.skills if self.skills else "")},
+            {"role": "user", "content": USER_TEMPLATE.format(
+                card=json.dumps(card, ensure_ascii=False, indent=2),
+                champion=json.dumps(champion, ensure_ascii=False, indent=2),
+                budget=json.dumps(budget, ensure_ascii=False, indent=2),
+                history=json.dumps(compact_history(history), ensure_ascii=False, indent=2))},
+        ]
+
     # --------------------------------------------------------------- inference
     def plan(self, card, champion, budget, history):
+        if int(budget.get("tokens_left", 1)) <= 0:
+            raise LLMUnavailable("token budget exhausted")
         if not self.available():
             raise LLMUnavailable(self.last_error or "no endpoint configured")
+
+        key = self._cache_key(card, champion, budget, compact_history(history))
+        if self.cache_enabled and key in self._plan_cache:
+            self.cache_hits += 1
+            cached = json.loads(json.dumps(self._plan_cache[key]))
+            cached["_meta"].update({"cache_hit": True, "latency_s": 0.0, "tokens": 0})
+            return cached
+
         payload = {
             "model": self.model_id,
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
-            "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT + ("\n\n" + self.skills if self.skills else "")},
-                {"role": "user", "content": USER_TEMPLATE.format(
-                    card=json.dumps(card, ensure_ascii=False, indent=2),
-                    champion=json.dumps(champion, ensure_ascii=False, indent=2),
-                    budget=json.dumps(budget, ensure_ascii=False, indent=2),
-                    history=json.dumps(history[-4:], ensure_ascii=False, indent=2))},
-            ],
+            "messages": self._messages(card, champion, budget, history),
         }
+        # 1. trace off (the fast path on PyTRiO), 2. without the option in
+        # case the host does not know it, 3. the full budget without it.
+        attempts = (
+            ({**payload, "enable_thinking": False}, "thinking_off"),
+            (dict(payload), "default"),
+            ({**payload, "max_tokens": max(self.max_tokens, 2048)}, "full_budget"),
+        )[: max(1, min(self.call_attempts, 3))]
+
         started = time.monotonic()
-        raw = self._post("/chat/completions", payload)
-        self.calls += 1
-        self.tokens_used += int(raw.get("usage", {}).get("total_tokens", 0))
-        content = raw["choices"][0]["message"]["content"]
-        plan = _extract_json(content)
-        validated = validate_plan(plan)
-        validated["_meta"] = {"planner": "qwen", "model_id": self.model_id,
-                              "latency_s": round(time.monotonic() - started, 1),
-                              "tokens": int(raw.get("usage", {}).get("total_tokens", 0))}
-        return validated
+        last_error = None
+        for index, (attempt, label) in enumerate(attempts):
+            if index:
+                time.sleep(self.backoff_s * index)
+            try:
+                raw = self._post("/chat/completions", attempt)
+            except LLMUnavailable as exc:
+                last_error = exc
+                continue
+            self.calls += 1
+            tokens = int((raw.get("usage") or {}).get("total_tokens", 0))
+            self.tokens_used += tokens
+            choice = (raw.get("choices") or [{}])[0]
+            content = ((choice.get("message") or {}).get("content") or "").strip()
+            if not content:
+                self.failures += 1
+                last_error = LLMInvalid(
+                    f"empty content (finish_reason={choice.get('finish_reason')})")
+                continue
+            try:
+                validated = validate_plan(_extract_json(content))
+            except LLMInvalid as exc:
+                self.failures += 1
+                last_error = exc
+                continue
+            validated["_meta"] = {
+                "planner": "qwen", "model_id": self.model_id,
+                "latency_s": round(time.monotonic() - started, 1),
+                "tokens": tokens, "attempts": index + 1,
+                "cache_hit": False, "thinking_off": label == "thinking_off",
+            }
+            if self.cache_enabled:
+                self._plan_cache[key] = json.loads(json.dumps(validated))
+            # A successful round-trip is a better availability signal than
+            # the probe; trust it for longer than the probe TTL.
+            self._probe_ok = True
+            self._probe_until = time.monotonic() + max(self.probe_ttl_s, 60.0)
+            return validated
+        if isinstance(last_error, LLMUnavailable):
+            raise last_error
+        raise LLMUnavailable(f"{type(last_error).__name__}: {last_error}" if last_error
+                             else "model call failed")
 
     def _post(self, path, payload):
         import urllib.request
@@ -286,7 +395,9 @@ class QwenPlanner:
 
 
 def _extract_json(text):
-    text = text.strip()
+    if not isinstance(text, str):
+        raise LLMInvalid("model reply is not text")
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.S).strip()
     if text.startswith("```"):
         text = text.split("```", 2)[1]
         if text.startswith("json"):

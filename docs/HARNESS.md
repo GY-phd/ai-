@@ -68,7 +68,7 @@ python -m harness.run --llm-mode auto
 ```
 
 - 协议：OpenAI 兼容 `/chat/completions`，`model` 取自配置（默认 `Qwen3.8-27B`）。
-- 若走 PyTRiO 后训练路线，只需把 `llm.model_id` 改成平台上注册的模型 ID（例如 4B 后训练版），代码不变。
+- 若走 PyTRiO 后训练路线，只需把 `llm.model_id` 改成平台上注册的模型 ID 或 `trio://` Sampler 路径；容器里也可以用 `HARNESS_LLM_MODEL` 覆盖，代码不变。
 - **输出不可信**：返回的 JSON 必须过 `validate_plan()`——动作白名单、hypothesis 非空、risk 枚举、数值范围；任何解析/传输失败都回落到 `policy.py`，并把 `fallback: true` 与原因写进决策记录。
 - `--llm-mode policy` 可完全离线跑通全流程，用于开发和复现。
 
@@ -95,6 +95,42 @@ python -m harness.run --llm-mode auto
 **两条规则不合并**：`resolve_model_id` 只管拼写，`is_allowed_model` 只管合规。**把一个非法模型名改写成合法拼写会掩盖违规**——改写后的请求携带的是运维从未选择的模型。所以判定函数永不改写 ID。
 
 `evo/`（早期对照实现）也调同一入口，不带兜底副本：**兜底副本仍是第二份副本**，两份会漂移，而没人读的那份才是最终决定合规与否的那份。
+
+### 3.2 4 核生产环境的调用优化（2026-11-21）
+
+生产现场是 4 核无 GPU 的工业机，27B 的每一次调用都要算进 token 成本和墙钟。本轮改了五处，全部落在 `harness/llm.py`、`harness/orchestrator.py` 和启动脚本里：
+
+| 改动 | 之前 | 之后 |
+|---|---|---|
+| 思维链 | 默认开启，1024 token 被推理吃光，`content` 为空；27B 实测 288.3 s 后返回空正文 | 首次请求带 `enable_thinking: false`，正文直接返回 |
+| 空正文/宿主不识别参数 | 直接抛异常，整轮回落策略 | 依次尝试「关思维链 → 不带参数 → 满预算」，最多 3 次，间隔 1.5 s |
+| 端点探测 | 每个触发批次 `GET /models` | 结果缓存 30 s；一次成功 POST 后信任 60 s |
+| 相同状态 | 重复调用模型 | 以 `card + champion + budget + compact history` 为键缓存计划 |
+| Prompt 历史 | 最近 4 条完整账本记录（含诊断、漂移表、门控明细） | `compact_history()` 只保留 cycle/action/decision/hypothesis/reason/gain/gate/cost |
+| token 预算 | 只在下游用 | `tokens_left <= 0` 时不再调用，直接走策略 |
+
+实测（仓库 `evidence/ledger.jsonl` 的真实诊断卡，27B，`max_tokens=1024`）：
+
+```
+elapsed_s 4.8   tokens 1767   attempts 1   thinking_off true
+action do_nothing   risk low   schema valid
+```
+
+同一张卡在旧实现下是 288.3 s + 空正文。代码级的回归用例在 `tests/test_llm_planner.py`（7 项：关思维链、宿主拒绝参数、空正文重试、缓存命中、token 预算、历史压缩、`<think>` 清理）。
+
+CPU 侧把 BLAS 线程从库默认的 1 提到 4（`BASELINE_CPU_THREADS=4`，同时设置 `OMP/OPENBLAS/MKL_NUM_THREADS`）。在 20k×34、hidden 96、batch 128、200 epoch 的合成 RUL 上：
+
+| 线程 | 墙钟 | 最终 loss |
+|---:|---:|---:|
+| 1 | 43.49 s | 0.48219 |
+| 4 | 31.22 s | 0.48219 |
+
+4 线程快 28%，loss 一致。注意：多线程 BLAS 会改变浮点归约顺序，**严格逐位复现历史产物时仍应设 `BASELINE_CPU_THREADS=1`**；生产默认走 4 线程，`run_harness.sh` / `run_harness.ps1` / 两个 Dockerfile 都已固定。
+
+真实数据上的 4 核核查见 [INDUSTRIAL_CPU_CHECK.md](INDUSTRIAL_CPU_CHECK.md)：B 方向完整闭环
+123.3 s / 峰值 80.9 MB（接入 SFT 决策层后 170.7 s / 84.5 MB），C 方向提交路径
+16.2 s / 240.3 MB，均远低于 4 核 / 8G 限额。SFT 决策层的训练与评测记录见
+[PLANNER_SFT_RECORD.md](PLANNER_SFT_RECORD.md)。
 
 ## 4. 预算记账
 
