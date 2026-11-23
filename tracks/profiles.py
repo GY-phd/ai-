@@ -408,10 +408,55 @@ class GasProfile(Profile):
             transform.fit_scale(x_fit)
             x_fit = transform.apply(x_fit)
 
+        # The optimiser knobs, the feature transform and the activation
+        # used to be **hard-coded** here, which meant the hypothesis
+        # bank could not reach them: an experiment that asked for a
+        # different learning rate was silently measuring the same model
+        # again.  A knob that cannot be turned is not a knob, and a
+        # hypothesis that cannot change anything is a comment.
+        #
+        # Profile A's features span five orders of magnitude - eight of
+        # the 128 columns carry 99% of the variance - so the shape of
+        # the input and the size of the step are exactly the two things
+        # worth being able to vary.
+        learning_rate = float(kwargs.get("learning_rate", 0.003))
+        batch_size = int(kwargs.get("batch_size", 128))
+        feature_mode = str(kwargs.get("feature_transform", "raw"))
+        activation = str(kwargs.get("activation", "tanh"))
+
+        # The per-class loss weight.  ``"balanced"`` weights each class
+        # by the inverse of its frequency, so every class contributes
+        # the same total mass to the loss.
+        #
+        # This is the principled version of what the older
+        # ``class_weighting="balanced"`` resampling was trying to do,
+        # and it does it without changing the number of rows - which
+        # matters here, because oversampling the 18-row class 18 times
+        # also oversamples its noise.
+        class_weight = None
+        weighting = kwargs.get("class_weight", "")
+        if weighting is None:
+            # An explicit ``None`` means the plain, unweighted loss - a
+            # hypothesis has to be able to turn the weighting *off* to
+            # test whether it is what helps.
+            weighting = ""
+        elif weighting == "balanced":
+            counts = np.bincount(np.asarray(y), minlength=len(CLASSES_A))
+            counts = counts.astype(float)
+            counts[counts < 1] = 1.0
+            class_weight = (counts.sum() / (len(CLASSES_A) * counts)).tolist()
+        elif isinstance(weighting, (list, tuple)):
+            class_weight = [float(w) for w in weighting]
+        elif weighting:
+            raise ValueError("unknown class_weight %r" % weighting)
+
         model = Model("classification", paths, list(CLASSES_A), x_fit, y,
-                      hidden=hidden, seed=seed, learning_rate=0.003,
-                      batch_size=128, feature_transform="raw", target_scaling=False)
-        model.fit(x_fit, y, epochs, learning_rate=0.003)
+                      hidden=hidden, seed=seed,
+                      learning_rate=learning_rate, batch_size=batch_size,
+                      feature_transform=feature_mode,
+                      activation=activation, target_scaling=False,
+                      class_weight=class_weight)
+        model.fit(x_fit, y, epochs, learning_rate=learning_rate)
         if scaled:
             model = _TransformedClassification(model, transform)
         return model
@@ -535,7 +580,9 @@ class BearingProfile(Profile):
             rate_limit=float(kwargs.get("rate_limit", 0.25)),
             max_rul_minutes=float(kwargs.get("max_rul_minutes", 3000.0)),
             normalisation=normalisation,
-            elapsed_feature=(extra == "elapsed"))
+            elapsed_feature=(extra == "elapsed"),
+            lifetime_estimator=str(kwargs.get("lifetime_estimator", "fitted")),
+            affine=str(kwargs.get("affine", "on")) != "off")
         model.fit(x, fit_target, paths, groups,
                   hidden=hidden, seed=seed, learning_rate=0.003, batch_size=128,
                   feature_transform="eng34", activation="tanh", epochs=epochs,

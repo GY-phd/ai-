@@ -204,6 +204,39 @@ def prepare(hypothesis, model, train, profile_key, seed, adapter=None):
         changed["resample_weight"] = "inverse class frequency"
         x, y = x[indices], y[indices]
 
+    elif hypothesis.key == "the-scale-is-swamping-the-signal":
+        # Compress every column with the sign-preserving log1p.
+        #
+        # This is a **value-level** change: the same 128 columns come
+        # out with different values, so the feature schema is untouched
+        # and the hidden rows can be mapped into the same space.  The
+        # checkpoint declares the transform, so the platform's own
+        # forward pass applies it.
+        #
+        # The migration is explicit rather than a silent carry-over:
+        # the parent's weights were fitted in the raw space, and
+        # feeding them compressed values would measure that mismatch
+        # instead of the hypothesis.  The input layer is re-initialised
+        # and the outgoing weights are kept.
+        migration = model.set_feature_transform("slog", x)
+        changed["feature_transform"] = "slog"
+        changed["migration"] = migration
+        changed["note"] = ("the feature schema is unchanged; only the "
+                            "column values are compressed")
+
+    elif hypothesis.key == "the-rare-class-needs-the-loss-to-notice-it":
+        # Weight the cross-entropy by the inverse of each class's
+        # frequency.  Unlike the resampling variant, the rare class's
+        # rows are not duplicated: the weighting is applied to the
+        # loss, so the rows keep their own noise.
+        classes = model.meta["classes"]
+        counts = np.bincount(np.asarray(y), minlength=len(classes)).astype(np.float64)
+        counts[counts < 1] = 1.0
+        weight = counts.sum() / (len(classes) * counts)
+        model.meta["class_weight"] = [float(w) for w in weight]
+        changed["class_weight"] = "inverse class frequency"
+        changed["class_counts"] = [int(c) for c in counts]
+
     elif hypothesis.key == "the-batch-is-mixing-scales":
         # This hypothesis needs **at least two batches inside the training
         # set** - otherwise "oversample the rarest batch" has no meaning
@@ -266,7 +299,14 @@ def epoch_budget(hypothesis, round_index, wall_seconds=None, adapter=None):
     base = {"more-data-helps": 30, "the-parent-was-left-unconverged": 30,
             "the-tail-is-underweighted": 40, "the-unit-is-the-confounder": 40,
             "capacity-is-overfitting": 40, "rare-class-is-underweighted": 30,
-            "the-batch-is-mixing-scales": 30}
+            "the-batch-is-mixing-scales": 30,
+            # The two scale hypotheses change the *values* the network
+            # sees, so they need a longer schedule to fit: the measured
+            # recipe on Profile A was a small step taken for hundreds of
+            # epochs, and the spread across seeds fell by a factor of
+            # four compared with a short, large-step schedule.
+            "the-scale-is-swamping-the-signal": 60,
+            "the-rare-class-needs-the-loss-to-notice-it": 60}
     count = base.get(hypothesis.key, 30)
     # Each round gets a larger budget than the last, but never without
     # bound: the tenth round is not allowed to run ten times as long.

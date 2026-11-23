@@ -1,0 +1,86 @@
+[
+  {
+    "split": "TRAIN",
+    "bearing": "Bearing1_1",
+    "rows": 123,
+    "true_median": 61.0,
+    "blended_rmse": 41.74641873768034,
+    "blended_bias": -22.22448979591835,
+    "product_rmse": 2260.3082780602604,
+    "product_bias": 1951.9924197642779,
+    "estimated_lifetime": 2572.4999999999977,
+    "blend_weight": 1.0
+  },
+  {
+    "split": "TRAIN",
+    "bearing": "Bearing1_3",
+    "rows": 158,
+    "true_median": 78.5,
+    "blended_rmse": 45.288643043004626,
+    "blended_bias": -2.479591836734523,
+    "product_rmse": 2416.805490706403,
+    "product_bias": 2153.1333394367475,
+    "estimated_lifetime": 3000.0,
+    "blend_weight": 1.0
+  },
+  {
+    "split": "TRAIN",
+    "bearing": "Bearing2_2",
+    "rows": 161,
+    "true_median": 80.0,
+    "blended_rmse": 56.415673150154696,
+    "blended_bias": -36.77551020408171,
+    "product_rmse": 1978.6190121906568,
+    "product_bias": 1572.0476250373054,
+    "estimated_lifetime": 2400.0,
+    "blend_weight": 1.0
+  },
+  {
+    "split": "TRAIN",
+    "bearing": "Bearing2_3",
+    "rows": 533,
+    "true_median": 266.0,
+    "blended_rmse": 154.54564433780396,
+    "blended_bias": -57.02187483658043,
+    "product_rmse": 2503.1535478181486,
+    "product_bias": 2302.9517523399168,
+    "estimated_lifetime": 3000.0,
+    "blend_weight": 1.0
+  },
+  {
+    "split": "TRAIN",
+    "bearing": "Bearing3_2",
+    "rows": 2496,
+    "true_median": 1247.5,
+    "blended_rmse": 709.4410578316192,
+    "blended_bias": -115.72660098523617,
+    "product_rmse": 1854.4653909445515,
+    "product_bias": 1632.3469822239608,
+    "estimated_lifetime": 3000.0,
+    "blend_weight": 1.0
+  },
+  {
+    "split": "JUDGE",
+    "bearing": "Bearing2_1",
+    "rows": 491,
+    "true_median": 245.0,
+    "blended_rmse": 141.90278815752276,
+    "blended_bias": -12.34693877551099,
+    "product_rmse": 2627.399783351328,
+    "product_bias": 2507.7455552566316,
+    "estimated_lifetime": 3000.0,
+    "blend_weight": 1.0
+  },
+  {
+    "split": "JUDGE",
+    "bearing": "Bearing3_3",
+    "rows": 371,
+    "true_median": 185.0,
+    "blended_rmse": 104.24607637055233,
+    "blended_bias": -7.831632653060826,
+    "product_rmse": 2599.030329451551,
+    "product_bias": 2431.167298196782,
+    "estimated_lifetime": 3000.0,
+    "blend_weight": 1.0
+  }
+]

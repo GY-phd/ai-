@@ -9,14 +9,18 @@
       "validation_rows": 934,
       "recipe": {
         "hidden": 32,
-        "epochs": 50
+        "epochs": 400,
+        "feature_transform": "slog",
+        "learning_rate": 0.003,
+        "batch_size": 128,
+        "class_weight": "balanced"
       },
       "refit_rows": 755,
       "refit_parameter_count": 4326,
       "metric": "macro_f1",
       "baseline_primary": 0.724,
-      "system_primary": 0.9707,
-      "primary_gain_pct": 34.07,
+      "system_primary": 0.9573,
+      "primary_gain_pct": 32.22,
       "rmse_gain_pct": null,
       "per_unit_baseline": {
         "batch2": {
@@ -28,7 +32,7 @@
       "per_unit_system": {
         "batch2": {
           "accuracy": 0.9904,
-          "macro_f1": 0.9707,
+          "macro_f1": 0.9573,
           "rows": 934
         }
       },
@@ -40,8 +44,8 @@
       },
       "system": {
         "accuracy": 0.9903640256959315,
-        "macro_f1": 0.9707450678415781,
-        "max_abs_error": 0.5921756059218504,
+        "macro_f1": 0.9573013109565937,
+        "max_abs_error": 0.5124008509998041,
         "bias": 0.0
       }
     },
@@ -51,25 +55,27 @@
       "package": "cpu-b-rul-20261110-v1",
       "validation_rows": 1679,
       "recipe": {
-        "hidden": 64,
-        "epochs": 200,
-        "normalisation": "slope",
-        "target": "life_fraction",
+        "hidden": 96,
+        "epochs": 400,
+        "normalisation": "train_scale",
+        "target": "minutes",
         "floor": 0.02,
         "cap": 3000.0,
         "rate_limit": 0.25,
         "feature_transform": "eng34",
         "activation": "tanh",
         "seed": 42,
+        "lifetime_estimator": "fitted",
+        "affine": "off",
         "fraction_basis": "target"
       },
       "refit_rows": 7032,
-      "refit_parameter_count": 2305,
+      "refit_parameter_count": 3457,
       "metric": "rmse",
       "baseline_primary": 681.1598,
-      "system_primary": 636.6707,
-      "rmse_gain_pct": 6.53,
-      "primary_gain_pct": 6.53,
+      "system_primary": 414.7336,
+      "rmse_gain_pct": 39.11,
+      "primary_gain_pct": 39.11,
       "per_unit_baseline": {
         "Bearing1_4": {
           "rmse": 241.981,
@@ -89,18 +95,18 @@
       },
       "per_unit_system": {
         "Bearing1_4": {
-          "rmse": 67.11,
-          "mae": 55.664,
+          "rmse": 35.068,
+          "mae": 30.207,
           "rows": 122
         },
         "Bearing2_4": {
-          "rmse": 21.05,
-          "mae": 16.848,
+          "rmse": 9.161,
+          "mae": 7.541,
           "rows": 42
         },
         "Bearing3_4": {
-          "rmse": 669.966,
-          "mae": 539.922,
+          "rmse": 436.488,
+          "mae": 377.572,
           "rows": 1515
         }
       },
@@ -112,11 +118,11 @@
         "max_abs_error": 1514.0
       },
       "system": {
-        "rmse": 636.6707239522342,
-        "mae": 491.64988539363475,
-        "r2": -0.870275147197954,
-        "bias": 86.09223006861741,
-        "max_abs_error": 1511.8281268391179
+        "rmse": 414.7336024565175,
+        "mae": 343.0756648916637,
+        "r2": 0.20637710024047606,
+        "bias": -15.934569897091027,
+        "max_abs_error": 772.7362325883217
       }
     },
     {

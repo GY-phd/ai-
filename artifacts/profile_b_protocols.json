@@ -1,0 +1,29 @@
+{
+  "recipe": {
+    "hidden": 96,
+    "epochs": 400,
+    "normalisation": "slope",
+    "target": "minutes",
+    "floor": 0.02,
+    "cap": 3000.0,
+    "rate_limit": 0.25,
+    "feature_transform": "eng34",
+    "activation": "tanh",
+    "seed": 42,
+    "lifetime_estimator": "fitted",
+    "affine": "off"
+  },
+  "official_split": 408.16202188410165,
+  "lobo_pooled": 640.3047759490634,
+  "lobo_per_unit": {
+    "Bearing1_1": 41.74641873768034,
+    "Bearing1_2": 68.51414412140811,
+    "Bearing1_3": 45.15665180093642,
+    "Bearing2_1": 141.31082366650438,
+    "Bearing2_2": 57.9141100965175,
+    "Bearing2_3": 170.470349324238,
+    "Bearing3_1": 728.7264783190051,
+    "Bearing3_2": 776.2831382389529,
+    "Bearing3_3": 103.98385678104438
+  }
+}

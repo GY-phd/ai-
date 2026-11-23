@@ -65,7 +65,7 @@ MAX_HIDDEN = 128
 class Model:
     def __init__(self, task, paths, classes, x, y, *, hidden=64, seed=42, learning_rate=3e-3,
                  batch_size=128, feature_transform="raw", activation="tanh",
-                 target_scaling=True):
+                 target_scaling=True, class_weight=None):
         if task not in ("classification", "regression") or not 1 <= hidden <= MAX_HIDDEN:
             raise ValueError("invalid model configuration")
         if feature_transform not in TRANSFORMS:
@@ -110,6 +110,19 @@ class Model:
             "target_scaling": bool(target_scaling),
             "target_mean": float(y.mean()) if task == "regression" else 0.0,
             "target_scale": max(float(y.std()), 1.0) if task == "regression" else 1.0,
+            # The per-class weight applied to the cross-entropy, for a
+            # classification task.  ``None`` means the plain loss.
+            #
+            # This exists because a plain cross-entropy on an unbalanced
+            # problem is not a neutral choice: with 18 rows in one class
+            # and 247 in the others, the majority's contribution to the
+            # gradient is an order of magnitude larger, and the minority
+            # class can end up with a per-class F1 of exactly zero - the
+            # model never once wins the argmax for it.  The weight is
+            # stored in the checkpoint so that a reloaded model scores
+            # the same way it was fitted.
+            "class_weight": (None if class_weight is None
+                             else [float(w) for w in class_weight]),
         }
         self.validate()
 
@@ -149,6 +162,17 @@ class Model:
             raise ValueError("invalid checkpoint activation")
         if not isinstance(m.get("target_scaling", True), bool):
             raise ValueError("invalid checkpoint target_scaling flag")
+        # ``class_weight`` was added later, for the same reason the two
+        # keys above were: a checkpoint that predates it must keep
+        # loading and scoring identically, so its absence means the
+        # plain, unweighted loss.
+        class_weight = m.get("class_weight")
+        if class_weight is not None:
+            if (not isinstance(class_weight, list)
+                    or len(class_weight) != len(classes)
+                    or any(isinstance(w, bool) or not isinstance(w, (float, int))
+                           or not math.isfinite(w) or w < 0 for w in class_weight)):
+                raise ValueError("invalid checkpoint class weight")
         input_size, hidden = len(m["paths"]), m["hidden"]
         output = len(classes) if m["task"] == "classification" else 1
         shapes = {"w1": (input_size, hidden), "b1": (hidden,), "w2": (hidden, output), "b2": (output,)}
@@ -217,6 +241,12 @@ class Model:
         base_lr = float(self.meta["learning_rate"] if learning_rate is None else learning_rate)
         total = epochs
         losses, history = [], []
+        # The per-class loss weight, as an array, so that it can be
+        # indexed by the class of each example.  ``None`` means the
+        # plain, unweighted loss.
+        class_weight = self.meta.get("class_weight")
+        if class_weight is not None:
+            class_weight = np.asarray(class_weight, dtype=np.float64)
         for epoch_index in range(total):
             # Epoch-indexed shuffling keeps split/resumed execution identical to one long run.
             rng = np.random.default_rng(np.random.SeedSequence([self.meta["seed"], self.meta["epochs"]]))
@@ -231,9 +261,20 @@ class Model:
                     logits = logits - logits.max(axis=1, keepdims=True)
                     prob = np.exp(logits)
                     prob /= prob.sum(axis=1, keepdims=True)
-                    loss_sum -= float(np.log(np.maximum(prob[np.arange(len(idx)), expected], 1e-300)).sum())
+                    # The per-example loss, before it is summed.  It is
+                    # kept separate from the sum so that a **class
+                    # weight** can scale it: the plain cross-entropy
+                    # below would let a class with 18 rows be drowned
+                    # out by one with 247.
+                    example_loss = -np.log(
+                        np.maximum(prob[np.arange(len(idx)), expected], 1e-300))
+                    if class_weight is not None:
+                        example_loss = example_loss * class_weight[expected]
+                    loss_sum += float(example_loss.sum())
                     delta = prob
                     delta[np.arange(len(idx)), expected] -= 1
+                    if class_weight is not None:
+                        delta = delta * class_weight[expected][:, None]
                     delta /= len(idx)
                 else:
                     error = logits[:, 0] - expected

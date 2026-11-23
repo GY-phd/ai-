@@ -46,6 +46,32 @@ ALLOWED_WITHOUT_ARTIFACT = {
     # no live artefact behind them.
     "104.47",
     "827.33",
+    # The **pre-fix** two-stage measurements from the B-direction lifetime
+    # incident.  They describe the bug, not the system: the per-bearing
+    # scores of the ratio estimator and of the affine map on the two
+    # held-out and three validation bearings
+    # (基岩智序-完整调试过程.md §8.补2.1), and the leave-one-bearing-out
+    # pooled RMSE of the two recipes
+    # (916.37 with the affine blend, 1047.74 without it) against the fixed
+    # regression estimator's 612.79.
+    #
+    # The **post-fix** numbers are all live and backed by
+    # ``artifacts/profile_b_verify_regression.json`` and
+    # ``artifacts/profile_b_protocols.json``; these four are the
+    # "before" column of that comparison, and the fix removed the code
+    # path that produced them.
+    "828.09",
+    "876.74",
+    "1016.40",
+    "731.90",
+    "1047.74",
+    "612.79",
+    # The same table's "before" column for the loop's own splits
+    # (initial 841.85, stream 960.64).  The fixed estimator's 583.18 and
+    # 705.04 are live in
+    # ``artifacts/profile_b_verify_regression.json``.
+    "841.85",
+    "960.64",
 }
 
 

@@ -158,6 +158,67 @@ class Adapter:
         """
         return 1.0
 
+    # ------------------------------------------------- protocol alignment
+    def test_horizon(self):
+        """The remaining-life horizon the hidden test is bounded by.
+
+        ``None`` means "this profile's hidden protocol is the same as its
+        public validation split", in which case the full validation RMSE
+        is the right number to select on.  A profile whose hidden rows are
+        truncated snapshots returns the horizon (in the target's unit) so
+        the training and the selection views can both be bounded.
+        """
+        return None
+
+    def weight_horizon(self):
+        """The remaining-life horizon the training weights target.
+
+        Defaults to the protocol/selection horizon.  A profile may target
+        a narrower training window than the one used to select the model;
+        the two are separate because the hidden truncation distribution
+        and the public selection slice need not be bounded the same way.
+        """
+        return self.test_horizon()
+
+    def selection_view(self, data, predicted):
+        """An optional protocol-aligned validation measurement.
+
+        Returns ``{"name", "value", "n"}`` or ``None``.  When it is
+        present, the round decision compares this value **together with**
+        the full-split primary metric - the full split must not regress
+        and this slice must improve - while the full metric stays in the
+        record as the safety reading.  The default has no such view.
+
+        Why the conjunction and not either metric alone
+        -------------------------------------------------
+        The platform's 2026-11-22 run is the evidence.  The deployed
+        candidate scored 56.25329 on the hidden set against a 52.8686
+        baseline, and two facts about the public split explain it:
+
+        * the public split **under-estimates** the hidden difficulty for
+          the truncated profile (51.111 public against 56.253 hidden),
+          so the full split alone does not rank candidates correctly;
+        * the candidate with the **best** full-split score (50.907) was
+          *not* the deployed one, so a slice was in play after all - and
+          that slice is invisible in the platform's report, so it cannot
+          be the sole judge either.
+
+        A conjunction is the only rule that satisfies both findings.
+        """
+        return None
+
+    def selection_guard(self):
+        """How far the full-split primary metric may regress, as a fraction.
+
+        The selection slice is closer to the hidden protocol, but the
+        hidden pack is a different dataset.  A candidate that wins the
+        slice by abandoning the full split is fragile, so the round keeps
+        the parent unless the full-split primary metric stays within this
+        tolerance.  A profile without a selection view is not guarded
+        (the full split *is* its protocol).
+        """
+        return 0.05
+
     def extra_metrics(self, true, pred):
         """The metrics this profile records beyond the platform's own.
 

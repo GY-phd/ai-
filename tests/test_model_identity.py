@@ -166,12 +166,21 @@ class TestSingleAuthority:
         that runs, and a rule frozen inside a snapshot is not a second
         authority - it is a record of one.  So the scan covers the
         directories that are actually imported.
+
+        The Python environments are skipped by **prefix**, not by exact
+        name: the machine may carry several (``.venv``, ``.venv-py310``,
+        ``.venv-py313``, ``.venv-py314``), and a third-party package
+        that ships a deliberately non-UTF-8 source file - ``joblib``
+        does, in its test suite - would otherwise be read as if it were
+        this project's code.
         """
-        skip = {".venv", "node_modules", ".git", "__pycache__", "dist",
+        skip = {"node_modules", ".git", "__pycache__", "dist",
                 "build", ".pytest_tmp", "openspec", "AI2", "_tmp_rm",
                 "artifacts", "runs"}
         for path in ROOT.rglob("*.py"):
             if any(part in skip for part in path.parts):
+                continue
+            if any(part.startswith(".venv") for part in path.parts):
                 continue
             yield path
 

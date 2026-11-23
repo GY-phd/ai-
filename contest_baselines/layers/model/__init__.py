@@ -60,10 +60,22 @@ from .checkpoint import (
     checkpoint_digest,
 )
 from .ledger import Ledger, LedgerEntry
-from .metrics import MetricRecord, compare
+from .metrics import (
+    BETTER,
+    CONFLICT,
+    THE_SAME,
+    WORSE,
+    MetricRecord,
+    compare,
+    compare_joint,
+    delta,
+    selection_delta,
+)
 from .state import RoundState
 
 __all__ = [
+    "BETTER",
+    "CONFLICT",
     "Checkpoint",
     "FORMAT",
     "Ledger",
@@ -71,6 +83,11 @@ __all__ = [
     "MAX_HIDDEN",
     "MetricRecord",
     "RoundState",
+    "THE_SAME",
+    "WORSE",
     "checkpoint_digest",
     "compare",
+    "compare_joint",
+    "delta",
+    "selection_delta",
 ]

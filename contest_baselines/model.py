@@ -56,14 +56,55 @@ MAX_CHECKPOINT_BYTES = 16 * 1024 * 1024
 MAX_PARAMETERS = 100_000
 MAX_HIDDEN = 128
 
+#: The value-level feature transforms a checkpoint may declare.
+#:
+#: A transform is a **value-level** map: it changes the numbers in the
+#: columns, never the columns themselves.  That matters because the
+#: platform's prediction request carries the parent's feature schema and
+#: the reference loader refuses a checkpoint whose schema differs - so a
+#: transform that added, dropped or renamed a feature would produce a
+#: candidate that scores nothing on the hidden rows.  Every transform
+#: here is a per-column function, applied to the training rows and to
+#: the hidden rows alike.
+TRANSFORMS = ("raw", "slog")
+
+
+def transform(x, mode="raw"):
+    """The per-column feature transform a checkpoint declares.
+
+    ``raw``
+        The columns as they arrived.
+    ``slog``
+        The sign-preserving log1p of every column.
+
+    Why ``slog`` exists
+    -------------------
+    Profile A's gas array carries columns spanning five orders of
+    magnitude - eight of the 128 hold 99% of the variance - so the
+    distance the network measures is dominated by a handful of huge
+    columns and the class information in the rest is drowned out.
+    Compressing the heavy tails keeps the schema, changes only the
+    values, and measurably raises the held-out Macro-F1 while cutting
+    the spread across seeds.
+    """
+    x = np.asarray(x, dtype=np.float64)
+    if mode == "raw":
+        return x
+    if mode == "slog":
+        return np.sign(x) * np.log1p(np.abs(x))
+    raise ValueError("unknown feature transform %r" % (mode,))
+
 
 class Model:
     """The reference CPU MLP, with the continuation hooks this project needs."""
 
     def __init__(self, task, paths, classes, x, y, *, hidden=32, seed=42,
-                 learning_rate=0.003, batch_size=128, target_scaling=True):
+                 learning_rate=0.003, batch_size=128, target_scaling=True,
+                 feature_transform="raw", class_weight=None):
         if task not in ("classification", "regression") or not 1 <= hidden <= MAX_HIDDEN:
             raise ValueError("invalid model configuration")
+        if feature_transform not in TRANSFORMS:
+            raise ValueError("invalid feature transform")
         if x.ndim != 2 or x.shape[1] != len(paths):
             raise ValueError("feature schema mismatch")
         output = len(classes) if task == "classification" else 1
@@ -81,8 +122,13 @@ class Model:
         }
         self.first = {key: np.zeros_like(value) for key, value in self.params.items()}
         self.second = {key: np.zeros_like(value) for key, value in self.params.items()}
-        self.mean = x.mean(axis=0)
-        self.scale = x.std(axis=0)
+        # The transform is applied **before** the normalisation state is
+        # measured, so the stored mean and scale describe the
+        # transformed values - which is what the hidden rows are
+        # compared against.
+        xf = transform(x, feature_transform)
+        self.mean = xf.mean(axis=0)
+        self.scale = xf.std(axis=0)
         self.scale[self.scale < 1e-12] = 1
         self.meta = {
             "format": FORMAT, "device": "cpu", "task": task, "paths": paths,
@@ -91,6 +137,16 @@ class Model:
             "batch_size": batch_size, "parameter_count": count,
             "target_mean": float(y.mean()) if task == "regression" else 0.0,
             "target_scale": max(float(y.std()), 1.0) if task == "regression" else 1.0,
+            # The value-level feature transform.  It is declared in the
+            # checkpoint so that the hidden rows are transformed the
+            # same way the training rows were - a transform the model
+            # does not know about would silently score every hidden row
+            # in the wrong space.
+            "feature_transform": feature_transform,
+            # The per-class weight applied to the cross-entropy.  A
+            # checkpoint that predates the key keeps the plain loss.
+            "class_weight": (None if class_weight is None
+                             else [float(w) for w in class_weight]),
         }
         self.target_scaling = bool(target_scaling)
         self.validate()
@@ -120,6 +176,20 @@ class Model:
                 raise ValueError("invalid checkpoint numeric state")
         if not 0 < m["learning_rate"] <= 1 or m["target_scale"] <= 0:
             raise ValueError("invalid optimizer/scaler state")
+        # ``feature_transform`` and ``class_weight`` were added after
+        # the original checkpoints were produced.  A checkpoint that
+        # predates them must keep loading and scoring identically, so
+        # the absence of the keys means the original behaviour: the
+        # raw columns and the plain, unweighted loss.
+        if m.get("feature_transform", "raw") not in TRANSFORMS:
+            raise ValueError("invalid feature transform")
+        class_weight = m.get("class_weight")
+        if class_weight is not None:
+            if (not isinstance(class_weight, list)
+                    or len(class_weight) != len(classes)
+                    or any(isinstance(w, bool) or not isinstance(w, (float, int))
+                           or not math.isfinite(w) or w < 0 for w in class_weight)):
+                raise ValueError("invalid checkpoint class weight")
         input_size, hidden = len(m["paths"]), m["hidden"]
         output = len(classes) if m["task"] == "classification" else 1
         shapes = {"w1": (input_size, hidden), "b1": (hidden,), "w2": (hidden, output), "b2": (output,)}
@@ -142,6 +212,10 @@ class Model:
     def normalized(self, x):
         if x.ndim != 2 or x.shape[1] != len(self.meta["paths"]) or not np.all(np.isfinite(x)):
             raise ValueError("invalid feature matrix")
+        # The transform comes **before** the normalisation, and it is
+        # the one the checkpoint declares - so the hidden rows are
+        # mapped into the same space the weights were fitted in.
+        x = transform(x, self.meta.get("feature_transform", "raw"))
         return np.clip((x - self.mean) / self.scale, -10, 10)
 
     def forward(self, x):
@@ -182,6 +256,11 @@ class Model:
                 raise ValueError("unknown class")
             target = y
         base_lr = float(self.meta["learning_rate"] if learning_rate is None else learning_rate)
+        # The per-class loss weight, as an array, so it can be indexed
+        # by each example's class.  ``None`` means the plain loss.
+        class_weight = self.meta.get("class_weight")
+        if class_weight is not None:
+            class_weight = np.asarray(class_weight, dtype=np.float64)
         losses = []
         for _ in range(epochs):
             rng = np.random.default_rng(np.random.SeedSequence([self.meta["seed"], self.meta["epochs"]]))
@@ -195,9 +274,21 @@ class Model:
                     logits = logits - logits.max(axis=1, keepdims=True)
                     probabilities = np.exp(logits)
                     probabilities /= probabilities.sum(axis=1, keepdims=True)
-                    loss_sum -= float(np.log(np.maximum(probabilities[np.arange(len(indices)), expected], 1e-300)).sum())
+                    # The per-example loss, kept separate from the sum
+                    # so a **class weight** can scale it.  On an
+                    # unbalanced problem the plain cross-entropy is not
+                    # a neutral choice: the majority's contribution to
+                    # the gradient dominates, and a minority class can
+                    # end up with a per-class F1 of exactly zero.
+                    example_loss = -np.log(
+                        np.maximum(probabilities[np.arange(len(indices)), expected], 1e-300))
+                    if class_weight is not None:
+                        example_loss = example_loss * class_weight[expected]
+                    loss_sum += float(example_loss.sum())
                     delta = probabilities
                     delta[np.arange(len(indices)), expected] -= 1
+                    if class_weight is not None:
+                        delta = delta * class_weight[expected][:, None]
                     delta /= len(indices)
                 else:
                     error = logits[:, 0] - expected
@@ -328,6 +419,64 @@ class Model:
         # counters is what makes this a continuation rather than a restart.
         self.validate()
         return {"migrated": True, "from_hidden": old_hidden, "to_hidden": hidden}
+
+    def set_feature_transform(self, mode, x=None, seed=None):
+        """Move the model's input space, with an explicit migration.
+
+        Why a migration is needed
+        -------------------------
+        The parent's weights were fitted in the parent's input space.
+        Changing the transform changes the space the weights live in, so
+        carrying them over unchanged would feed the network numbers it
+        has never seen - and the first measurement after the switch
+        measures that mismatch, not the hypothesis.
+
+        So the **input layer is re-initialised** and the rest of the
+        network is kept: the outgoing weights and the output bias
+        survive, and the hidden layer's Adam moments are reset because
+        the layer's meaning changed.
+
+        This is the same discipline the rules require of an
+        architecture change - an explicit, documented migration rather
+        than a silent re-init - applied to the input space.  The
+        feature **schema** does not change: the same columns come out,
+        with different values, so the hidden rows remain scorable.
+
+        The normalisation state is rebuilt from the transformed training
+        rows, because the stored mean and scale describe the parent's
+        values.
+        """
+        if mode not in TRANSFORMS:
+            raise ValueError("unknown feature transform %r" % (mode,))
+        current = self.meta.get("feature_transform", "raw")
+        if mode == current:
+            return {"migrated": False, "from": current, "to": mode}
+        if x is None:
+            raise ValueError("set_feature_transform() needs the training rows")
+
+        rng = np.random.default_rng(self.meta["seed"] if seed is None else seed)
+        inputs = self.params["w1"].shape[0]
+        hidden = self.params["w1"].shape[1]
+        # The input layer is drawn from the same distribution a fresh
+        # layer would use.  The outgoing weights and the output bias
+        # carry over: they describe the *classes*, and the classes have
+        # not changed.
+        w1 = rng.normal(0, math.sqrt(1 / inputs), (inputs, hidden))
+        b1 = np.zeros(hidden)
+        self.params = {"w1": w1, "b1": b1,
+                       "w2": self.params["w2"].copy(),
+                       "b2": self.params["b2"].copy()}
+        self.first = {k: np.zeros_like(v) for k, v in self.params.items()}
+        self.second = {k: np.zeros_like(v) for k, v in self.params.items()}
+        self.meta["feature_transform"] = mode
+        transformed = transform(x, mode)
+        self.mean = transformed.mean(axis=0)
+        self.scale = transformed.std(axis=0)
+        self.scale[self.scale < 1e-12] = 1
+        self.validate()
+        return {"migrated": True, "from": current, "to": mode,
+                "reinitialised": "input layer",
+                "kept": "outgoing weights and output bias"}
 
     def set_target_scaling(self, enabled):
         """Switch the regression target between standardised and direct.

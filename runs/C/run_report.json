@@ -1,7 +1,7 @@
 {
   "profile": "C",
   "package": "cpu-c-guide-20261110-v1",
-  "created_at": "2026-11-16T19:07:33",
+  "created_at": "2026-11-22T22:46:16",
   "stream_meta": {
     "profile": "C",
     "mode": "unit_holdout",
@@ -657,7 +657,7 @@
   "final_refit": {
     "tag": "final",
     "rows": 113089,
-    "seconds": 110.94,
+    "seconds": 261.17,
     "parameter_count": 3457,
     "overrides": {
       "hidden": 128,
@@ -1718,7 +1718,7 @@
       "candidate": {
         "tag": "batch000",
         "rows": 112003,
-        "seconds": 5.66,
+        "seconds": 12.42,
         "parameter_count": 833,
         "overrides": {
           "hidden": 32,
@@ -1753,6 +1753,7 @@
         "under_predict_mae": 11.966356135662544
       },
       "gain": -4.992533,
+      "min_gain": 0.01,
       "decision": "reject",
       "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
       "hypothesis": "capacity-is-overfitting",
@@ -1773,7 +1774,7 @@
       "candidate": {
         "tag": "batch001",
         "rows": 112233,
-        "seconds": 96.49,
+        "seconds": 276.94,
         "parameter_count": 3457,
         "overrides": {
           "hidden": 128,
@@ -1809,6 +1810,7 @@
         "under_predict_mae": 11.573982980015227
       },
       "gain": 8.347974,
+      "min_gain": 0.01,
       "decision": "promote",
       "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
       "hypothesis": "units-are-confounded",
@@ -1829,7 +1831,7 @@
       "candidate": {
         "tag": "batch002",
         "rows": 112463,
-        "seconds": 83.23,
+        "seconds": 160.12,
         "parameter_count": 3457,
         "overrides": {
           "hidden": 128,
@@ -1866,6 +1868,7 @@
         "under_predict_mae": 2.933589611389054
       },
       "gain": 0.0,
+      "min_gain": 0.01,
       "decision": "reject",
       "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
       "hypothesis": "degradation-is-not-first-order",
@@ -1886,7 +1889,7 @@
       "candidate": {
         "tag": "batch003",
         "rows": 112693,
-        "seconds": 84.55,
+        "seconds": 149.08,
         "parameter_count": 3457,
         "overrides": {
           "hidden": 128,
@@ -1922,6 +1925,7 @@
         "under_predict_mae": 3.2926432711355855
       },
       "gain": 0.0,
+      "min_gain": 0.01,
       "decision": "reject",
       "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
       "hypothesis": "lifetime-is-multiplicative",
@@ -1942,7 +1946,7 @@
       "candidate": {
         "tag": "batch004",
         "rows": 112694,
-        "seconds": 89.66,
+        "seconds": 272.88,
         "parameter_count": 3457,
         "overrides": {
           "hidden": 128,
@@ -1979,6 +1983,7 @@
         "under_predict_mae": 3.5802540935105527
       },
       "gain": -1.3e-05,
+      "min_gain": 0.01,
       "decision": "reject",
       "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
       "hypothesis": "drift-is-a-scale-shift",
@@ -2001,7 +2006,7 @@
       "candidate": {
         "tag": "batch000",
         "rows": 112003,
-        "seconds": 5.66,
+        "seconds": 12.42,
         "parameter_count": 833,
         "overrides": {
           "hidden": 32,
@@ -2036,6 +2041,7 @@
         "under_predict_mae": 11.966356135662544
       },
       "gain": -4.992533,
+      "min_gain": 0.01,
       "decision": "reject",
       "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
       "hypothesis": "capacity-is-overfitting",
@@ -2056,7 +2062,7 @@
       "candidate": {
         "tag": "batch001",
         "rows": 112233,
-        "seconds": 96.49,
+        "seconds": 276.94,
         "parameter_count": 3457,
         "overrides": {
           "hidden": 128,
@@ -2092,6 +2098,7 @@
         "under_predict_mae": 11.573982980015227
       },
       "gain": 8.347974,
+      "min_gain": 0.01,
       "decision": "promote",
       "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
       "hypothesis": "units-are-confounded",
@@ -2112,7 +2119,7 @@
       "candidate": {
         "tag": "batch002",
         "rows": 112463,
-        "seconds": 83.23,
+        "seconds": 160.12,
         "parameter_count": 3457,
         "overrides": {
           "hidden": 128,
@@ -2149,6 +2156,7 @@
         "under_predict_mae": 2.933589611389054
       },
       "gain": 0.0,
+      "min_gain": 0.01,
       "decision": "reject",
       "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
       "hypothesis": "degradation-is-not-first-order",
@@ -2169,7 +2177,7 @@
       "candidate": {
         "tag": "batch003",
         "rows": 112693,
-        "seconds": 84.55,
+        "seconds": 149.08,
         "parameter_count": 3457,
         "overrides": {
           "hidden": 128,
@@ -2205,6 +2213,7 @@
         "under_predict_mae": 3.2926432711355855
       },
       "gain": 0.0,
+      "min_gain": 0.01,
       "decision": "reject",
       "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
       "hypothesis": "lifetime-is-multiplicative",
@@ -2225,7 +2234,7 @@
       "candidate": {
         "tag": "batch004",
         "rows": 112694,
-        "seconds": 89.66,
+        "seconds": 272.88,
         "parameter_count": 3457,
         "overrides": {
           "hidden": 128,
@@ -2262,6 +2271,7 @@
         "under_predict_mae": 3.5802540935105527
       },
       "gain": -1.3e-05,
+      "min_gain": 0.01,
       "decision": "reject",
       "falsification": "the candidate must beat the champion on the unseen judge slice by more than 0.0100",
       "hypothesis": "drift-is-a-scale-shift",

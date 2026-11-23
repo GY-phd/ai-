@@ -130,6 +130,14 @@ class TrackRunner:
         # of the run.
         self.champion_overrides = dict(config.get("model", {}))
         self.champion_overrides.update(champion_defaults(profile_key))
+        # The champion's **starting** recipe, kept separately because the
+        # final refit is checked against it.  A promoted hypothesis may
+        # switch the model family (profile B's ``lifetime-is-multiplicative``
+        # moves the target from ``minutes`` to ``life_fraction``), and the
+        # final refit is a fresh fit rather than the model that was gated.
+        # Comparing the two on the judge slice is what keeps the closed
+        # loop from ending up worse than the champion it started from.
+        self.initial_overrides = dict(self.champion_overrides)
 
     # -- data ------------------------------------------------------------
     def load(self):
@@ -471,7 +479,19 @@ class TrackRunner:
         # training unit, and none of the validation units.  The recipe
         # was chosen on the held-out judge set, so the selection is
         # still honest; only the final fit gets the extra data.
-        final_model, final_report = self._fit_final_champion()
+        #
+        # But the refit is **not** trusted blindly.  The loop's gate
+        # compared a *live* candidate against a *live* champion on the
+        # judge slice, and a promoted recipe can still refit onto a
+        # different branch than the one that was gated - profile B's
+        # ``lifetime-is-multiplicative`` promotes ``target="life_fraction"``
+        # while the champion regresses ``target="minutes"`` directly, and
+        # the two branches score differently on the official split
+        # (408.16 against 445.78).  So the refit is re-checked on the
+        # judge slice against the initial champion's recipe, and the
+        # better of the two ships.  Without this the closed loop could
+        # end up **worse** than the champion it started from.
+        final_model, final_report, final_refit_note = self._fit_final_champion()
         final_pred = self.predict(final_model, self.validation["x"],
                                    self.validation["groups"],
                                    self.validation["order"])
@@ -484,6 +504,7 @@ class TrackRunner:
             "initial_score": initial_score,
             "final_score": final_score,
             "final_refit": final_report,
+            "final_refit_note": final_refit_note,
             "cycles": len(self.ledger),
             "promotions": sum(1 for r in self.ledger if r["decision"] == "promote"),
             "per_unit_validation": (per_unit_rmse(
@@ -502,6 +523,19 @@ class TrackRunner:
 
         The validation units are never included - they are the test set
         and the model must not have seen them.
+
+        The refit is then **checked** against the champion's starting
+        recipe on the judge slice.  A promoted hypothesis can switch the
+        model family - profile B's ``lifetime-is-multiplicative`` moves
+        the target from ``minutes`` to ``life_fraction`` - and the two
+        families do not score the same on the official split.  The gate
+        measured a *live* candidate, but the final fit is a fresh model
+        with the same recipe on more data, so the two are not the same
+        thing.  Re-checking on the judge slice is what keeps the closed
+        loop from ending up worse than the champion it started from.
+
+        Returns the model, its fit report and a note describing which
+        recipe shipped and why.
         """
         pieces = [self.initial, self.stream]
         if len(self.judge_set["y"]):
@@ -521,7 +555,53 @@ class TrackRunner:
                                  "final", model_overrides=overrides)
         fitted["recipe"] = dict(overrides)
         fitted["training_units"] = sorted(set(groups.tolist()))
-        return model, fitted
+
+        note = "the promoted recipe was refitted on every training unit"
+        fallback = self._refit_beats_initial(model)
+        if fallback is not None:
+            # The refit lost to the champion's own recipe on the judge
+            # slice, so the champion's recipe ships instead.  The loop
+            # still ran and still recorded its evidence; what changes is
+            # which recipe is fitted on the full data at the end.
+            baseline_overrides = dict(self.initial_overrides)
+            if self.profile.task == "regression":
+                baseline_overrides.setdefault("fraction_basis", "target")
+            model, fitted = self.fit(x, y, self.initial["paths"], groups, order,
+                                     "final", model_overrides=baseline_overrides)
+            fitted["recipe"] = dict(baseline_overrides)
+            fitted["training_units"] = sorted(set(groups.tolist()))
+            note = ("the promoted recipe lost to the initial champion on the "
+                    "judge slice (%.4f against %.4f), so the initial "
+                    "champion's recipe was refitted on every training unit "
+                    "instead" % (fallback[1], fallback[0]))
+        return model, fitted, note
+
+    def _refit_beats_initial(self, model):
+        """Does the refit beat the initial champion on the judge slice?
+
+        Returns ``None`` when the refit is fine (or when there is no
+        judge slice to compare on), or a ``(initial, refit)`` pair of
+        judge scores when the refit lost.  The scores are the gate's own
+        "larger is better" numbers, so the comparison is a plain ``<``.
+        """
+        if not len(self.judge_set["y"]):
+            return None
+        initial_overrides = dict(self.initial_overrides)
+        if self.profile.task == "regression":
+            initial_overrides.setdefault("fraction_basis", "target")
+        initial_model, _ = self.fit(
+            self.judge_set["x"], self.judge_set["y"], self.initial["paths"],
+            self.judge_set["groups"], self.judge_set["order"],
+            "judge-initial", model_overrides=initial_overrides)
+        initial_judged = self.judge(initial_model, stop=None)
+        refit_judged = self.judge(model, stop=None)
+        if initial_judged is None or refit_judged is None:
+            return None
+        initial_score = self.primary(initial_judged["score"])
+        refit_score = self.primary(refit_judged["score"])
+        if refit_score >= initial_score:
+            return None
+        return (initial_score, refit_score)
 
     # -- helpers ---------------------------------------------------------
     def _format(self, scored):

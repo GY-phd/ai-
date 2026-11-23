@@ -53,6 +53,16 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
+# Four-core production host: pin BLAS so numpy does not oversubscribe.
+#
+# The evaluation machine is a fixed four-core box, and numpy's default
+# BLAS spawns one thread per core *per process*.  With the loop's own
+# worker processes that oversubscribes the box, and the round costs more
+# wall-clock than it should - the platform's own run spent 6 160 s of
+# wall clock on ten C rounds, 616 s each.  Pinning the pools to four
+# threads each makes the cost predictable instead of merely measured.
+ENV OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4
+
 WORKDIR /app
 
 # ---- 1. the SDK ------------------------------------------------------------

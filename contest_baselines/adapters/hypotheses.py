@@ -155,6 +155,37 @@ BATCH_MIXING_SCALES = Hypothesis(
     profiles={"A"},
 )
 
+SCALE_SWAMPING_SIGNAL = Hypothesis(
+    key="the-scale-is-swamping-the-signal",
+    claim="The gas array's columns span five orders of magnitude - eight "
+          "of the 128 hold 99% of the variance - so the distance the "
+          "network measures is dominated by a handful of huge columns "
+          "and the class information in the rest is drowned out.",
+    change="Compress every column with the sign-preserving log1p before "
+           "the network sees it.  The schema does not change: the same "
+           "128 columns come out, with different values.",
+    falsifier="If the compressed columns do not raise the held-out "
+              "Macro-F1, the scale was not what was limiting the model.",
+    expect="Macro-F1 rises, and the spread across seeds shrinks.",
+    profiles={"A"},
+)
+
+RARE_CLASS_NEEDS_THE_LOSS = Hypothesis(
+    key="the-rare-class-needs-the-loss-to-notice-it",
+    claim="One of the six gases has 18 rows against 247 for the rest, so "
+          "the plain cross-entropy never rewards the model for getting "
+          "it right and its per-class F1 collapses - which costs a "
+          "sixth of the Macro-F1 on its own.",
+    change="Weight the cross-entropy by the inverse of each class's "
+           "frequency, so every class contributes the same total mass "
+           "to the loss.  The rows are not resampled: the rare class's "
+           "18 rows keep their own noise.",
+    falsifier="If the rare class's per-class F1 does not rise, the "
+              "weighting did not reach it.",
+    expect="The rare class's per-class F1 rises; Macro-F1 rises with it.",
+    profiles={"A"},
+)
+
 #: Every hypothesis the project knows about.  Adapters pick from this.
 BANK = (
     MORE_DATA_HELPS,
@@ -164,4 +195,6 @@ BANK = (
     CAPACITY,
     RARE_CLASS_UNDERWEIGHTED,
     BATCH_MIXING_SCALES,
+    SCALE_SWAMPING_SIGNAL,
+    RARE_CLASS_NEEDS_THE_LOSS,
 )

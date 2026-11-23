@@ -1,0 +1,26 @@
+{
+  "official validation": {
+    "current: ratio product": 704.5398688777502,
+    "current: ratio + affine blend": 722.6174472697382,
+    "FIXED: regression product": 445.77936073846126,
+    "FIXED: regression + affine blend": 460.7430385337886
+  },
+  "initial": {
+    "current: ratio product": 1005.4449940252293,
+    "current: ratio + affine blend": 862.6685985671601,
+    "FIXED: regression product": 583.1751759268159,
+    "FIXED: regression + affine blend": 677.1850335001534
+  },
+  "stream": {
+    "current: ratio product": 1227.1361060256588,
+    "current: ratio + affine blend": 987.0331509258275,
+    "FIXED: regression product": 705.0410775385016,
+    "FIXED: regression + affine blend": 730.8382583714349
+  },
+  "judge": {
+    "current: ratio product": 221.39199549472605,
+    "current: ratio + affine blend": 367.30219141803565,
+    "FIXED: regression product": 137.3448482583532,
+    "FIXED: regression + affine blend": 544.5757795092654
+  }
+}

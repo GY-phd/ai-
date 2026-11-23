@@ -74,7 +74,15 @@ from ...model import Model, checkpoint_digest
 # The Model layer's tables.
 from ..model.checkpoint import Checkpoint
 from ..model.ledger import LedgerEntry
-from ..model.metrics import BETTER, THE_SAME, WORSE, MetricRecord, compare
+from ..model.metrics import (
+    BETTER,
+    CONFLICT,
+    THE_SAME,
+    WORSE,
+    MetricRecord,
+    compare,
+    compare_joint,
+)
 from ..model.state import RoundState
 
 # The host's model service can be temporarily unavailable, and a gateway can
@@ -226,14 +234,29 @@ class RoundController:
         values = score_metrics(model.meta["task"], data["y"], predicted,
                                profile=self.dataset_key)
         name = primary_metric_name(model.meta["task"])
+        view = self.adapter.selection_view(data, predicted)
+        selection_name = selection_value = None
+        if view:
+            # A protocol-aligned slice: profile C's hidden test scores
+            # truncated snapshots, not every cycle of a complete
+            # sequence.  The full-split primary metric stays in
+            # ``values`` and the decision applies a guard on it.
+            values[view["name"]] = view["value"]
+            values[view["name"] + "_n"] = view["n"]
+            selection_name, selection_value = view["name"], view["value"]
         return MetricRecord(model.meta["task"], values, name,
-                            primary_metric_value(model.meta["task"], values))
+                            primary_metric_value(model.meta["task"], values),
+                            selection_name=selection_name,
+                            selection_value=selection_value)
 
     def measure_parent(self):
         """Score the parent on the public validation split."""
         self.parent_record = self._measure(self.parent, self.validation)
         log("parent %s = %.4f" % (self.parent_record.primary_name,
                                   self.parent_record.primary_value))
+        if self.parent_record.selection_name != self.parent_record.primary_name:
+            log("parent %s = %.4f" % (self.parent_record.selection_name,
+                                      self.parent_record.selection_value))
         return self.parent_record
 
     def measure_candidate(self):
@@ -241,6 +264,9 @@ class RoundController:
         self.candidate_record = self._measure(self.candidate, self.validation)
         log("candidate %s = %.4f" % (self.candidate_record.primary_name,
                                      self.candidate_record.primary_value))
+        if self.candidate_record.selection_name != self.candidate_record.primary_name:
+            log("candidate %s = %.4f" % (self.candidate_record.selection_name,
+                                         self.candidate_record.selection_value))
         return self.candidate_record
 
     # -------------------------------------------------------------- building
@@ -273,33 +299,70 @@ class RoundController:
         **not** predict is treated as a refutation, not as a
         confirmation.  A change that improved the score for a reason
         other than the one claimed is not evidence for the claim.
+
+        The verdict is a **conjunction** when the profile exposes a
+        protocol-aligned selection slice: the full split must not
+        regress *and* the slice must improve.  See
+        :func:`contest_baselines.layers.model.metrics.compare_joint`
+        for why neither metric alone is enough - the platform's own
+        2026-11-22 run is the evidence.
         """
-        self.verdict = compare(self.parent_record, self.candidate_record,
-                               self.parent.task)
+        self.verdict = compare_joint(self.parent_record, self.candidate_record,
+                                     self.parent.task)
+        guard = self._full_split_guard()
+        self.guard = guard
         improved = self.verdict == BETTER
         consistent = self._consistent_with_expectation(improved)
-        self.adopted = bool(improved and consistent)
+        self.adopted = bool(improved and consistent and guard["passed"])
 
-        if improved and not consistent:
+        if improved and not guard["passed"]:
             self.reason = (
-                "the score improved (%s -> %s) but not in the direction the "
-                "hypothesis predicted, so the change is not adopted"
-                % (self.parent_record.primary_value,
-                   self.candidate_record.primary_value))
+                "the protocol-aligned metric improved (%s %s -> %s) but the "
+                "full-split %s regressed by %+.1f%% (tolerance +%.1f%%), so "
+                "the candidate is not adopted"
+                % (self.parent_record.selection_name,
+                   _fmt(self.parent_record.selection_value),
+                   _fmt(self.candidate_record.selection_value),
+                   self.parent_record.primary_name, guard["rel"] * 100.0,
+                   guard["limit"] * 100.0))
+        elif improved and not consistent:
+            self.reason = (
+                "the score improved (%s %.4f -> %.4f) but not in the direction "
+                "the hypothesis predicted, so the change is not adopted"
+                % (self.parent_record.selection_name,
+                   self.parent_record.selection_value,
+                   self.candidate_record.selection_value))
         elif improved:
             self.reason = (
-                "the hypothesis is confirmed: %s moved from %s to %s"
-                % (self.parent_record.primary_name,
-                   self.parent_record.primary_value,
-                   self.candidate_record.primary_value))
+                "the hypothesis is confirmed: %s moved from %.4f to %.4f"
+                % (self.parent_record.selection_name,
+                   self.parent_record.selection_value,
+                   self.candidate_record.selection_value))
+            if self.candidate_record.selection_name != self.candidate_record.primary_name:
+                self.reason += (
+                    " (full %s %.4f -> %.4f, within the +%.1f%% guard)"
+                    % (self.parent_record.primary_name,
+                       self.parent_record.primary_value,
+                       self.candidate_record.primary_value,
+                       guard["limit"] * 100.0))
         elif self.verdict == THE_SAME:
             self.reason = "the change left the score unchanged, so it is not adopted"
-        else:
+        elif self.verdict == CONFLICT:
             self.reason = (
-                "the hypothesis is refuted: %s moved from %s to %s"
-                % (self.parent_record.primary_name,
+                "the two readings disagree (%s %.4f -> %.4f, full %s %.4f -> "
+                "%.4f), so the candidate is not adopted"
+                % (self.parent_record.selection_name,
+                   self.parent_record.selection_value,
+                   self.candidate_record.selection_value,
+                   self.parent_record.primary_name,
                    self.parent_record.primary_value,
                    self.candidate_record.primary_value))
+        else:
+            self.reason = (
+                "the hypothesis is refuted: %s moved from %.4f to %.4f"
+                % (self.parent_record.selection_name,
+                   self.parent_record.selection_value,
+                   self.candidate_record.selection_value))
         log("decision: %s" % self.reason)
         return self.adopted, self.reason
 
@@ -313,11 +376,31 @@ class RoundController:
         """
         if not improved:
             return False
-        before = self.parent_record.primary_value
-        after = self.candidate_record.primary_value
+        before = self.parent_record.selection_value
+        after = self.candidate_record.selection_value
         if self.parent.task == "classification":
             return after > before
         return after < before
+
+    def _full_split_guard(self):
+        """Bound how far the full-split metric may regress.
+
+        The selection slice is closer to the hidden protocol, but the
+        hidden pack is a different dataset.  A candidate that wins the
+        slice by abandoning the full split is fragile, so the round keeps
+        the parent unless the full-split primary metric stays within the
+        adapter's tolerance.  Profiles without a selection view are not
+        guarded (the full split *is* their protocol).
+        """
+        before = self.parent_record
+        after = self.candidate_record
+        if after.selection_name == after.primary_name:
+            return {"active": False, "passed": True, "limit": 0.0, "rel": 0.0}
+        limit = float(self.adapter.selection_guard())
+        base = float(before.primary_value)
+        rel = (float(after.primary_value) - base) / base if base > 0 else 0.0
+        return {"active": True, "passed": rel <= limit, "limit": limit,
+                "rel": rel, "before": base, "after": float(after.primary_value)}
 
     # -------------------------------------------------------------- recording
     def record(self):
@@ -627,6 +710,15 @@ class RoundController:
                 "adopted": self.adopted,
                 "validation_before": self.parent_record.values,
                 "validation_after": self.candidate_record.values,
+                # The selection slice and the guard travel with the entry
+                # so that the adoption decision can be reproduced from
+                # the artefacts alone.  Without them a reader sees the
+                # verdict but cannot check it - and the platform's own
+                # report does not display the slice either.
+                "selection_before": self.parent_record.selection_value,
+                "selection_after": self.candidate_record.selection_value,
+                "selection_metric": self.parent_record.selection_name,
+                "selection_guard": self.guard,
                 "model_call_id": self.receipt.call_id if self.receipt else "",
             },
             seed=self.seed,
@@ -655,3 +747,24 @@ class RoundController:
         self.submit()
         self.finish()
         return self
+
+
+def _fmt(value):
+    """Format a metric for a human-readable reason.
+
+    The reason string goes into the ledger, the SwanLab record and the
+    model's own review prompt, so it has to stay readable for a number
+    that may be either very small (an accuracy) or very large (a
+    remaining life in minutes).
+    """
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return str(value)
+    if number != number:  # NaN
+        return "nan"
+    if abs(number) >= 1000.0:
+        return "%.1f" % number
+    if abs(number) >= 1.0:
+        return "%.4f" % number
+    return "%.6f" % number

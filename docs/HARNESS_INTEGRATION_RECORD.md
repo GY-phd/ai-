@@ -281,33 +281,60 @@ Ran 15 tests in 9.526s  OK                                 # SDK 1.0.2 自带测
 
 ## 7. 离线 30 轮演练结果
 
-`python tools/run_harness_offline.py --rounds 10 --out runs/harness-offline-10`
+```bash
+python tools/run_harness_offline.py --rounds 10 --live --out runs/harness-offline
+```
 
 演练用一个本地 host 替身走**同一套 JSONL 协议**，跑的是选手自己的
 `train`/`predict`，用**真实公开数据包**和**真实父检查点**。
-模型请求由替身本地作答——所以它证明的是**代码路径**，不是分数。
+
+> **`--live` 用 PyTRiO 的真实 27B 驱动决策层**（`Qwen/Qwen3.8-27B`，
+> 思维链关闭），不加该参数时由本地替身作答。
+> 报告里的 `live` 字段和每轮的 `live_model` 字段写明那一轮到底是哪一种，
+> 读者不必猜。**两种模式证明的都是代码路径，不是分数**——
+> 演练用的是公开验证集，隐藏集上的表现仍以平台测量为准。
 
 | 数据集 | 轮次 | 假设 | 采纳 | 主指标 |
 | --- | --- | --- | --- | --- |
 | A | 1 | more-data-helps | 是 | macro_f1 0.7140 → 0.7192 |
-| A | 2 | the-parent-was-left-unconverged | 否 | 0.7140 → 0.6677 |
-| A | 3 | capacity-is-overfitting | 是 | 0.7140 → 0.7205 |
-| A | 4 | rare-class-is-underweighted | 否 | 0.7140 → 0.5737 |
-| A | 5 | the-batch-is-mixing-scales | 否 | 0.7140 → 0.6589 |
+| A | 2 | the-parent-was-left-unconverged | 否 | 0.7192 → 0.6157 |
+| A | 3 | the-scale-is-swamping-the-signal | 是 | 0.7192 → 0.7358 |
+| A | 4 | the-rare-class-needs-the-loss-to-notice-it | 是 | 0.7358 → 0.7371 |
+| A | 5 | capacity-is-overfitting | 否 | 0.7371 → 0.7370 |
+| A | 6 | rare-class-is-underweighted | 否 | 0.7371 → 0.7367 |
+| A | 7 | the-batch-is-mixing-scales | 是 | 0.7371 → 0.7391 |
+| A | 8 | more-data-helps | 是 | 0.7391 → 0.7400 |
+| A | 9 | more-data-helps | 是 | 0.7400 → 0.7405 |
+| A | 10 | more-data-helps | 是 | 0.7405 → 0.7410 |
 | B | 1 | more-data-helps | 是 | rmse 681.16 → 663.91 |
-| B | 2 | the-parent-was-left-unconverged | 是 | 681.16 → 580.58 |
-| B | 3 | the-tail-is-underweighted | 否 | 681.16 → 722.51 |
-| B | 4 | the-unit-is-the-confounder | 是 | 681.16 → 670.86 |
-| B | 5 | capacity-is-overfitting | 是 | 681.16 → 663.21 |
-| C | 1 | more-data-helps | 是 | rmse 52.87 → 51.35 |
-| C | 2 | the-parent-was-left-unconverged | 是 | 52.87 → 51.04 |
-| C | 3 | the-tail-is-underweighted | 否 | 52.87 → 56.05 |
-| C | 4 | the-unit-is-the-confounder | 是 | 52.87 → 51.40 |
-| C | 5 | capacity-is-overfitting | 是 | 52.87 → 51.07 |
+| B | 2 | the-parent-was-left-unconverged | 是 | 663.91 → 621.26 |
+| B | 3 | the-tail-is-underweighted | 否 | 621.26 → 672.71 |
+| B | 4 | the-unit-is-the-confounder | 是 | 621.26 → 591.27 |
+| B | 5 | capacity-is-overfitting | 是 | 591.27 → 578.67 |
+| B | 6 | more-data-helps | 是 | 578.67 → 547.32 |
+| B | 7 | more-data-helps | 是 | 547.32 → 537.49 |
+| B | 8 | more-data-helps | 是 | 537.49 → 529.80 |
+| B | 9 | more-data-helps | 是 | 529.80 → 490.25 |
+| B | 10 | more-data-helps | 是 | 490.25 → 456.42 |
+| C | 1 | more-data-helps | 是 | rmse 52.87 → 52.23 |
+| C | 2 | the-parent-was-left-unconverged | 否 | 52.23 → 51.24 |
+| C | 3 | the-tail-is-underweighted | 否 | 切片 38.52 → 34.52，**全量 +7.31% 被守门否决** |
+| C | 4 | the-unit-is-the-confounder | 是 | 38.52 → 36.15 |
+| C | 5 | capacity-is-overfitting | 否 | 36.15 → 39.01 |
+| C | 6–10 | more-data-helps | 否 | 切片改善但全量守门不过，父模型保留 |
 
-每轮耗时：A 约 1.2 s，B 约 2.7 s，C 约 22 s——都远在平台墙钟之内。
+**C 第 3 轮是这套判据存在的理由**：切片指标从 38.52 掉到 34.52
+（**−10.4%**，看起来是本轮最大的一次提升），但**全量**指标同时劣化了
+**+7.31%**，超出 5% 的守门容差，所以候选被否决、父模型保留。
 
-产物：`runs/harness-offline-10/run_report.json`、`runs/harness-offline-10/ledger.jsonl`。
+这正是平台 2026-11-22 试运行踩到的坑：当时上线的候选在隐藏集上
+**56.253**，比 52.8686 的静态基线**差 6.40%**，违反平台
+「效果不低于平台基线」的硬性要求——而公开切分**低估**了隐藏难度
+（51.111 公开 vs 56.253 隐藏，差 +10.06%）。
+只看全量会漏判，只看切片也会误判，**两者并列**才拦得住。
+
+产物：`runs/harness-offline/run_report.json`、`runs/harness-offline/ledger.jsonl`，
+以及 `runs/harness-offline/swanlab/<数据集>-round-<n>.jsonl`（逐轮实验记录）。
 
 ## 8. 平台操作步骤
 
@@ -318,9 +345,15 @@ Ran 15 tests in 9.526s  OK                                 # SDK 1.0.2 自带测
    > 再上一版（`a5474acf…`）能上传但试运行报「模型服务暂不可用」，根因见 §3.6。
 2. 平台会依次执行 `describe` → `train` × 10 → `predict`。
    入口声明通过**不代表**训练、预测和比赛要求都已通过。
-3. **模型选 `Qwen/Qwen3.5-4B`**（见 `docs/平台提交表单填写指南.md` §2.2）：
-   分数由工业模型决定，LLM 大小不进入任何分数项；27B 在开思维链时
-   单次调用要 288 秒，会把平台网关拖到「模型服务暂不可用」。
+3. **模型选 `Qwen/Qwen3.8-27B`**（赛题白名单内，见
+   `docs/平台提交表单填写指南.md` §2.2）：
+   分数由工业模型决定，LLM 大小不进入任何分数项；
+   **思维链必须关掉**（`enable_thinking=False`）——
+   上表实测：27B 关思维链只要 **12.0 s** 且正文正常返回（793 字符），
+   开思维链则 288.3 s 且正文为空。
+   > 旧版本文档曾建议改用 `Qwen/Qwen3.5-4B`，理由是"27B 开思维链要 288 秒"。
+   > 那个前提已经被 `enable_thinking=False` 消掉了——**关掉思维链后 27B 比 4B 还快**
+   > （12.0 s vs 9.0 s，且 27B 正文更完整）。改用 4B 不是必需，且等于放弃了更大的模型。
 4. 若要本地复核：
 
 ```powershell
@@ -328,7 +361,7 @@ python tools/build_docker_image.py --verify-only --out zhixun-engine-linux-amd64
 python tools/verify_image_roundtrip.py --archive zhixun-engine-linux-amd64.tar
 python -m unittest discover -s tests -t . -v
 python tools/scan_for_secrets.py
-python tools/run_harness_offline.py --rounds 10 --out runs/harness-offline-10
+python tools/run_harness_offline.py --rounds 10 --live --out runs/harness-offline
 ```
 
 **表单每个字段填什么**，见 [`docs/平台提交表单填写指南.md`](平台提交表单填写指南.md)。
@@ -338,8 +371,13 @@ python tools/run_harness_offline.py --rounds 10 --out runs/harness-offline-10
 
 ## 9. 已知限制
 
-- 离线演练的模型请求由本地替身作答，**不能**用来预测平台上的真实分数。
-- 演练用的是**公开**验证集；隐藏集上的表现仍以平台测量为准。
+- 离线演练可以用**真实模型**驱动，也可以由本地替身作答。
+  默认是替身；加 `--live` 则通过 PyTRiO 打真实模型
+  （`HARNESS_LLM_BASE_URL` / `HARNESS_LLM_API_KEY` / `HARNESS_LLM_MODEL`）。
+  无论哪种，**都不能**用来预测平台上的真实分数——
+  演练用的是公开验证集，隐藏集上的表现仍以平台测量为准。
+- 演练的报告里 `live` 字段与每轮的 `live_model` 字段会写明那一轮
+  到底是**真模型**还是**替身**作答的，不需要读者猜。
 - 第 6–10 轮在假设穷尽后会重复最优假设。严格递增的 epoch 预算让重复仍是
   不同的实验，但一个真正穷尽后应当做的动作是"把已验证的结论固化下来"，
   而不是再跑一遍同样的配置——这一点留给平台上的真实轮次观察。
