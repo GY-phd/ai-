@@ -17,7 +17,7 @@
 
 | 文件 | 大小 | SHA256 |
 | --- | --- | --- |
-| `zhixun-engine-linux-amd64.tar` | 182,517,760 B (174.1 MiB) | `fd5fe06f5142420d67b49877f4c2f15d276f66ef111ff33cb11fdd70717419cf` |
+| `zhixun-engine-linux-amd64.tar` | 174.3 MiB | `5fb7ef173e6df951396201d285a3220e355c5c59ae407cd4f2810e713a499c3f` |
 | `dist/zhixun-engine-linux-amd64.tar` | 同上（同一文件） | 同上 |
 | `zhixun-engine-linux-amd64.tar.sha256` | 校验和旁挂文件 | — |
 
@@ -339,10 +339,12 @@ python tools/run_harness_offline.py --rounds 10 --live --out runs/harness-offlin
 ## 8. 平台操作步骤
 
 1. 在 `https://rsi-index.115.zone/#submissions` 上传
-   `zhixun-engine-linux-amd64.tar`（174.1 MiB 的**未压缩** tar，不要打包成 zip）。
-   SHA256：`fd5fe06f5142420d67b49877f4c2f15d276f66ef111ff33cb11fdd70717419cf`。
+   `zhixun-engine-linux-amd64.tar`（174.3 MiB 的**未压缩** tar，不要打包成 zip）。
+   SHA256：`5fb7ef173e6df951396201d285a3220e355c5c59ae407cd4f2810e713a499c3f`。
    > **必须上传新包**：上一版（`9e6c1415…`）在试运行时被拒，根因见 §3.5；
-   > 再上一版（`a5474acf…`）能上传但试运行报「模型服务暂不可用」，根因见 §3.6。
+   > 再上一版（`a5474acf…`）能上传但试运行报「模型服务暂不可用」，根因见 §3.6；
+   > 第三版（`fd5fe06f…`）能跑完，但试运行的隐藏分 **56.253** 比基线
+   > **差 6.40%**，违反「效果不低于平台基线」，根因见 §7 与 §8。
 2. 平台会依次执行 `describe` → `train` × 10 → `predict`。
    入口声明通过**不代表**训练、预测和比赛要求都已通过。
 3. **模型选 `Qwen/Qwen3.8-27B`**（赛题白名单内，见

@@ -1,7 +1,7 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 6585646,
+  "total_bytes": 6587189,
   "file_count": 398,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
@@ -411,8 +411,8 @@
       "sha256": "cd82dec30ba59084facebd8febc332c4d62df683b66a21abfd65052594c0f1ba"
     },
     "docs/HARNESS_INTEGRATION_RECORD.md": {
-      "bytes": 21230,
-      "sha256": "b7441793012092846cce8d8c9f93ea7e18ab7c15e4c421be50d060331c699b34"
+      "bytes": 21393,
+      "sha256": "fe72d395125e1db2b549fc3160aab20679d40a8a565e8e610b8c0628aa749f92"
     },
     "docs/INDUSTRIAL_CPU_CHECK.md": {
       "bytes": 7313,
@@ -455,8 +455,8 @@
       "sha256": "b218dd2bf1230aa184b4c3b1302c2f2730688f8a97f41ddf029cda96b784290b"
     },
     "docs/平台提交表单填写指南.md": {
-      "bytes": 20023,
-      "sha256": "9f2ea24f481bd696345816240c9d0879c14449a4a0c3fa1badda70a1e1e47c24"
+      "bytes": 21403,
+      "sha256": "4df239e4669c451090be2eb821a6cbe8b6042bca575c034c521f34eb90d91698"
     },
     "docs/数据适配说明.md": {
       "bytes": 4237,
