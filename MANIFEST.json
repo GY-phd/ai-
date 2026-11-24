@@ -1,7 +1,7 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 72580230,
+  "total_bytes": 72623620,
   "file_count": 455,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
@@ -531,8 +531,8 @@
       "sha256": "9a40c3cfd48a917f7761f19cc7a3e87b6d963922ceab31925c10d01e8c5b38a3"
     },
     "docs/figures/fig02_平台实测成绩.png": {
-      "bytes": 174126,
-      "sha256": "d744598c4fbca810480e6d58883b0c07f9541d2cf2da11c70bafe1b3f70e171a"
+      "bytes": 215771,
+      "sha256": "ff0677f3d175f6f89cb305ee0dcb51aa22c54ff0cd33410a9d8ec39667d8a6b1"
     },
     "docs/figures/fig03_切片口径负相关根因.png": {
       "bytes": 248700,
@@ -607,12 +607,12 @@
       "sha256": "4d739eb2ad4b460b9cdd20251db264a016239f1b9f2256f587b886066f703791"
     },
     "docs/答辩PPT内容大纲.md": {
-      "bytes": 20385,
-      "sha256": "e546759e31acf41b62c0b661a9aef6981229894625fe6122c9310153e34eb119"
+      "bytes": 20871,
+      "sha256": "57d69d2e282d0cfc25017769f1f2b3380ebec9a2da8d275c254df6e33aae4ab1"
     },
     "docs/答辩PPT配图索引.md": {
-      "bytes": 7077,
-      "sha256": "4920ee364887995c941e2755c412408001c628aed0e58e3a60411b3e725e6f7d"
+      "bytes": 7208,
+      "sha256": "9dcc8852b072019c8642d45c95f20206e666844a5cfe00f817395162a0cfe491"
     },
     "docs/系统运行说明.md": {
       "bytes": 16362,
@@ -1579,8 +1579,8 @@
       "sha256": "d80ba68259b7fb7e882a2c34b6531844c2cd7a8fa3c2f7268881bc393ebbff99"
     },
     "tools/build_ppt_figures.py": {
-      "bytes": 38738,
-      "sha256": "a684d783c4c691cc44961c861035bd4e9837921aec8a4354f9684cad179c7efc"
+      "bytes": 39866,
+      "sha256": "58a131415db4b66a9bcf8c853543efa69a6862eadab87d17f1d21e92e23e121c"
     },
     "tools/build_source_archive.py": {
       "bytes": 4560,
