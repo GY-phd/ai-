@@ -119,9 +119,7 @@ def main(argv=None):
                 held_mask = np.isin(ctx["tunit"], held)
                 train_mask = ~held_mask
                 model = train_on(ctx, spec, train_mask, epochs=epochs,
-                                 lr=lr, batch=256, seed=seed)
-                if hidden and hidden != 32:
-                    _resize(model, hidden)
+                                 lr=lr, batch=256, seed=seed, hidden=hidden)
                 scores.append(evaluate(ctx, model, held_mask))
                 bases.append(baseline_on(ctx, held_mask))
             agg = {k: float(np.mean([f[k] for f in scores]))
@@ -184,10 +182,15 @@ def main(argv=None):
 
 
 def _resize(model, hidden):
-    """Widen the regressor's hidden layer if the platform model allows it."""
+    """Widen or narrow the regressor's hidden layer.
+
+    The model exposes ``resize()`` for exactly this: the competition rules
+    require a shape change to be an explicit weight migration rather than a
+    silent re-initialisation, and ``resize`` carries the surviving units'
+    weights and their Adam moments over.
+    """
     try:
-        model.meta["hidden_units"] = hidden
-        model.validate()
+        model.resize(hidden)
     except Exception as exc:  # pragma: no cover - defensive
         print("  (resize to %d refused: %s)" % (hidden, exc))
 

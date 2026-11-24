@@ -1,8 +1,8 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 72623620,
-  "file_count": 455,
+  "total_bytes": 72627261,
+  "file_count": 458,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
   "files": {
@@ -23,8 +23,8 @@
       "sha256": "6e8c351b368d18e66465c20e4aa11f6b98f4758da53375a9d52cd4ddc2372b34"
     },
     ".gitignore": {
-      "bytes": 6285,
-      "sha256": "868fde1a53aa52b7993b08bfa995ec16ecedcc72ff64a54727df7f3a5670aff7"
+      "bytes": 6461,
+      "sha256": "02dfd9216744555b89a534214a24bd87371a4a68fb3e44a412017f997d1b6635"
     },
     "Dockerfile": {
       "bytes": 4980,
@@ -1107,8 +1107,8 @@
       "sha256": "0d3dfdd0069a1d04e78b7541643782280390224e6ec12b2dc308ebc38a73ec44"
     },
     "research/tracks/c_holdout.py": {
-      "bytes": 8955,
-      "sha256": "a20172b44362991b69e34c18032505888aa9681f3c58ab34c986872897c0bb33"
+      "bytes": 9229,
+      "sha256": "854f712c34cdf0deeef8f757c9fe68eb828dcb726d7d03be617a0ad0e238bff1"
     },
     "research/tracks/c_horizon.py": {
       "bytes": 6742,
@@ -1123,8 +1123,8 @@
       "sha256": "ad7347a2a05a2e2a88b3a571b5e0a4c62dd78f8eaef4012bd03ece949651dcb5"
     },
     "research/tracks/c_tune.py": {
-      "bytes": 8211,
-      "sha256": "677aa6cad26445e3d3f94405c4945b2f94103de6279a203d197fe8bb7a44d658"
+      "bytes": 8349,
+      "sha256": "3c56c755f7fe4289b0fb46d6f0bc3562445beb557d8e4fb15c884922e72ad90f"
     },
     "research/tracks/c_verify.py": {
       "bytes": 4696,
@@ -1674,6 +1674,14 @@
       "bytes": 2739,
       "sha256": "346db9c5be2affffdd0cd97b7a27d9a07fb6b206f3ed5669b3d7d1de1d27d45f"
     },
+    "tools/run_c_tune.bat": {
+      "bytes": 115,
+      "sha256": "f8350be4c99689549c8e39cce9278289e13c4ef33bb63e00ead92388f639d2ce"
+    },
+    "tools/run_c_tune_task.py": {
+      "bytes": 1359,
+      "sha256": "c255c00f3ffacd67404f464598b060ff174fb9f930d4bc068587bce65371f681"
+    },
     "tools/run_ci_local.py": {
       "bytes": 8307,
       "sha256": "d364aa004b6a6ae99e4295c1b6437a25a81457d798dafde209893e5aee2fc4a3"
@@ -1681,6 +1689,10 @@
     "tools/run_ci_matrix.py": {
       "bytes": 12465,
       "sha256": "15b4e6da485b9ca82bb6869a4f186011dd98d024bad49d5f5336bbf780a2a289"
+    },
+    "tools/run_detached.py": {
+      "bytes": 1579,
+      "sha256": "da7daef6c5e2d3dc220aeb91eea7924c50267da484a89c9c9cc32a4ddaaab9d4"
     },
     "tools/run_harness_offline.py": {
       "bytes": 23026,

@@ -223,3 +223,9 @@ github-support-body.txt
 # 脚本与 README 进版本库；生成的 JSONL 和 trio:// 报告留在本地。
 train/data/
 train/reports/
+
+# throwaway tuning-sweep logs (the JSON result is tracked)
+artifacts/tracks/c_tune_*.log
+artifacts/tracks/c_tune_*.err
+artifacts/tracks/c_tune.log
+artifacts/tracks/c_tune.err

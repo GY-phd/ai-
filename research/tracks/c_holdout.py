@@ -107,11 +107,18 @@ def evaluate(ctx, model, engine_mask, val_mask=None):
     return out
 
 
-def train_on(ctx, spec, rows_mask, *, epochs, lr, batch, seed):
-    """Train a candidate on the given subset of the public training rows."""
+def train_on(ctx, spec, rows_mask, *, epochs, lr, batch, seed, hidden=None):
+    """Train a candidate on the given subset of the public training rows.
+
+    ``hidden`` migrates the network to a different width *before* training,
+    so the extra capacity is actually trained rather than bolted on
+    afterwards.
+    """
     from contest_baselines.model import Model
 
     model = Model.load(ctx["pkg"] / "checkpoint.npz")
+    if hidden is not None and hidden != model.meta.get("hidden"):
+        model.resize(hidden)
     model.meta["learning_rate"] = lr
     model.meta["batch_size"] = batch
     model.meta["seed"] = seed
