@@ -140,7 +140,7 @@ def fig_progress():
         ax.plot(xs, ys, "-o", color=SERIES[0], lw=2.0, ms=6,
                 label="每轮候选（采纳后）", zorder=3)
         ax.axhline(base, color=ACCENT, ls="--", lw=1.6,
-                   label="官方基线 %.4f" % base)
+                   label="静态基线 %.4f" % base)
         # mark adopted rounds
         ad = [r["round"] for r in rounds if r.get("adopted")]
         ax.scatter(ad, [ys[xs.index(i)] for i in ad], s=130, facecolors="none",
@@ -185,7 +185,7 @@ def fig_platform_scores():
     ax1.axhline(0, color=INK, lw=1.1)
     ax1.set_xticks(xs)
     ax1.set_xticklabels([r[0] for r in rows], fontsize=12, fontweight="bold")
-    _style(ax1, "相对官方基线的成绩（正 = 更好）", None, "相对提升 (%)")
+    _style(ax1, "相对静态基线的成绩（正 = 更好）", None, "相对提升 (%)")
     ax1.set_ylim(0, 26)
     ax1.text(2, -4.5, "C 方向未达标\n→ 本次根因分析的对象",
              ha="center", fontsize=9.5, color=ACCENT, fontweight="bold")
@@ -197,7 +197,7 @@ def fig_platform_scores():
         tbl_data.append([k, m, "%.4f" % base, "%.5f" % got,
                          ("+" if rel > 0 else "") + "%.2f%%" % rel])
     table = ax2.table(cellText=tbl_data,
-                      colLabels=["方向", "指标", "官方基线", "平台实测", "相对"],
+                      colLabels=["方向", "指标", "静态基线", "平台实测", "相对"],
                       loc="center", cellLoc="center")
     table.auto_set_font_size(False)
     table.set_fontsize(10.5)
@@ -321,21 +321,22 @@ def fig_hidden_count():
     ]
     for i, (col, title, state, tag) in enumerate(cards):
         x = 0.03 + i * 0.49
-        ax2.add_patch(plt.Rectangle((x, 0.30), 0.44, 0.52,
+        ax2.add_patch(plt.Rectangle((x, 0.38), 0.44, 0.50,
                                     transform=ax2.transAxes,
                                     facecolor=col, alpha=0.10,
                                     edgecolor=col, lw=1.8))
-        ax2.text(x + 0.22, 0.74, title, transform=ax2.transAxes,
+        ax2.text(x + 0.22, 0.80, title, transform=ax2.transAxes,
                  ha="center", fontsize=12, fontweight="bold", color=col)
-        ax2.text(x + 0.22, 0.55, state, transform=ax2.transAxes,
+        ax2.text(x + 0.22, 0.62, state, transform=ax2.transAxes,
                  ha="center", fontsize=12.5, color=INK, linespacing=1.5)
-        ax2.text(x + 0.22, 0.37, tag, transform=ax2.transAxes,
+        ax2.text(x + 0.22, 0.45, tag, transform=ax2.transAxes,
                  ha="center", fontsize=10, color=MUTED)
-    ax2.text(0.5, 0.20, "→ 切片丢失了「寿命尺度」信息，\n"
+    # the two conclusions sit *below* the cards, with room to breathe
+    ax2.text(0.5, 0.26, "→ 切片丢失了「寿命尺度」信息，\n"
                         "把健康中期与已报废混为一谈",
-             transform=ax2.transAxes, ha="center", fontsize=11,
-             color=INK, fontweight="bold", linespacing=1.5)
-    ax2.text(0.5, 0.05, "方法论教训：规模对得上 ≠ 度量对得上",
+             transform=ax2.transAxes, ha="center", fontsize=11.5,
+             color=INK, fontweight="bold", linespacing=1.6)
+    ax2.text(0.5, 0.04, "方法论教训：规模对得上 ≠ 度量对得上",
              transform=ax2.transAxes, ha="center", fontsize=11.5,
              color=ACCENT, fontweight="bold")
 
@@ -361,7 +362,7 @@ def fig_epochs():
     bars = ax1.bar(xs, mean, color=cols, alpha=0.9, width=0.55,
                    edgecolor="white", lw=1.4)
     ax1.axhline(base, color=INK, ls="--", lw=1.8,
-                label="官方基线 %.3f" % base)
+                label="静态基线 %.3f" % base)
     for b, m, e in zip(bars, mean, ep):
         ax1.text(b.get_x() + b.get_width() / 2, m + 0.09,
                  "%.3f" % m, ha="center", fontsize=10.5,
@@ -427,7 +428,7 @@ def fig_weight():
         ax1.text(m + 0.25, yy, "%.3f" % m, va="center", fontsize=9.4,
                  fontweight="bold" if "采用" in names[i] else "normal",
                  color=GOOD if "采用" in names[i] else INK)
-    ax1.axvline(55.218, color=INK, ls="--", lw=1.6, label="官方基线 55.218")
+    ax1.axvline(55.218, color=INK, ls="--", lw=1.6, label="静态基线 55.218")
     _style(ax1, "8 种训练加权配方在留出发动机上的表现（越左越好）",
            "留出集平均 RMSE (↓)", None)
     ax1.grid(axis="y", visible=False)
@@ -528,21 +529,45 @@ def fig_rounds_adopted():
     ax.legend(fontsize=8.8, loc="upper right")
     ax.grid(axis="x", visible=False)
 
-    # 3) hypothesis diversity
+    # 3) hypothesis coverage - a clean list, one row per hypothesis
     ax = axes[2]
+    ax.axis("off")
+    ax.set_title("三个方向实际用到的假设", fontsize=12,
+                 fontweight="bold", color=INK, pad=10)
+    # de-duplicate: the same hypothesis in several directions is one row
+    order, owner = [], {}
     for j, ds in enumerate(("A", "B", "C")):
-        seen = hyps[j]
-        ax.add_patch(plt.Rectangle((0, j * 3.2), len(seen), 2.6,
-                                   facecolor=SERIES[j], alpha=0.16,
-                                   edgecolor=SERIES[j], lw=1.4))
-        for k, h in enumerate(seen):
-            ax.text(k + 0.5, j * 3.2 + 1.3, h.replace("-", "-\n"),
-                    ha="center", va="center", fontsize=7.0, color=INK)
-    ax.set_xlim(-0.1, 9.2)
-    ax.set_ylim(-0.4, 9.9)
-    ax.set_yticks([])
-    _style(ax, "三个方向假设库的实际覆盖", None, None)
-    ax.grid(False)
+        for h in hyps[j]:
+            if h not in owner:
+                owner[h] = []
+                order.append(h)
+            owner[h].append(ds)
+    # sort by how many directions used it, then by first appearance
+    first_seen = {h: i for i, h in enumerate(order)}
+    order.sort(key=lambda h: (-len(owner[h]), first_seen[h]))
+    row_h = 0.055
+    y0 = 0.90
+    for i, h in enumerate(order):
+        yy = y0 - i * row_h
+        if yy < 0.03:
+            break
+        short = h.replace("-", " ")
+        ax.text(0.02, yy, "· " + short, transform=ax.transAxes,
+                fontsize=8.8, color=INK, va="center", family="monospace")
+        # direction badges
+        for k, ds in enumerate(owner[h]):
+            bx = 0.60 + k * 0.105
+            ax.add_patch(plt.Rectangle((bx, yy - 0.022), 0.085, 0.044,
+                                       transform=ax.transAxes,
+                                       facecolor=SERIES["ABC".index(ds)],
+                                       alpha=0.92, edgecolor="none"))
+            ax.text(bx + 0.0425, yy, ds, transform=ax.transAxes,
+                    fontsize=8.2, ha="center", va="center",
+                    color="white", fontweight="bold")
+    ax.text(0.02, 0.005, "A/B 共用同一批假设；C 独有「退化是相对的」",
+            transform=ax.transAxes, fontsize=8.4, color=MUTED, va="bottom")
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
 
     fig.suptitle("图 7  30 轮可追溯闭环：采纳轨迹、护栏通过率、假设多样性",
                  fontsize=14, fontweight="bold", color=INK, y=1.02)
@@ -619,77 +644,95 @@ def fig_sft():
 
 # ================================================================ FIG 9
 def fig_system():
-    """Architecture + the four gates, as a schematic."""
-    fig = plt.figure(figsize=(13.4, 5.6))
+    """Architecture + the four gates, as a schematic.
+
+    Three columns that never touch:
+      left   - the 11 fixed steps of a round
+      middle - the five layers, as a vertical stack
+      right  - the four controlled gates
+    """
+    fig = plt.figure(figsize=(13.6, 6.0))
     ax = fig.add_axes([0, 0, 1, 1])
     ax.axis("off")
     ax.set_xlim(0, 100)
     ax.set_ylim(0, 100)
 
+    COL_L, COL_M, COL_R = 2.0, 38.0, 70.0
+    COL_W = 28.0
+
+    # ---------------- middle: the five layers, a clean vertical stack
+    ax.text(COL_M + COL_W / 2, 93, "五层分层", fontsize=12.5,
+            fontweight="bold", color=INK, ha="center")
     layers = [
-        ("View        layers/view/", 62, 84, 36, "#dce6f2", "观测面"),
-        ("Controller  layers/controller/", 50, 71, 46, "#cfe0f2",
-         "协议唯一所有者 · 轮序唯一实现"),
-        ("Model       layers/model/", 38, 58, 54, "#b9d4ec",
-         "工件 · 账本 · 度量表 · 轮次状态机"),
-        ("Profile     adapters/", 26, 45, 62, "#a6c8e6",
-         "每方向：假设库 · 度量口径 · 选型视图 · 护栏"),
-        ("Reference   model.py", 14, 32, 70, "#8fb8dc",
-         "平台工件格式 · 平台自带前向传播"),
+        ("View", "layers/view/", "观测面", "#dce6f2"),
+        ("Controller", "layers/controller/", "协议唯一所有者 · 轮序唯一实现", "#cfe0f2"),
+        ("Model", "layers/model/", "工件 · 账本 · 度量表 · 轮次状态机", "#b9d4ec"),
+        ("Profile", "adapters/", "每方向：假设库 · 度量口径 · 护栏", "#a6c8e6"),
+        ("Reference", "model.py", "平台工件格式 · 平台自带前向传播", "#8fb8dc"),
     ]
-    for title, x, y, w, col, note in layers:
-        ax.add_patch(plt.Rectangle((x, y), w, 10, facecolor=col,
-                                   edgecolor="#4a6f8f", lw=1.4,
-                                   transform=ax.transData))
-        ax.text(x + 2.2, y + 5, title, fontsize=10.6, fontweight="bold",
-                color=INK, va="center")
-        ax.text(x + 2.2, y + 1.6, note, fontsize=8.6, color="#3d5468",
-                va="center")
-        if y > 32:
-            ax.annotate("", xy=(x + w / 2, y - 0.4), xytext=(x + w / 2, y),
-                        arrowprops=dict(arrowstyle="-|>", color="#5b7fa0", lw=1.5))
+    top, h, gap = 86.0, 11.0, 3.0
+    for i, (name, path, note, col) in enumerate(layers):
+        y = top - i * (h + gap)
+        ax.add_patch(plt.Rectangle((COL_M, y - h), COL_W, h,
+                                   facecolor=col, edgecolor="#4a6f8f",
+                                   lw=1.3))
+        ax.text(COL_M + 2.0, y - 3.6, name, fontsize=10.6,
+                fontweight="bold", color=INK, va="center")
+        ax.text(COL_M + 2.0, y - 7.4, path, fontsize=7.8,
+                color="#3d5468", va="center", family="monospace")
+        ax.text(COL_M + 2.0, y - 10.0, note, fontsize=8.3,
+                color="#3d5468", va="center")
+        if i < len(layers) - 1:
+            ax.annotate("", xy=(COL_M + COL_W / 2, y - h - 0.3),
+                        xytext=(COL_M + COL_W / 2, y - h - gap + 0.3),
+                        arrowprops=dict(arrowstyle="-|>", color="#5b7fa0",
+                                        lw=1.4))
 
-    # right column: the four gates
-    ax.text(74, 92, "四道受控闸门", fontsize=11.5, fontweight="bold",
-            color=ACCENT)
+    # ---------------- right: the four gates
+    ax.text(COL_R + COL_W / 2, 93, "四道受控闸门", fontsize=12.5,
+            fontweight="bold", color=ACCENT, ha="center")
     gates = [
-        "① 父模型只读  rnd.parent.path + 摘要校验",
-        "② 5% 回归护栏  主指标劣化 > 5% 一律不采纳",
-        "③ 方向一致性  分数变好但方向非预测 → 证伪",
-        "④ 受控 epoch 预算  随轮次递增且有上限",
+        ("① 父模型只读", "rnd.parent.path + 摘要校验"),
+        ("② 5% 回归护栏", "主指标劣化 > 5% 一律不采纳"),
+        ("③ 方向一致性", "分数变好但方向非预测 → 证伪"),
+        ("④ 受控 epoch 预算", "随轮次递增且有上限"),
     ]
-    for i, g in enumerate(gates):
-        yy = 85 - i * 8.4
-        ax.add_patch(plt.Rectangle((74, yy - 3.4), 24, 7,
+    gh, ggap = 15.0, 4.0
+    for i, (title, note) in enumerate(gates):
+        y = 86.0 - i * (gh + ggap)
+        ax.add_patch(plt.Rectangle((COL_R, y - gh), COL_W, gh,
                                    facecolor="#fdf1ef", edgecolor=ACCENT,
-                                   lw=1.1, alpha=0.95))
-        ax.text(75.4, yy, g, fontsize=8.4, color=INK, va="center")
+                                   lw=1.2))
+        ax.text(COL_R + 1.8, y - 5.0, title, fontsize=10.0,
+                fontweight="bold", color=ACCENT, va="center")
+        ax.text(COL_R + 1.8, y - 10.0, note, fontsize=8.4, color=INK,
+                va="center")
 
-    # left: the 11 steps
-    ax.text(2, 92, "一轮的 11 步固定顺序", fontsize=11.5,
-            fontweight="bold", color=INK)
-    steps = ["open_parent", "read_public", "plan", "measure_parent",
-             "build_candidate", "measure_candidate", "decide", "record",
-             "consult_the_model", "submit", "finish"]
+    # ---------------- left: the 11 steps
+    ax.text(COL_L + COL_W / 2, 93, "一轮的 11 步固定顺序", fontsize=12.5,
+            fontweight="bold", color=INK, ha="center")
+    steps = ["open_parent", "read_public", "plan",
+             "measure_parent", "build_candidate", "measure_candidate",
+             "decide", "record", "consult_the_model", "submit", "finish"]
+    sw, sh, sgap = 13.2, 6.2, 2.2
     for i, s in enumerate(steps):
-        col = i % 2
-        row = i // 2
-        xx = 2 + col * 14.5
-        yy = 84 - row * 9.2
+        col, row = i % 2, i // 2
+        x = COL_L + col * (sw + 1.6)
+        y = 86.0 - row * (sh + sgap)
         special = s in ("decide", "consult_the_model")
-        ax.add_patch(plt.Rectangle((xx, yy - 3.2), 13.6, 6.4,
+        ax.add_patch(plt.Rectangle((x, y - sh), sw, sh,
                                    facecolor="#eaf4ee" if special else "#eef1f5",
                                    edgecolor=GOOD if special else "#b8c2cd",
                                    lw=1.1))
-        ax.text(xx + 6.8, yy, s, fontsize=8.0, ha="center", va="center",
-                color=GOOD if special else INK,
+        ax.text(x + sw / 2, y - sh / 2, s, fontsize=7.6, ha="center",
+                va="center", color=GOOD if special else INK,
                 fontweight="bold" if special else "normal", family="monospace")
 
-    ax.text(50, 4.5, "层间只通过固定接口通信 => 任何一轮的效果都能精确归因到那一个改动",
-            fontsize=10, ha="center", color=INK, style="italic")
+    ax.text(50, 2.0, "层间只通过固定接口通信 => 任何一轮的效果都能精确归因到那一个改动",
+            fontsize=9.6, ha="center", color=INK, style="italic")
 
     fig.suptitle("图 9  系统架构：五层分层 + 四道受控闸门 + 11 步固定轮序",
-                 fontsize=14, fontweight="bold", color=INK, y=1.01)
+                 fontsize=14, fontweight="bold", color=INK, y=1.0)
     return _save(fig, "fig09_系统架构与四道闸门.png")
 
 
@@ -737,30 +780,25 @@ def fig_failure():
              edgecolor="white", lw=1.2)
     ax2.barh(2, 40.3, color="#7d5ba6", alpha=0.9, height=0.6,
              edgecolor="white", lw=1.2)
-    ax2.barh(3, 0.5, color=GOOD, alpha=0.95, height=0.6,
-             edgecolor="white", lw=1.2)
     names = ["python:3.12-slim 基础层", "numpy + numpy.libs",
-             "其它基础层", "★ 我们的全部代码"]
+             "其它基础层"]
     for i, n in enumerate(names):
         ax2.text(-1.5, i, n, ha="right", va="center", fontsize=10,
-                 color=INK, fontweight="bold" if i == 3 else "normal")
+                 color=INK)
     ax2.text(79.5, 0, "77.5 MB", va="center", fontsize=9.6, color="white",
              fontweight="bold")
     ax2.text(57.9, 1, "55.9 MB", va="center", fontsize=9.6, color="white",
              fontweight="bold")
     ax2.text(42.3, 2, "40.3 MB", va="center", fontsize=9.6, color="white",
              fontweight="bold")
-    ax2.annotate("0.5 MB (0.3%)", xy=(2, 3), xytext=(24, 3.45),
-                 fontsize=9.6, color=GOOD, fontweight="bold",
-                 arrowprops=dict(arrowstyle="->", color=GOOD, lw=1.4))
     ax2.set_xlim(0, 96)
-    ax2.set_ylim(-0.7, 3.7)
+    ax2.set_ylim(-0.7, 2.7)
     ax2.invert_yaxis()
     ax2.set_yticks([])
     ax2.set_xlabel("MB", fontsize=10)
-    _style(ax2, "镜像体积构成：我们的代码只占 0.3%", None, None)
+    _style(ax2, "镜像体积构成：绝大多数是 Python 运行时与 numpy", None, None)
     ax2.grid(axis="y", visible=False)
-    ax2.text(48, 3.42, "总计 174.27 MiB（规则上限 50 MB）",
+    ax2.text(48, 2.48, "总计 174.27 MiB（规则上限 50 MB，已提供网盘链接）",
              ha="center", fontsize=10, color=ACCENT, fontweight="bold")
 
     fig.suptitle("图 10  平台失败诊断与镜像体积分析",

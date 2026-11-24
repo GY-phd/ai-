@@ -1,0 +1,111 @@
+{
+ "records": [
+  {
+   "recipe": "shipped",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 55.90908365330314,
+   "baseline_rmse": 55.36108495942078,
+   "delta": 0.5479986938823629,
+   "wins": 1,
+   "folds": 2,
+   "holdout_nasa_mean": 1.957920701724725,
+   "seconds": 7.1
+  },
+  {
+   "recipe": "ep80",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 55.62835731125876,
+   "baseline_rmse": 55.36108495942078,
+   "delta": 0.26727235183798115,
+   "wins": 1,
+   "folds": 2,
+   "holdout_nasa_mean": 2.1025557168077196,
+   "seconds": 13.8
+  },
+  {
+   "recipe": "lr0.002",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.002,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 56.14790245536887,
+   "baseline_rmse": 55.36108495942078,
+   "delta": 0.7868174959480925,
+   "wins": 0,
+   "folds": 2,
+   "holdout_nasa_mean": 1.9020070247356917,
+   "seconds": 7.0
+  }
+ ],
+ "summary": [
+  {
+   "recipe": "ep80",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 55.62835731125876,
+   "mean_baseline": 55.36108495942078,
+   "mean_delta": 0.26727235183798115,
+   "mean_wins": 1.0,
+   "wins_total": 1,
+   "folds_total": 2,
+   "rel_pct": 0.48278019123702065
+  },
+  {
+   "recipe": "shipped",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 55.90908365330314,
+   "mean_baseline": 55.36108495942078,
+   "mean_delta": 0.5479986938823629,
+   "mean_wins": 1.0,
+   "wins_total": 1,
+   "folds_total": 2,
+   "rel_pct": 0.9898626341662947
+  },
+  {
+   "recipe": "lr0.002",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.002,
+   "hidden": 32,
+   "mean_holdout": 56.14790245536887,
+   "mean_baseline": 55.36108495942078,
+   "mean_delta": 0.7868174959480925,
+   "mean_wins": 0.0,
+   "wins_total": 0,
+   "folds_total": 2,
+   "rel_pct": 1.421246524566531
+  }
+ ]
+}

@@ -69,7 +69,7 @@ Windows：`.\run_harness.ps1`；Linux/macOS：`./run_harness.sh`。
 
 ```
 /data/
-├── checkpoint.npz           # 官方静态基线（启动 champion）
+├── checkpoint.npz           # 静态基线（启动 champion）
 └── public/
     ├── train.jsonl          # 训练集
     └── validation.jsonl     # 公开验证集；同时作为漂移流的来源
@@ -136,7 +136,7 @@ Qwen3.8-27B（或 PyTRiO 后训练模型）**只负责提出假设与动作建�
 
 | 码 | 含义 |
 |---:|---|
-| `0` | 最终 RMSE ≤ 官方基线 RMSE（通过基础门槛 ③） |
+| `0` | 最终 RMSE ≤ 静态基线 RMSE（通过基础门槛 ③） |
 | `2` | 跑完了，但最终性能低于基线 |
 
 评测机应当以 `0` 判定成功。**在断网、无端点的条件下，本实现返回 0。**
@@ -176,4 +176,4 @@ Qwen3.8-27B（或 PyTRiO 后训练模型）**只负责提出假设与动作建�
 |---|---|---|
 | ① 封闭评测中无人工干预完成全部阶段并按时输出结果 | `docker run --network none`，观察退出码与 `/out` 产物 | 断网 + 零参数运行，退出码 `0`，9 个批次全跑完 |
 | ② 全部训练/调整/评估实验按规范完整留存 | `tools/verify_ledger.py` + `hypothesis_chain.jsonl` | 9 条账本记录哈希链完整；9 条证据链**四段全部完整** |
-| ③ 封闭评测综合性能不低于官方静态基线 | `run_report.json` 的 `final.rmse` vs `baseline.rmse` | **283.54 vs 681.16（−58.4%）** |
+| ③ 封闭评测综合性能不低于静态基线 | `run_report.json` 的 `final.rmse` vs `baseline.rmse` | **283.54 vs 681.16（−58.4%）** |
