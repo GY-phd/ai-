@@ -1,0 +1,1182 @@
+[
+  {
+    "seed": 42,
+    "fold": 0,
+    "recipe": "control",
+    "spec": {
+      "w": "none"
+    },
+    "seconds": 8.1,
+    "holdout_full": 56.44229805563306,
+    "holdout_late200": 40.309720542224944,
+    "holdout_mae": 40.43153889292393,
+    "holdout_nasa_mean": 2.266733673532814,
+    "baseline_holdout_full": 57.21588670749913,
+    "baseline_holdout_late200": 40.55791560571137,
+    "public_full": 51.781041222193004,
+    "public_late200": 39.450216862659445,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 0,
+    "recipe": "surv150",
+    "spec": {
+      "w": "surv",
+      "H": 150,
+      "scale": 75,
+      "floor": 0.05
+    },
+    "seconds": 8.4,
+    "holdout_full": 58.816752683862845,
+    "holdout_late200": 35.32162014276835,
+    "holdout_mae": 40.51820260065072,
+    "holdout_nasa_mean": 2.132029781696244,
+    "baseline_holdout_full": 57.21588670749913,
+    "baseline_holdout_late200": 40.55791560571137,
+    "public_full": 52.94127279455139,
+    "public_late200": 35.15750946674748,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 0,
+    "recipe": "surv150p05",
+    "spec": {
+      "w": "surv",
+      "H": 150,
+      "scale": 75,
+      "floor": 0.05,
+      "power": 0.5
+    },
+    "seconds": 9.2,
+    "holdout_full": 57.37309632284059,
+    "holdout_late200": 37.25631136405505,
+    "holdout_mae": 40.19731105428103,
+    "holdout_nasa_mean": 2.199820614281926,
+    "baseline_holdout_full": 57.21588670749913,
+    "baseline_holdout_late200": 40.55791560571137,
+    "public_full": 52.04791859347303,
+    "public_late200": 36.77928843893265,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 0,
+    "recipe": "surv100",
+    "spec": {
+      "w": "surv",
+      "H": 100,
+      "scale": 50,
+      "floor": 0.05
+    },
+    "seconds": 9.2,
+    "holdout_full": 60.93414117747785,
+    "holdout_late200": 33.683679268744626,
+    "holdout_mae": 40.8244822778872,
+    "holdout_nasa_mean": 1.8022522214957304,
+    "baseline_holdout_full": 57.21588670749913,
+    "baseline_holdout_late200": 40.55791560571137,
+    "public_full": 54.655236789783295,
+    "public_late200": 33.80928804620134,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 0,
+    "recipe": "surv195",
+    "spec": {
+      "w": "surv",
+      "H": 195,
+      "scale": 75,
+      "floor": 0.05
+    },
+    "seconds": 8.3,
+    "holdout_full": 58.0078141810107,
+    "holdout_late200": 36.71420162222423,
+    "holdout_mae": 40.53637183492957,
+    "holdout_nasa_mean": 2.247987016273986,
+    "baseline_holdout_full": 57.21588670749913,
+    "baseline_holdout_late200": 40.55791560571137,
+    "public_full": 52.38293002990448,
+    "public_late200": 36.384086041483904,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 0,
+    "recipe": "deg0.5",
+    "spec": {
+      "w": "deg",
+      "alpha": 0.5
+    },
+    "seconds": 8.5,
+    "holdout_full": 56.57627105540055,
+    "holdout_late200": 38.91663578727157,
+    "holdout_mae": 40.035315357512935,
+    "holdout_nasa_mean": 2.160021086683354,
+    "baseline_holdout_full": 57.21588670749913,
+    "baseline_holdout_late200": 40.55791560571137,
+    "public_full": 51.74872983485833,
+    "public_late200": 38.1815179011961,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 0,
+    "recipe": "deg1",
+    "spec": {
+      "w": "deg",
+      "alpha": 1.0
+    },
+    "seconds": 8.7,
+    "holdout_full": 56.775569714420534,
+    "holdout_late200": 38.06996385091014,
+    "holdout_mae": 39.86941490698431,
+    "holdout_nasa_mean": 2.105325459408116,
+    "baseline_holdout_full": 57.21588670749913,
+    "baseline_holdout_late200": 40.55791560571137,
+    "public_full": 51.83834741473184,
+    "public_late200": 37.4316320454222,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 0,
+    "recipe": "deg2",
+    "spec": {
+      "w": "deg",
+      "alpha": 2.0
+    },
+    "seconds": 8.3,
+    "holdout_full": 57.15658063397738,
+    "holdout_late200": 36.960334875281255,
+    "holdout_mae": 39.73100966423012,
+    "holdout_nasa_mean": 2.0289290572235643,
+    "baseline_holdout_full": 57.21588670749913,
+    "baseline_holdout_late200": 40.55791560571137,
+    "public_full": 52.06617060201993,
+    "public_late200": 36.468026400346986,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 0,
+    "recipe": "deg2p0.5",
+    "spec": {
+      "w": "deg",
+      "alpha": 2.0,
+      "power": 0.5
+    },
+    "seconds": 8.9,
+    "holdout_full": 56.700024603874944,
+    "holdout_late200": 38.448628024805835,
+    "holdout_mae": 39.9576598154299,
+    "holdout_nasa_mean": 2.133733460240564,
+    "baseline_holdout_full": 57.21588670749913,
+    "baseline_holdout_late200": 40.55791560571137,
+    "public_full": 51.79626582387397,
+    "public_late200": 37.76727094880426,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 0,
+    "recipe": "unit",
+    "spec": {
+      "w": "unit"
+    },
+    "seconds": 8.3,
+    "holdout_full": 57.39726170368278,
+    "holdout_late200": 37.2758252671464,
+    "holdout_mae": 40.072483379903424,
+    "holdout_nasa_mean": 2.077922848408858,
+    "baseline_holdout_full": 57.21588670749913,
+    "baseline_holdout_late200": 40.55791560571137,
+    "public_full": 51.906018784651486,
+    "public_late200": 36.74447147792479,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 0,
+    "recipe": "cap150",
+    "spec": {
+      "w": "none",
+      "cap": 150
+    },
+    "seconds": 8.8,
+    "holdout_full": 67.82318390792506,
+    "holdout_late200": 33.64500351393511,
+    "holdout_mae": 45.03496528866264,
+    "holdout_nasa_mean": 2.020404743513676,
+    "baseline_holdout_full": 57.21588670749913,
+    "baseline_holdout_late200": 40.55791560571137,
+    "public_full": 59.264126164691596,
+    "public_late200": 34.098724198139614,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 0,
+    "recipe": "cap200",
+    "spec": {
+      "w": "none",
+      "cap": 200
+    },
+    "seconds": 8.7,
+    "holdout_full": 60.014370770000454,
+    "holdout_late200": 35.84676083563598,
+    "holdout_mae": 41.68927973584832,
+    "holdout_nasa_mean": 2.395939256755142,
+    "baseline_holdout_full": 57.21588670749913,
+    "baseline_holdout_late200": 40.55791560571137,
+    "public_full": 53.47250636397287,
+    "public_late200": 35.764736594898594,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 1,
+    "recipe": "control",
+    "spec": {
+      "w": "none"
+    },
+    "seconds": 8.0,
+    "holdout_full": 53.800701442081156,
+    "holdout_late200": 41.60039855609743,
+    "holdout_mae": 39.41540532680706,
+    "holdout_nasa_mean": 1.6882054708443224,
+    "baseline_holdout_full": 54.04464316370114,
+    "baseline_holdout_late200": 44.085586265839616,
+    "public_full": 51.96778089871743,
+    "public_late200": 36.705383429290606,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 1,
+    "recipe": "surv150",
+    "spec": {
+      "w": "surv",
+      "H": 150,
+      "scale": 75,
+      "floor": 0.05
+    },
+    "seconds": 8.3,
+    "holdout_full": 54.220880157928356,
+    "holdout_late200": 37.64657075208478,
+    "holdout_mae": 39.18290060907302,
+    "holdout_nasa_mean": 1.6702983648247942,
+    "baseline_holdout_full": 54.04464316370114,
+    "baseline_holdout_late200": 44.085586265839616,
+    "public_full": 54.25467119650466,
+    "public_late200": 34.226830501751316,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 1,
+    "recipe": "surv150p05",
+    "spec": {
+      "w": "surv",
+      "H": 150,
+      "scale": 75,
+      "floor": 0.05,
+      "power": 0.5
+    },
+    "seconds": 8.1,
+    "holdout_full": 53.69444557809559,
+    "holdout_late200": 39.199833390185404,
+    "holdout_mae": 39.0907963133894,
+    "holdout_nasa_mean": 1.6468439483901331,
+    "baseline_holdout_full": 54.04464316370114,
+    "baseline_holdout_late200": 44.085586265839616,
+    "public_full": 52.852332431668636,
+    "public_late200": 35.003811048237274,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 1,
+    "recipe": "surv100",
+    "spec": {
+      "w": "surv",
+      "H": 100,
+      "scale": 50,
+      "floor": 0.05
+    },
+    "seconds": 8.8,
+    "holdout_full": 55.94910348318395,
+    "holdout_late200": 37.221418982514955,
+    "holdout_mae": 39.76248961049857,
+    "holdout_nasa_mean": 1.4879590630886228,
+    "baseline_holdout_full": 54.04464316370114,
+    "baseline_holdout_late200": 44.085586265839616,
+    "public_full": 56.43592728147005,
+    "public_late200": 34.417285578223655,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 1,
+    "recipe": "surv195",
+    "spec": {
+      "w": "surv",
+      "H": 195,
+      "scale": 75,
+      "floor": 0.05
+    },
+    "seconds": 8.8,
+    "holdout_full": 53.538677629672534,
+    "holdout_late200": 38.434277451989196,
+    "holdout_mae": 39.06455238079913,
+    "holdout_nasa_mean": 1.7571477131902684,
+    "baseline_holdout_full": 54.04464316370114,
+    "baseline_holdout_late200": 44.085586265839616,
+    "public_full": 53.22271518354387,
+    "public_late200": 34.61353496039325,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 1,
+    "recipe": "deg0.5",
+    "spec": {
+      "w": "deg",
+      "alpha": 0.5
+    },
+    "seconds": 8.4,
+    "holdout_full": 54.00501584109925,
+    "holdout_late200": 40.86892785425737,
+    "holdout_mae": 39.300003662828736,
+    "holdout_nasa_mean": 1.6039991281460322,
+    "baseline_holdout_full": 54.04464316370114,
+    "baseline_holdout_late200": 44.085586265839616,
+    "public_full": 52.3939421754752,
+    "public_late200": 36.16361566147031,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 1,
+    "recipe": "deg1",
+    "spec": {
+      "w": "deg",
+      "alpha": 1.0
+    },
+    "seconds": 7.9,
+    "holdout_full": 54.17812623154272,
+    "holdout_late200": 40.36163628729026,
+    "holdout_mae": 39.26096726022443,
+    "holdout_nasa_mean": 1.5613347771173973,
+    "baseline_holdout_full": 54.04464316370114,
+    "baseline_holdout_late200": 44.085586265839616,
+    "public_full": 52.7462841463773,
+    "public_late200": 35.826830772011085,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 1,
+    "recipe": "deg2",
+    "spec": {
+      "w": "deg",
+      "alpha": 2.0
+    },
+    "seconds": 7.9,
+    "holdout_full": 54.44878447068284,
+    "holdout_late200": 39.70285564583084,
+    "holdout_mae": 39.24821574845854,
+    "holdout_nasa_mean": 1.5184528084145288,
+    "baseline_holdout_full": 54.04464316370114,
+    "baseline_holdout_late200": 44.085586265839616,
+    "public_full": 53.27938317432653,
+    "public_late200": 35.4372934214801,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 1,
+    "recipe": "deg2p0.5",
+    "spec": {
+      "w": "deg",
+      "alpha": 2.0,
+      "power": 0.5
+    },
+    "seconds": 7.9,
+    "holdout_full": 54.067416094808124,
+    "holdout_late200": 40.57229919418033,
+    "holdout_mae": 39.27064434973791,
+    "holdout_nasa_mean": 1.5857237979281056,
+    "baseline_holdout_full": 54.04464316370114,
+    "baseline_holdout_late200": 44.085586265839616,
+    "public_full": 52.55757425536918,
+    "public_late200": 35.9657918132447,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 1,
+    "recipe": "unit",
+    "spec": {
+      "w": "unit"
+    },
+    "seconds": 8.9,
+    "holdout_full": 53.916542222300734,
+    "holdout_late200": 39.56640433059522,
+    "holdout_mae": 39.269216094034164,
+    "holdout_nasa_mean": 1.5593985689852503,
+    "baseline_holdout_full": 54.04464316370114,
+    "baseline_holdout_late200": 44.085586265839616,
+    "public_full": 52.89457252294323,
+    "public_late200": 35.23065028144484,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 1,
+    "recipe": "cap150",
+    "spec": {
+      "w": "none",
+      "cap": 150
+    },
+    "seconds": 8.4,
+    "holdout_full": 58.919107381985874,
+    "holdout_late200": 35.7556854650691,
+    "holdout_mae": 41.60758111138205,
+    "holdout_nasa_mean": 1.765583383258132,
+    "baseline_holdout_full": 54.04464316370114,
+    "baseline_holdout_late200": 44.085586265839616,
+    "public_full": 61.229880023932076,
+    "public_late200": 34.83915286011379,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 1,
+    "recipe": "cap200",
+    "spec": {
+      "w": "none",
+      "cap": 200
+    },
+    "seconds": 8.6,
+    "holdout_full": 53.97996252971999,
+    "holdout_late200": 36.8585838899409,
+    "holdout_mae": 39.29660944726743,
+    "holdout_nasa_mean": 1.900166127180301,
+    "baseline_holdout_full": 54.04464316370114,
+    "baseline_holdout_late200": 44.085586265839616,
+    "public_full": 54.79504588473693,
+    "public_late200": 34.05989595280552,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 2,
+    "recipe": "control",
+    "spec": {
+      "w": "none"
+    },
+    "seconds": 8.5,
+    "holdout_full": 57.938146637860214,
+    "holdout_late200": 42.1488681353523,
+    "holdout_mae": 41.143946105084744,
+    "holdout_nasa_mean": 2.2172820209818225,
+    "baseline_holdout_full": 58.39989688413537,
+    "baseline_holdout_late200": 41.98786701903653,
+    "public_full": 52.41158476781366,
+    "public_late200": 40.16950529934882,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 2,
+    "recipe": "surv150",
+    "spec": {
+      "w": "surv",
+      "H": 150,
+      "scale": 75,
+      "floor": 0.05
+    },
+    "seconds": 8.5,
+    "holdout_full": 59.764233266012134,
+    "holdout_late200": 36.16360644163616,
+    "holdout_mae": 40.61430118199345,
+    "holdout_nasa_mean": 1.8512163160981974,
+    "baseline_holdout_full": 58.39989688413537,
+    "baseline_holdout_late200": 41.98786701903653,
+    "public_full": 53.816226858639396,
+    "public_late200": 35.561831421938926,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 2,
+    "recipe": "surv150p05",
+    "spec": {
+      "w": "surv",
+      "H": 150,
+      "scale": 75,
+      "floor": 0.05,
+      "power": 0.5
+    },
+    "seconds": 9.2,
+    "holdout_full": 58.71248259238949,
+    "holdout_late200": 38.43802866178312,
+    "holdout_mae": 40.584624214129164,
+    "holdout_nasa_mean": 1.9525670574882157,
+    "baseline_holdout_full": 58.39989688413537,
+    "baseline_holdout_late200": 41.98786701903653,
+    "public_full": 53.066928974289965,
+    "public_late200": 37.51798323309641,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 2,
+    "recipe": "surv100",
+    "spec": {
+      "w": "surv",
+      "H": 100,
+      "scale": 50,
+      "floor": 0.05
+    },
+    "seconds": 8.3,
+    "holdout_full": 61.541309802589474,
+    "holdout_late200": 34.867285474037296,
+    "holdout_mae": 40.91569551250388,
+    "holdout_nasa_mean": 1.6578069694901798,
+    "baseline_holdout_full": 58.39989688413537,
+    "baseline_holdout_late200": 41.98786701903653,
+    "public_full": 55.45585592189756,
+    "public_late200": 34.61693215176724,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 2,
+    "recipe": "surv195",
+    "spec": {
+      "w": "surv",
+      "H": 195,
+      "scale": 75,
+      "floor": 0.05
+    },
+    "seconds": 8.5,
+    "holdout_full": 59.1315349302404,
+    "holdout_late200": 37.44916231089949,
+    "holdout_mae": 40.71114935482082,
+    "holdout_nasa_mean": 1.9304768421344443,
+    "baseline_holdout_full": 58.39989688413537,
+    "baseline_holdout_late200": 41.98786701903653,
+    "public_full": 53.35293840400671,
+    "public_late200": 36.72498287506459,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 2,
+    "recipe": "deg0.5",
+    "spec": {
+      "w": "deg",
+      "alpha": 0.5
+    },
+    "seconds": 11.0,
+    "holdout_full": 58.31320954177201,
+    "holdout_late200": 40.697031547275714,
+    "holdout_mae": 40.836632043229464,
+    "holdout_nasa_mean": 2.024418908029248,
+    "baseline_holdout_full": 58.39989688413537,
+    "baseline_holdout_late200": 41.98786701903653,
+    "public_full": 52.92969049413209,
+    "public_late200": 39.44908726706188,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 2,
+    "recipe": "deg1",
+    "spec": {
+      "w": "deg",
+      "alpha": 1.0
+    },
+    "seconds": 9.8,
+    "holdout_full": 58.40038282579415,
+    "holdout_late200": 39.749360323323565,
+    "holdout_mae": 40.560253146631446,
+    "holdout_nasa_mean": 1.9334435122447746,
+    "baseline_holdout_full": 58.39989688413537,
+    "baseline_holdout_late200": 41.98786701903653,
+    "public_full": 52.951175022652485,
+    "public_late200": 38.603007259595486,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 2,
+    "recipe": "deg2",
+    "spec": {
+      "w": "deg",
+      "alpha": 2.0
+    },
+    "seconds": 9.3,
+    "holdout_full": 58.594120369719256,
+    "holdout_late200": 38.557027301064096,
+    "holdout_mae": 40.28038774252346,
+    "holdout_nasa_mean": 1.848001208889456,
+    "baseline_holdout_full": 58.39989688413537,
+    "baseline_holdout_late200": 41.98786701903653,
+    "public_full": 53.01693924983039,
+    "public_late200": 37.480682870759814,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 2,
+    "recipe": "deg2p0.5",
+    "spec": {
+      "w": "deg",
+      "alpha": 2.0,
+      "power": 0.5
+    },
+    "seconds": 8.6,
+    "holdout_full": 58.366908064265566,
+    "holdout_late200": 40.14020296101445,
+    "holdout_mae": 40.68966138257733,
+    "holdout_nasa_mean": 1.9777322938710922,
+    "baseline_holdout_full": 58.39989688413537,
+    "baseline_holdout_late200": 41.98786701903653,
+    "public_full": 52.94001870925337,
+    "public_late200": 38.96526224331525,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 2,
+    "recipe": "unit",
+    "spec": {
+      "w": "unit"
+    },
+    "seconds": 8.9,
+    "holdout_full": 58.688158427336774,
+    "holdout_late200": 38.85337214418822,
+    "holdout_mae": 40.666316240846015,
+    "holdout_nasa_mean": 1.8949626927956005,
+    "baseline_holdout_full": 58.39989688413537,
+    "baseline_holdout_late200": 41.98786701903653,
+    "public_full": 53.03917381849945,
+    "public_late200": 37.816873089613715,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 2,
+    "recipe": "cap150",
+    "spec": {
+      "w": "none",
+      "cap": 150
+    },
+    "seconds": 8.1,
+    "holdout_full": 66.56482793463775,
+    "holdout_late200": 34.22768148787826,
+    "holdout_mae": 44.51456844437729,
+    "holdout_nasa_mean": 1.9939892803716128,
+    "baseline_holdout_full": 58.39989688413537,
+    "baseline_holdout_late200": 41.98786701903653,
+    "public_full": 59.34689067804657,
+    "public_late200": 34.51780565231838,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 2,
+    "recipe": "cap200",
+    "spec": {
+      "w": "none",
+      "cap": 200
+    },
+    "seconds": 7.4,
+    "holdout_full": 60.68074528206312,
+    "holdout_late200": 35.840959895183396,
+    "holdout_mae": 41.465362775300726,
+    "holdout_nasa_mean": 1.9454420116152782,
+    "baseline_holdout_full": 58.39989688413537,
+    "baseline_holdout_late200": 41.98786701903653,
+    "public_full": 54.54663487992847,
+    "public_late200": 35.53878392957113,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 3,
+    "recipe": "control",
+    "spec": {
+      "w": "none"
+    },
+    "seconds": 7.9,
+    "holdout_full": 56.67751893118514,
+    "holdout_late200": 42.64015727974441,
+    "holdout_mae": 41.383594769282254,
+    "holdout_nasa_mean": 2.1584886576269406,
+    "baseline_holdout_full": 56.816200179033466,
+    "baseline_holdout_late200": 41.36528140809939,
+    "public_full": 53.14468176627739,
+    "public_late200": 41.174819287705446,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 3,
+    "recipe": "surv150",
+    "spec": {
+      "w": "surv",
+      "H": 150,
+      "scale": 75,
+      "floor": 0.05
+    },
+    "seconds": 7.5,
+    "holdout_full": 58.95722775929389,
+    "holdout_late200": 35.22965761185298,
+    "holdout_mae": 40.7003650502055,
+    "holdout_nasa_mean": 1.5650766590484666,
+    "baseline_holdout_full": 56.816200179033466,
+    "baseline_holdout_late200": 41.36528140809939,
+    "public_full": 53.51653844449048,
+    "public_late200": 34.34616405007538,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 3,
+    "recipe": "surv150p05",
+    "spec": {
+      "w": "surv",
+      "H": 150,
+      "scale": 75,
+      "floor": 0.05,
+      "power": 0.5
+    },
+    "seconds": 7.6,
+    "holdout_full": 57.21383495744766,
+    "holdout_late200": 37.83666544657401,
+    "holdout_mae": 40.473310906681675,
+    "holdout_nasa_mean": 1.780791944843244,
+    "baseline_holdout_full": 56.816200179033466,
+    "baseline_holdout_late200": 41.36528140809939,
+    "public_full": 52.67200605138538,
+    "public_late200": 36.69947801944277,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 3,
+    "recipe": "surv100",
+    "spec": {
+      "w": "surv",
+      "H": 100,
+      "scale": 50,
+      "floor": 0.05
+    },
+    "seconds": 8.2,
+    "holdout_full": 61.77594058404266,
+    "holdout_late200": 34.408701455378036,
+    "holdout_mae": 41.73140926052069,
+    "holdout_nasa_mean": 1.2990771463287052,
+    "baseline_holdout_full": 56.816200179033466,
+    "baseline_holdout_late200": 41.36528140809939,
+    "public_full": 55.814837839118056,
+    "public_late200": 33.79391462099722,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 3,
+    "recipe": "surv195",
+    "spec": {
+      "w": "surv",
+      "H": 195,
+      "scale": 75,
+      "floor": 0.05
+    },
+    "seconds": 8.3,
+    "holdout_full": 57.80322230235196,
+    "holdout_late200": 36.664664666083986,
+    "holdout_mae": 40.59924565914077,
+    "holdout_nasa_mean": 1.7253601438677857,
+    "baseline_holdout_full": 56.816200179033466,
+    "baseline_holdout_late200": 41.36528140809939,
+    "public_full": 52.85300815250889,
+    "public_late200": 35.67822320017362,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 3,
+    "recipe": "deg0.5",
+    "spec": {
+      "w": "deg",
+      "alpha": 0.5
+    },
+    "seconds": 7.8,
+    "holdout_full": 56.61672245901839,
+    "holdout_late200": 40.890171040812355,
+    "holdout_mae": 40.81247743767083,
+    "holdout_nasa_mean": 1.97409511702907,
+    "baseline_holdout_full": 56.816200179033466,
+    "baseline_holdout_late200": 41.36528140809939,
+    "public_full": 52.825886607923245,
+    "public_late200": 39.471784829965024,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 3,
+    "recipe": "deg1",
+    "spec": {
+      "w": "deg",
+      "alpha": 1.0
+    },
+    "seconds": 7.6,
+    "holdout_full": 56.69099325985301,
+    "holdout_late200": 39.6025484312617,
+    "holdout_mae": 40.457311847478465,
+    "holdout_nasa_mean": 1.8480708397516006,
+    "baseline_holdout_full": 56.816200179033466,
+    "baseline_holdout_late200": 41.36528140809939,
+    "public_full": 52.62862441715767,
+    "public_late200": 38.198484883024506,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 3,
+    "recipe": "deg2",
+    "spec": {
+      "w": "deg",
+      "alpha": 2.0
+    },
+    "seconds": 7.6,
+    "holdout_full": 57.058203607347046,
+    "holdout_late200": 37.91155575090984,
+    "holdout_mae": 40.136564405972116,
+    "holdout_nasa_mean": 1.6809267454276833,
+    "baseline_holdout_full": 56.816200179033466,
+    "baseline_holdout_late200": 41.36528140809939,
+    "public_full": 52.540331472323835,
+    "public_late200": 36.523226381006964,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 3,
+    "recipe": "deg2p0.5",
+    "spec": {
+      "w": "deg",
+      "alpha": 2.0,
+      "power": 0.5
+    },
+    "seconds": 7.9,
+    "holdout_full": 56.66424346140237,
+    "holdout_late200": 40.23501193945421,
+    "holdout_mae": 40.652950530681125,
+    "holdout_nasa_mean": 1.9194922749879744,
+    "baseline_holdout_full": 56.816200179033466,
+    "baseline_holdout_late200": 41.36528140809939,
+    "public_full": 52.745179572143826,
+    "public_late200": 38.84683382888944,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 3,
+    "recipe": "unit",
+    "spec": {
+      "w": "unit"
+    },
+    "seconds": 8.4,
+    "holdout_full": 57.38415248523649,
+    "holdout_late200": 38.10990791649313,
+    "holdout_mae": 40.551607451120006,
+    "holdout_nasa_mean": 1.7023758126209079,
+    "baseline_holdout_full": 56.816200179033466,
+    "baseline_holdout_late200": 41.36528140809939,
+    "public_full": 52.877848435420745,
+    "public_late200": 36.966864950026455,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 3,
+    "recipe": "cap150",
+    "spec": {
+      "w": "none",
+      "cap": 150
+    },
+    "seconds": 8.2,
+    "holdout_full": 68.12752324725945,
+    "holdout_late200": 34.20341212586478,
+    "holdout_mae": 45.614897044018804,
+    "holdout_nasa_mean": 1.386011745342991,
+    "baseline_holdout_full": 56.816200179033466,
+    "baseline_holdout_late200": 41.36528140809939,
+    "public_full": 60.43099797397041,
+    "public_late200": 34.240321048777965,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 3,
+    "recipe": "cap200",
+    "spec": {
+      "w": "none",
+      "cap": 200
+    },
+    "seconds": 8.5,
+    "holdout_full": 59.778468447526365,
+    "holdout_late200": 34.954112619703466,
+    "holdout_mae": 41.432453355248725,
+    "holdout_nasa_mean": 1.6995084181804634,
+    "baseline_holdout_full": 56.816200179033466,
+    "baseline_holdout_late200": 41.36528140809939,
+    "public_full": 54.05599385392983,
+    "public_late200": 34.444769581044724,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 4,
+    "recipe": "control",
+    "spec": {
+      "w": "none"
+    },
+    "seconds": 8.6,
+    "holdout_full": 49.31030355078394,
+    "holdout_late200": 40.34177569485175,
+    "holdout_mae": 36.82162751102674,
+    "holdout_nasa_mean": 2.2281016940038305,
+    "baseline_holdout_full": 49.678518930483946,
+    "baseline_holdout_late200": 39.92777961472975,
+    "public_full": 51.44018996943706,
+    "public_late200": 39.326548476738225,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 4,
+    "recipe": "surv150",
+    "spec": {
+      "w": "surv",
+      "H": 150,
+      "scale": 75,
+      "floor": 0.05
+    },
+    "seconds": 8.7,
+    "holdout_full": 50.18513852924525,
+    "holdout_late200": 34.654089105164374,
+    "holdout_mae": 36.02319280734551,
+    "holdout_nasa_mean": 1.884787523091573,
+    "baseline_holdout_full": 49.678518930483946,
+    "baseline_holdout_late200": 39.92777961472975,
+    "public_full": 53.247480976564965,
+    "public_late200": 34.64770142541828,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 4,
+    "recipe": "surv150p05",
+    "spec": {
+      "w": "surv",
+      "H": 150,
+      "scale": 75,
+      "floor": 0.05,
+      "power": 0.5
+    },
+    "seconds": 8.2,
+    "holdout_full": 49.49983735142621,
+    "holdout_late200": 36.78720277922761,
+    "holdout_mae": 36.118641363998655,
+    "holdout_nasa_mean": 2.019581609226036,
+    "baseline_holdout_full": 49.678518930483946,
+    "baseline_holdout_late200": 39.92777961472975,
+    "public_full": 52.00116361704248,
+    "public_late200": 36.10790812683556,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 4,
+    "recipe": "surv100",
+    "spec": {
+      "w": "surv",
+      "H": 100,
+      "scale": 50,
+      "floor": 0.05
+    },
+    "seconds": 8.0,
+    "holdout_full": 52.09883040706685,
+    "holdout_late200": 33.713510114184544,
+    "holdout_mae": 36.353218108002075,
+    "holdout_nasa_mean": 1.571715951340827,
+    "baseline_holdout_full": 49.678518930483946,
+    "baseline_holdout_late200": 39.92777961472975,
+    "public_full": 55.31410063124181,
+    "public_late200": 33.83577270632138,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 4,
+    "recipe": "surv195",
+    "spec": {
+      "w": "surv",
+      "H": 195,
+      "scale": 75,
+      "floor": 0.05
+    },
+    "seconds": 7.8,
+    "holdout_full": 49.65419272333795,
+    "holdout_late200": 35.79345224461938,
+    "holdout_mae": 36.124378486568375,
+    "holdout_nasa_mean": 2.0114655125883876,
+    "baseline_holdout_full": 49.678518930483946,
+    "baseline_holdout_late200": 39.92777961472975,
+    "public_full": 52.484758010772424,
+    "public_late200": 35.59872572621265,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 4,
+    "recipe": "deg0.5",
+    "spec": {
+      "w": "deg",
+      "alpha": 0.5
+    },
+    "seconds": 8.1,
+    "holdout_full": 49.04617849537697,
+    "holdout_late200": 38.86995260150475,
+    "holdout_mae": 36.22690250842812,
+    "holdout_nasa_mean": 2.084878966111957,
+    "baseline_holdout_full": 49.678518930483946,
+    "baseline_holdout_late200": 39.92777961472975,
+    "public_full": 51.43234354277864,
+    "public_late200": 37.94242067368304,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 4,
+    "recipe": "deg1",
+    "spec": {
+      "w": "deg",
+      "alpha": 1.0
+    },
+    "seconds": 7.6,
+    "holdout_full": 48.99639214161522,
+    "holdout_late200": 37.92702048410044,
+    "holdout_mae": 35.916460841781834,
+    "holdout_nasa_mean": 1.9966672899329458,
+    "baseline_holdout_full": 49.678518930483946,
+    "baseline_holdout_late200": 39.92777961472975,
+    "public_full": 51.55729061204915,
+    "public_late200": 37.08511988109689,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 4,
+    "recipe": "deg2",
+    "spec": {
+      "w": "deg",
+      "alpha": 2.0
+    },
+    "seconds": 8.2,
+    "holdout_full": 49.10949418461676,
+    "holdout_late200": 36.767509734109794,
+    "holdout_mae": 35.628167633911794,
+    "holdout_nasa_mean": 1.876651352052005,
+    "baseline_holdout_full": 49.678518930483946,
+    "baseline_holdout_late200": 39.92777961472975,
+    "public_full": 51.89234556235356,
+    "public_late200": 36.073062659858536,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 4,
+    "recipe": "deg2p0.5",
+    "spec": {
+      "w": "deg",
+      "alpha": 2.0,
+      "power": 0.5
+    },
+    "seconds": 8.0,
+    "holdout_full": 49.00434203898135,
+    "holdout_late200": 38.33472038068514,
+    "holdout_mae": 36.05338097535331,
+    "holdout_nasa_mean": 2.0348067041785765,
+    "baseline_holdout_full": 49.678518930483946,
+    "baseline_holdout_late200": 39.92777961472975,
+    "public_full": 51.48609652397796,
+    "public_late200": 37.46531660387902,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 4,
+    "recipe": "unit",
+    "spec": {
+      "w": "unit"
+    },
+    "seconds": 7.6,
+    "holdout_full": 49.76476883245378,
+    "holdout_late200": 37.01034720470876,
+    "holdout_mae": 36.145155169494565,
+    "holdout_nasa_mean": 1.914092388529304,
+    "baseline_holdout_full": 49.678518930483946,
+    "baseline_holdout_late200": 39.92777961472975,
+    "public_full": 51.86782010950686,
+    "public_late200": 36.15092810189288,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 4,
+    "recipe": "cap150",
+    "spec": {
+      "w": "none",
+      "cap": 150
+    },
+    "seconds": 7.6,
+    "holdout_full": 58.099893736036584,
+    "holdout_late200": 33.91917248716509,
+    "holdout_mae": 40.112192139215395,
+    "holdout_nasa_mean": 1.7431439687463366,
+    "baseline_holdout_full": 49.678518930483946,
+    "baseline_holdout_late200": 39.92777961472975,
+    "public_full": 59.76640156508053,
+    "public_late200": 34.19676255662814,
+    "baseline_public_full": 55.38038477916956
+  },
+  {
+    "seed": 42,
+    "fold": 4,
+    "recipe": "cap200",
+    "spec": {
+      "w": "none",
+      "cap": 200
+    },
+    "seconds": 8.5,
+    "holdout_full": 51.226553852385486,
+    "holdout_late200": 34.60082516433918,
+    "holdout_mae": 36.897946505846676,
+    "holdout_nasa_mean": 1.988622960715599,
+    "baseline_holdout_full": 49.678518930483946,
+    "baseline_holdout_late200": 39.92777961472975,
+    "public_full": 53.94062011853601,
+    "public_late200": 34.88615420474847,
+    "baseline_public_full": 55.38038477916956
+  }
+]

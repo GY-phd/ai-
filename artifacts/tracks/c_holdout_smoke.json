@@ -1,0 +1,127 @@
+[
+  {
+    "variant": "control",
+    "spec": {
+      "w": "none"
+    },
+    "seed": 42,
+    "seconds": 13.2,
+    "fold_count": 2,
+    "folds": [
+      {
+        "holdout_full_rmse": 56.076802201029636,
+        "holdout_mae": 41.00328394806359,
+        "holdout_late150_rmse": 44.79440180221491,
+        "holdout_late195_rmse": 44.63408665331676,
+        "holdout_late200_rmse": 44.72150155865519,
+        "holdout_nasa_mean": 2.369022036171667,
+        "holdout_rows": 56067,
+        "holdout_engines": 248,
+        "valid_full_rmse": 52.084175200743275,
+        "valid_late200_rmse": 40.20507608935582
+      },
+      {
+        "holdout_full_rmse": 56.37792687382377,
+        "holdout_mae": 40.389798796401145,
+        "holdout_late150_rmse": 37.42455560184792,
+        "holdout_late195_rmse": 38.51552153688587,
+        "holdout_late200_rmse": 38.78171139587738,
+        "holdout_nasa_mean": 1.767745741585472,
+        "holdout_rows": 57022,
+        "holdout_engines": 248,
+        "valid_full_rmse": 53.55691304689951,
+        "valid_late200_rmse": 38.41191687675404
+      }
+    ],
+    "mean": {
+      "holdout_full_rmse": 56.2273645374267,
+      "holdout_mae": 40.69654137223237,
+      "holdout_late150_rmse": 41.10947870203141,
+      "holdout_late195_rmse": 41.574804095101314,
+      "holdout_late200_rmse": 41.751606477266286,
+      "holdout_nasa_mean": 2.0683838888785697,
+      "holdout_rows": 56544.5,
+      "holdout_engines": 248.0,
+      "valid_full_rmse": 52.82054412382139,
+      "valid_late200_rmse": 39.30849648305493
+    },
+    "baseline_mean": {
+      "holdout_full_rmse": 55.379567782350136,
+      "holdout_mae": 40.57925177750167,
+      "holdout_late150_rmse": 41.80721810447831,
+      "holdout_late195_rmse": 41.473143848118625,
+      "holdout_late200_rmse": 41.59273945385654,
+      "holdout_nasa_mean": 2.1687892087698684,
+      "holdout_rows": 56544.5,
+      "holdout_engines": 248.0,
+      "valid_full_rmse": 52.86857256611151,
+      "valid_late200_rmse": 39.91669506952041
+    },
+    "beats_baseline_holdout": false,
+    "beats_baseline_holdout_late200": false
+  },
+  {
+    "variant": "surv150",
+    "spec": {
+      "w": "surv",
+      "H": 150,
+      "scale": 75,
+      "floor": 0.05
+    },
+    "seed": 42,
+    "seconds": 9.8,
+    "fold_count": 2,
+    "folds": [
+      {
+        "holdout_full_rmse": 56.291765306189895,
+        "holdout_mae": 39.548532116184326,
+        "holdout_late150_rmse": 35.72646356567379,
+        "holdout_late195_rmse": 37.61263509024688,
+        "holdout_late200_rmse": 37.97953449351927,
+        "holdout_nasa_mean": 2.026393107043138,
+        "holdout_rows": 56067,
+        "holdout_engines": 248,
+        "valid_full_rmse": 53.21302335739587,
+        "valid_late200_rmse": 35.11096403058131
+      },
+      {
+        "holdout_full_rmse": 59.014080457072154,
+        "holdout_mae": 40.60863179623549,
+        "holdout_late150_rmse": 29.99565502558749,
+        "holdout_late195_rmse": 33.49979296719122,
+        "holdout_late200_rmse": 34.08198266651216,
+        "holdout_nasa_mean": 1.6034483946621585,
+        "holdout_rows": 57022,
+        "holdout_engines": 248,
+        "valid_full_rmse": 55.176547601491954,
+        "valid_late200_rmse": 34.14830441922039
+      }
+    ],
+    "mean": {
+      "holdout_full_rmse": 57.65292288163103,
+      "holdout_mae": 40.07858195620991,
+      "holdout_late150_rmse": 32.86105929563064,
+      "holdout_late195_rmse": 35.556214028719054,
+      "holdout_late200_rmse": 36.030758580015714,
+      "holdout_nasa_mean": 1.8149207508526484,
+      "holdout_rows": 56544.5,
+      "holdout_engines": 248.0,
+      "valid_full_rmse": 54.19478547944391,
+      "valid_late200_rmse": 34.62963422490085
+    },
+    "baseline_mean": {
+      "holdout_full_rmse": 55.379567782350136,
+      "holdout_mae": 40.57925177750167,
+      "holdout_late150_rmse": 41.80721810447831,
+      "holdout_late195_rmse": 41.473143848118625,
+      "holdout_late200_rmse": 41.59273945385654,
+      "holdout_nasa_mean": 2.1687892087698684,
+      "holdout_rows": 56544.5,
+      "holdout_engines": 248.0,
+      "valid_full_rmse": 52.86857256611151,
+      "valid_late200_rmse": 39.91669506952041
+    },
+    "beats_baseline_holdout": false,
+    "beats_baseline_holdout_late200": true
+  }
+]

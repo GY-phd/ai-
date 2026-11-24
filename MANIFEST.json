@@ -1,8 +1,8 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 6598146,
-  "file_count": 399,
+  "total_bytes": 7099065,
+  "file_count": 414,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
   "files": {
@@ -45,6 +45,14 @@
     "README.md": {
       "bytes": 27209,
       "sha256": "f95b10545a2cf20b78573f86509a5ca7f8012d4ce66bf1f203ed1c6931e750ec"
+    },
+    "_tmp_calib_run.txt": {
+      "bytes": 16756,
+      "sha256": "7357a83f7e0409a94154545eed01df32e39dd7a022960965c7baf31af7d43004"
+    },
+    "_tmp_rule_run.txt": {
+      "bytes": 16734,
+      "sha256": "0bfacfb1a69be13d860305a84ae21295a14f9e459af8e935cc69ad45cde6ba55"
     },
     "artifacts/comparison.json": {
       "bytes": 9854,
@@ -141,6 +149,38 @@
     "artifacts/tracks/blend_rul.json": {
       "bytes": 719,
       "sha256": "c82efc4505ec89fe383ccb3f389c77611fac8ae86fbe32ecabb4e4b0fd5ce77f"
+    },
+    "artifacts/tracks/c_calibrate_mid.json": {
+      "bytes": 78253,
+      "sha256": "447ae8ed3bdbc6751475079e465833e0e03682442b63f6477bba318488145751"
+    },
+    "artifacts/tracks/c_calibrate_small.json": {
+      "bytes": 32662,
+      "sha256": "b20da8939dbff420ee438c2d9d9eac4b109ee70351223da3c581b2d9a5a81818"
+    },
+    "artifacts/tracks/c_holdout.json": {
+      "bytes": 96601,
+      "sha256": "f4b0c0fc3951e0e5c610e794f6081471d0683a93df008df5cb84eabb0aca9499"
+    },
+    "artifacts/tracks/c_holdout_smoke.json": {
+      "bytes": 4234,
+      "sha256": "aa989cdd1e219ff0ef7f7f9442b952ff863bc80908c5910c6a4701d49d1ab567"
+    },
+    "artifacts/tracks/c_protocol.json": {
+      "bytes": 21438,
+      "sha256": "5630a06eeba8c9dc9445dd847d22757c69285ad5ade45d79737abe68d843c07f"
+    },
+    "artifacts/tracks/c_protocol_smoke.json": {
+      "bytes": 738,
+      "sha256": "1bd67a5018db66e5b2c43acf3da6852ddccce1e3b84aaf01ce1d121b4c3ef6a7"
+    },
+    "artifacts/tracks/c_rule.json": {
+      "bytes": 90604,
+      "sha256": "290b97c598bfbb4d25e6cd77902825cb3ceab091b7bb402edc0e5213215f687c"
+    },
+    "artifacts/tracks/c_rule_small.json": {
+      "bytes": 90580,
+      "sha256": "5f7dd597206d64adacaaaddd56dec940ad12c6fc95995feb67a5af755c361be4"
     },
     "artifacts/tracks/c_weight_priors.json": {
       "bytes": 403333,
@@ -433,6 +473,10 @@
     "docs/RUNBOOK.md": {
       "bytes": 7209,
       "sha256": "77059e91b33ec0f780c8b375f72f0bdbf86baaf428c648fc4d6f32d858d8727b"
+    },
+    "docs/SELECTION_RULE_DECISION_20261124.md": {
+      "bytes": 15071,
+      "sha256": "95cb4204e73b14e32792a8dc29bf087f2db7aaa619cadec3815de0174f65d0fc"
     },
     "docs/SOLUTION.md": {
       "bytes": 15467,
@@ -937,6 +981,22 @@
     "research/tracks/blend_rul.py": {
       "bytes": 10803,
       "sha256": "ab13bd40d906a4d3b3246430e2e50ab4c070ed17de05df92c65de7799113b619"
+    },
+    "research/tracks/c_calibrate.py": {
+      "bytes": 6085,
+      "sha256": "e5db3a37ec82e1ac8db500039b0c84bba0735e9f250fda777ad1e78a03d9b4c6"
+    },
+    "research/tracks/c_holdout.py": {
+      "bytes": 8955,
+      "sha256": "a20172b44362991b69e34c18032505888aa9681f3c58ab34c986872897c0bb33"
+    },
+    "research/tracks/c_protocol.py": {
+      "bytes": 11191,
+      "sha256": "c5324aec2ed4e3f302a5163ae1c707071ca70810c922b5fc051fec657c6340b3"
+    },
+    "research/tracks/c_rule.py": {
+      "bytes": 11017,
+      "sha256": "ad7347a2a05a2e2a88b3a571b5e0a4c62dd78f8eaef4012bd03ece949651dcb5"
     },
     "research/tracks/c_weight.py": {
       "bytes": 15222,
