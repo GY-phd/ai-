@@ -17,8 +17,7 @@
 
 | 文件 | 大小 | SHA256 |
 | --- | --- | --- |
-| `zhixun-engine-linux-amd64.tar` | 174.3 MiB | `5fb7ef173e6df951396201d285a3220e355c5c59ae407cd4f2810e713a499c3f` |
-| `dist/zhixun-engine-linux-amd64.tar` | 同上（同一文件） | 同上 |
+| `zhixun-engine-linux-amd64.tar` | 174.3 MiB | `ffc64b8e95e7d98ddeae37f186c27cee6236efe18d5c0f3b89e4b3982abf03eb` |
 | `zhixun-engine-linux-amd64.tar.sha256` | 校验和旁挂文件 | — |
 
 镜像属性（`--verify-only` 校验通过）：
@@ -327,11 +326,19 @@ python tools/run_harness_offline.py --rounds 10 --live --out runs/harness-offlin
 （**−10.4%**，看起来是本轮最大的一次提升），但**全量**指标同时劣化了
 **+7.31%**，超出 5% 的守门容差，所以候选被否决、父模型保留。
 
-这正是平台 2026-11-22 试运行踩到的坑：当时上线的候选在隐藏集上
-**56.253**，比 52.8686 的静态基线**差 6.40%**，违反平台
-「效果不低于平台基线」的硬性要求——而公开切分**低估**了隐藏难度
-（51.111 公开 vs 56.253 隐藏，差 +10.06%）。
-只看全量会漏判，只看切片也会误判，**两者并列**才拦得住。
+> ⚠️ **2026-11-24 修订：上面这条「两者并列才拦得住」的结论已被推翻。**
+> 12 折留一轴承实验证明**任何**截断切片与留出集真值都**负相关**
+> （ρ = −0.27 ~ −0.53），按切片选型会稳定地选出**垫底**候选
+> （12/12 折选出 `cap150`，在留出引擎上 RMSE 73.73 vs 基线 59.87）。
+> **用切片参与判决本身就是隐藏分 56.25329 的成因**，
+> 而不只是"公开集低估隐藏难度"。
+>
+> 现行的正确规则是：**判决只看全量验证 RMSE**，
+> 切片降级为**纯记录**（不再否决改进，也不挽救退化）；
+> 训练权重同时从绝对阈值改为**相对退化度**
+> `w = 1 + α·(1 − y/u_max)`，epoch 预算提到 32–75。
+>
+> 完整证据与代码改动见 `docs/SELECTION_SLICE_ROOT_CAUSE_20261124.md`。
 
 产物：`runs/harness-offline/run_report.json`、`runs/harness-offline/ledger.jsonl`，
 以及 `runs/harness-offline/swanlab/<数据集>-round-<n>.jsonl`（逐轮实验记录）。
@@ -340,11 +347,10 @@ python tools/run_harness_offline.py --rounds 10 --live --out runs/harness-offlin
 
 1. 在 `https://rsi-index.115.zone/#submissions` 上传
    `zhixun-engine-linux-amd64.tar`（174.3 MiB 的**未压缩** tar，不要打包成 zip）。
-   SHA256：`5fb7ef173e6df951396201d285a3220e355c5c59ae407cd4f2810e713a499c3f`。
-   > **必须上传新包**：上一版（`9e6c1415…`）在试运行时被拒，根因见 §3.5；
-   > 再上一版（`a5474acf…`）能上传但试运行报「模型服务暂不可用」，根因见 §3.6；
-   > 第三版（`fd5fe06f…`）能跑完，但试运行的隐藏分 **56.253** 比基线
-   > **差 6.40%**，违反「效果不低于平台基线」，根因见 §7 与 §8。
+   SHA256：`ffc64b8e95e7d98ddeae37f186c27cee6236efe18d5c0f3b89e4b3982abf03eb`。
+   > **必须上传新包**：当前这一版（`ffc64b8e…`）带上了 2026-11-24 的
+   > C 方向根因修复（切片降级为记录、判决只看全量 RMSE、相对退化度加权、
+   > epoch 预算 32–75）；历史版本的失败记录见 §7 与 §8。
 2. 平台会依次执行 `describe` → `train` × 10 → `predict`。
    入口声明通过**不代表**训练、预测和比赛要求都已通过。
 3. **模型选 `Qwen/Qwen3.8-27B`**（赛题白名单内，见

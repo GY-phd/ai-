@@ -1,7 +1,7 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 7306666,
+  "total_bytes": 7312129,
   "file_count": 423,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
@@ -451,8 +451,8 @@
       "sha256": "6b1763f3c33593922cb8bfd8fd2312ca60c0fdc85156945053f369b052bb6ccc"
     },
     "docs/C_WEIGHTING.md": {
-      "bytes": 15336,
-      "sha256": "df05c1816451b0dc3081f1afc7c2f4559f638f718d09b8dd770efba82cb0d88e"
+      "bytes": 16102,
+      "sha256": "59895cf443fdf506519fcd1c11547525400c487a95451f929a84df18b6b40ada"
     },
     "docs/DECISIONS.txt": {
       "bytes": 1752,
@@ -467,8 +467,8 @@
       "sha256": "cd82dec30ba59084facebd8febc332c4d62df683b66a21abfd65052594c0f1ba"
     },
     "docs/HARNESS_INTEGRATION_RECORD.md": {
-      "bytes": 21393,
-      "sha256": "fe72d395125e1db2b549fc3160aab20679d40a8a565e8e610b8c0628aa749f92"
+      "bytes": 21634,
+      "sha256": "8e39af5dd14d61005f0935cce9da8f344105fe96afddd8db0dd4212805a4dbd0"
     },
     "docs/INDUSTRIAL_CPU_CHECK.md": {
       "bytes": 7313,
@@ -479,20 +479,20 @@
       "sha256": "bb851ae9a0543988e272b4082af27a78b1a6472e624a198e9fd8688c6bb102c5"
     },
     "docs/PLATFORM_REPORT_REVIEW.md": {
-      "bytes": 20645,
-      "sha256": "7b2f602a58cffa605ba9d8f938fb6b7b36dc4af507dd4728ebe9e8e17fa6092b"
+      "bytes": 21075,
+      "sha256": "e4b01d2797acb752edcf0f9362a32ad881267c9de7c2173a817f0cbe03ee0368"
     },
     "docs/PLATFORM_RUN_20261123_ANALYSIS.md": {
-      "bytes": 5851,
-      "sha256": "c8869434a85d703357233d3c9bce078c5bbfc087d5bafc1d2f447a9057b7ab4e"
+      "bytes": 6204,
+      "sha256": "bc6bfb0622eb24784500715d5463dcaaf0de9c6d9c27a60310db1d1a46e29932"
     },
     "docs/RUNBOOK.md": {
       "bytes": 7209,
       "sha256": "77059e91b33ec0f780c8b375f72f0bdbf86baaf428c648fc4d6f32d858d8727b"
     },
     "docs/SELECTION_RULE_DECISION_20261124.md": {
-      "bytes": 15897,
-      "sha256": "3e16055e4001ad330b5e024ff70af7ed2477998fab31809458ec08257540bfcf"
+      "bytes": 16774,
+      "sha256": "e2fe9f04708748fca94def7b41f0dabe9f37174b89bc0d480091e1bcfd82f9bc"
     },
     "docs/SELECTION_SLICE_ROOT_CAUSE_20261124.md": {
       "bytes": 13339,
@@ -515,16 +515,16 @@
       "sha256": "df258b3008aeffaab44033d521d088c00222ee9937d5020e0a3d36ff703e7bf4"
     },
     "docs/作品文档.md": {
-      "bytes": 10743,
-      "sha256": "0c29355370dd45a30e76a8ac5b7ef571a8e12888edf3cc118496e2cd43daed54"
+      "bytes": 12191,
+      "sha256": "311a203a26fa6d069c7e2c53b418cdbbf61ad0abf294b21938e43eec5c5658bd"
     },
     "docs/实验计划.md": {
       "bytes": 3588,
       "sha256": "b218dd2bf1230aa184b4c3b1302c2f2730688f8a97f41ddf029cda96b784290b"
     },
     "docs/平台提交表单填写指南.md": {
-      "bytes": 24311,
-      "sha256": "3228b2c8dadee712496c53dc201611198b58abcc45cbf7be767f12bf967bb5c0"
+      "bytes": 25659,
+      "sha256": "efee96fd7088d31ed8acdb7aba5483b7d69ffde80bc4d63a639b24141fb4e599"
     },
     "docs/数据适配说明.md": {
       "bytes": 4237,
