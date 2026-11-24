@@ -1,8 +1,8 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 7454133,
-  "file_count": 438,
+  "total_bytes": 72575034,
+  "file_count": 451,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
   "files": {
@@ -518,6 +518,46 @@
       "bytes": 12957,
       "sha256": "df258b3008aeffaab44033d521d088c00222ee9937d5020e0a3d36ff703e7bf4"
     },
+    "docs/figures/fig01_十轮收敛.png": {
+      "bytes": 292783,
+      "sha256": "e8fd05fe2ad5db2c9f6085a414e21beb5565e5850e4877cf2e2d405f1fdef54a"
+    },
+    "docs/figures/fig02_平台实测成绩.png": {
+      "bytes": 152711,
+      "sha256": "44afdd00b629c28b44b7dd78f61e6b41645f87ae7bb6669bb43788fda12cdf20"
+    },
+    "docs/figures/fig03_切片口径负相关根因.png": {
+      "bytes": 248700,
+      "sha256": "9782826f11355ec8a083246753d3a6927b527c201d391f6ca6cbfcdc02dbc69f"
+    },
+    "docs/figures/fig04_行数巧合与机理.png": {
+      "bytes": 204223,
+      "sha256": "ca75dbf95dcae09268fb6f9c327659ae20717f22fd6c56c0d2d79309e2f7549a"
+    },
+    "docs/figures/fig05_epoch预算扫描.png": {
+      "bytes": 190600,
+      "sha256": "13d7328b6e7116ade7aa2be54f24b2f0e7068dd77a96527d1c684a9f21723756"
+    },
+    "docs/figures/fig06_训练加权受控对比.png": {
+      "bytes": 229695,
+      "sha256": "33a7cc082509fca6bc6bb07f06f61a3b5298d99ddd2d0b3cfd587fae62d7b31e"
+    },
+    "docs/figures/fig07_逐轮采纳与护栏.png": {
+      "bytes": 214413,
+      "sha256": "ab62afdaed0f772ef40f1bfd8f723cf97b991c69732e7fdd052bf3d1143607f4"
+    },
+    "docs/figures/fig08_27B决策层LoRA.png": {
+      "bytes": 150875,
+      "sha256": "51eb2b423bb878fa9a9bc862dd6bc8a321b5da14a7110a82f0e8a74b9b2406ab"
+    },
+    "docs/figures/fig09_系统架构与四道闸门.png": {
+      "bytes": 213824,
+      "sha256": "8556111184ac40969bd1af40ba64f1ce9fc975c14b565c3bbb6db7bdba36bbb4"
+    },
+    "docs/figures/fig10_失败诊断与镜像体积.png": {
+      "bytes": 178966,
+      "sha256": "dfe6230cd5fc17eda60c42ab5f4f6fce8981ec11ad86ad2c0f416bdbb29fedfd"
+    },
     "docs/作品文档.md": {
       "bytes": 12191,
       "sha256": "311a203a26fa6d069c7e2c53b418cdbbf61ad0abf294b21938e43eec5c5658bd"
@@ -559,8 +599,12 @@
       "sha256": "8f7fe3e684d2ce502f8466ba2496f0fe129726f3c9438354d3febb2cb81067c4"
     },
     "docs/答辩PPT内容大纲.md": {
-      "bytes": 18305,
-      "sha256": "4009cfe70fe64ccb9b904174d57eb0d0f3c4dfb363c8d84d7c4727a3908bb96f"
+      "bytes": 20179,
+      "sha256": "6cb6e1614684c2a3774461dcb3e65f8c167e47e95fd6434e8aaf8a374a10ce90"
+    },
+    "docs/答辩PPT配图索引.md": {
+      "bytes": 6909,
+      "sha256": "0fdd9d1e30a95ce526a7e7d04058f499b195c010258a1b669b62bc6725179f44"
     },
     "docs/系统运行说明.md": {
       "bytes": 16362,
@@ -1522,6 +1566,10 @@
       "bytes": 17920,
       "sha256": "d80ba68259b7fb7e882a2c34b6531844c2cd7a8fa3c2f7268881bc393ebbff99"
     },
+    "tools/build_ppt_figures.py": {
+      "bytes": 36232,
+      "sha256": "c3b7309a82f511e96fadfcba982c935c1b56fc78e5e31157008e10f8549a6829"
+    },
     "tools/build_source_archive.py": {
       "bytes": 4560,
       "sha256": "b29f6336e52141a1439e09bb8915cbcd32b6e6e248c5daa6ef2010d0bf4a4d47"
@@ -1753,6 +1801,10 @@
     "基岩智序-完整调试过程.md": {
       "bytes": 34082,
       "sha256": "41af2805dcd5bd89da527aa2c6dc638078f0f363eaf21c86f717c760c42414be"
+    },
+    "提交材料_20261125.zip": {
+      "bytes": 62999096,
+      "sha256": "9a7ae94361ab953ab7eceab6af7a01a0840e1e546059bdb3b5dd1ad49372246a"
     },
     "智训引擎-系统总思路.md": {
       "bytes": 19973,
