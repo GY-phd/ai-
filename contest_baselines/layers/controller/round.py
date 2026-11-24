@@ -306,12 +306,14 @@ class RoundController:
         confirmation.  A change that improved the score for a reason
         other than the one claimed is not evidence for the claim.
 
-        The verdict is a **conjunction** when the profile exposes a
-        protocol-aligned selection slice: the full split must not
-        regress *and* the slice must improve.  See
+        The verdict is the **full split**, which is the only reading
+        that predicts the hidden outcome.  A profile's protocol-aligned
+        slice is still measured and still recorded, but it no longer
+        decides: the leave-one-engine-out study documented in
         :func:`contest_baselines.layers.model.metrics.compare_joint`
-        for why neither metric alone is enough - the platform's own
-        2026-11-22 run is the evidence.
+        shows every truncated slice is anti-correlated with the
+        held-out result, and selecting by one beats the baseline in 0 of
+        12 folds.
         """
         self.verdict = compare_joint(self.parent_record, self.candidate_record,
                                      self.parent.task)

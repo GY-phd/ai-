@@ -180,30 +180,67 @@ class Adapter:
         """
         return self.test_horizon()
 
+    def degradation_alpha(self):
+        """How strongly the relative-degradation weight leans on the tail.
+
+        The weight is ``1 + alpha * (1 - RUL / unit_lifetime)``, so
+        ``alpha = 0`` is an unweighted loss and a larger ``alpha`` moves
+        more mass onto the rows near the end of a unit's life.  The
+        leave-one-engine-out study picked ``0.5`` as the value that wins
+        on the held-out engines most often, so that is the default.
+        """
+        return 0.5
+
     def selection_view(self, data, predicted):
         """An optional protocol-aligned validation measurement.
 
         Returns ``{"name", "value", "n"}`` or ``None``.  When it is
-        present, the round decision compares this value **together with**
-        the full-split primary metric - the full split must not regress
-        and this slice must improve - while the full metric stays in the
-        record as the safety reading.  The default has no such view.
+        present, the round records it next to the full-split primary
+        metric, and it is **not** a decision input.  The default has no
+        such view.
 
-        Why the conjunction and not either metric alone
-        -------------------------------------------------
-        The platform's 2026-11-22 run is the evidence.  The deployed
-        candidate scored 56.25329 on the hidden set against a 52.8686
-        baseline, and two facts about the public split explain it:
+        Why the slice is evidence and not a decision
+        ---------------------------------------------
+        The slice was the decision input until 2026-11-23, when the
+        platform's own run showed the rule and the outcome disagreeing:
+        the round-7 candidate had the best full-split score of the whole
+        run (50.878) and was rejected because its slice moved the other
+        way, while the round-5 candidate that the rule did adopt
+        (51.111) was the one deployed - and it scored 56.25329 on the
+        hidden set against a 52.8686 baseline.
 
-        * the public split **under-estimates** the hidden difficulty for
-          the truncated profile (51.111 public against 56.253 hidden),
-          so the full split alone does not rank candidates correctly;
-        * the candidate with the **best** full-split score (50.907) was
-          *not* the deployed one, so a slice was in play after all - and
-          that slice is invisible in the platform's report, so it cannot
-          be the sole judge either.
+        A leave-one-engine-out study on the public data
+        (``research/tracks/c_horizon.py``; 12 engine folds, two seeds,
+        11 recipes) then measured *why*, by comparing every truncation
+        of the remaining life against the held-out full split on engines
+        the model had never seen:
 
-        A conjunction is the only rule that satisfies both findings.
+        ==================  ========  =========  ==============
+        slice               rho      top-1 rank  beats baseline
+        ==================  ========  =========  ==============
+        ``y <= 50``         -0.274   9.42 / 11  1 / 12
+        ``y <= 90``         -0.499   11.00 / 11  0 / 12
+        ``y <= 150``        -0.534   11.00 / 11  0 / 12
+        ``y <= 200``        -0.392   10.17 / 11  0 / 12
+        ``y <= 250``        +0.269   5.67 / 11   4 / 12
+        **full split**      **+1.0** **1.00**    **7 / 12**
+        ==================  ========  =========  ==============
+
+        Every truncated slice is anti-correlated with what the hidden
+        pack rewards, on 9 to 10 folds of 12.  Selecting by one picks,
+        in 12 of 12 folds, the ``cap150`` recipe - the worst candidate
+        on the full split - and beats the baseline in 0 of 12 folds.
+
+        The mechanism is structural: a truncated slice covers exactly
+        the region a recipe's training weights concentrate on, so the
+        recipe wins the slice by construction while losing accuracy
+        everywhere the slice cannot see.  The hidden pack scores 9 687
+        rows against the public split's 23 049, so it *is* a truncation
+        - but which truncation is not knowable from the public data,
+        and every plausible one points the wrong way.
+
+        So the full split decides, and the slice stays on the record so
+        the disagreement is auditable.
         """
         return None
 
@@ -228,48 +265,6 @@ class Adapter:
         """
         return {}
 
-    # ----------------------------------------------------- selection protocol
-    def test_horizon(self):
-        """The remaining-life horizon the hidden test is bounded by.
-
-        ``None`` means "this profile's hidden protocol is the same as its
-        public validation split", in which case the full validation RMSE
-        is the right number to select on.  A profile whose hidden rows are
-        truncated snapshots returns the horizon (in the target's unit) so
-        the training and the selection views can both be bounded.
-        """
-        return None
-
-    def weight_horizon(self):
-        """The remaining-life horizon the training weights target.
-
-        Defaults to the protocol/selection horizon.  A profile may target
-        a narrower training window than the one used to select the model;
-        the two are separate because the hidden truncation distribution
-        and the public selection slice need not be bounded the same way.
-        """
-        return self.test_horizon()
-
-    def selection_view(self, data, predicted):
-        """An optional protocol-aligned validation measurement.
-
-        Returns ``{"name", "value", "n"}`` or ``None``.  When it is
-        present, the round decision compares this value instead of the
-        full-split primary metric, while the full metric stays in the
-        record as a safety reading.  The default has no such view.
-        """
-        return None
-
-    def selection_guard(self):
-        """How much the full-split primary metric may regress.
-
-        Only consulted when ``selection_view`` returns a measurement.
-        A small regression on the full split is acceptable when the
-        protocol-aligned slice improves, but the full split must not be
-        abandoned: the hidden pack is a different dataset, and a model
-        that is only good on the bounded slice is fragile.
-        """
-        return 0.10
 
     def resize_hidden(self, task):
         """The hidden width a capacity migration should target.

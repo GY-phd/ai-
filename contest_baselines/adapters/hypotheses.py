@@ -143,6 +143,25 @@ THE_TEST_IS_TRUNCATED = Hypothesis(
     profiles={"C"},
 )
 
+DEGRADATION_IS_RELATIVE = Hypothesis(
+    key="the-degradation-is-relative",
+    claim="What the loss should emphasise is how far a unit has *degraded* "
+          "relative to its own lifetime, not how large its remaining life "
+          "is on an absolute scale.  An absolute threshold treats the "
+          "middle of a 400-cycle engine as end-of-life while treating the "
+          "start of a 500-cycle engine as fresh, so it mislabels the very "
+          "rows that carry the signal.",
+    change="Weight every training row by its unit-relative remaining life: "
+           "`1 + alpha * (1 - RUL / unit_lifetime)`.  The weight is a "
+           "loss-mass change only - no row is duplicated, the feature schema "
+           "is untouched, and prediction still needs only `inputs`.",
+    falsifier="If the full-split RMSE on engines held out from training does "
+              "not fall, the relative framing is not the better one.",
+    expect="Full-split RMSE falls, and the gain holds on held-out engines "
+           "rather than only on the training distribution.",
+    profiles={"C"},
+)
+
 UNIT_IS_CONFOUNDER = Hypothesis(
     key="the-unit-is-the-confounder",
     claim="The model cannot tell which unit a row came from, so it "
@@ -226,6 +245,7 @@ BANK = (
     TAIL_UNDERWEIGHTED,
     TAIL_WEIGHTED,
     THE_TEST_IS_TRUNCATED,
+    DEGRADATION_IS_RELATIVE,
     UNIT_IS_CONFOUNDER,
     CAPACITY,
     RARE_CLASS_UNDERWEIGHTED,

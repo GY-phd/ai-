@@ -177,9 +177,16 @@ class AdapterContractTest(unittest.TestCase):
         # that "效果不低于平台基线".  A 12% guard admits exactly that
         # size of full-split regression; 5% does not.
         self.assertEqual(c.selection_guard(), 0.05)
-        # C narrows the *training* window to 150 cycles while the
-        # selection view stays at the full 200-cycle protocol bound.
-        self.assertEqual(c.weight_horizon(), 150.0)
+        # The *training* weights no longer use an absolute window.
+        #
+        # The 2026-11-22 search put the training window at 150 cycles and
+        # optimised a truncated proxy; that proxy turned out to be
+        # anti-correlated with the held-out outcome (see
+        # ``research/tracks/c_horizon.py``), and an absolute cut also
+        # mislabels the middle of a long-lived engine as end-of-life.
+        # The relative-degradation weight replaced it.
+        self.assertIsNone(c.weight_horizon())
+        self.assertEqual(c.degradation_alpha(), 0.5)
         self.assertEqual(c.test_horizon(), 200.0)
 
     def test_a_and_b_have_no_selection_view(self):

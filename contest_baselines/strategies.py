@@ -269,6 +269,38 @@ def prepare(hypothesis, model, train, profile_key, seed, adapter=None):
             changed["weight_min"] = round(float(weights.min()), 4)
             changed["weight_max"] = round(float(weights.max()), 4)
 
+    elif hypothesis.key == "the-degradation-is-relative":
+        # Relative degradation, not an absolute remaining-life threshold.
+        #
+        # The absolute-threshold family (`surv`/`cap`: "this row is
+        # late because RUL < 150") was measured on 12 engine folds over
+        # two seeds and was **anti-correlated** with the held-out
+        # outcome: every truncation from `y <= 50` to `y <= 200`
+        # ranked candidates with rho between -0.27 and -0.53, and
+        # selecting by one beat the baseline in 0 of 12 folds.  The
+        # reason is structural - an absolute cut mislabels the middle of
+        # a long-lived engine as end-of-life, so the recipe wins the
+        # truncated view by construction while losing accuracy over the
+        # life cycle the view cannot see.
+        #
+        # The relative form has no such failure mode: the weight depends
+        # on where a row sits inside **its own unit's** life, so it is
+        # scale-free and every unit is treated the same way.
+        if task != "regression":
+            changed["skipped"] = ("profile %s is not a regression task"
+                                  % adapter.key)
+        else:
+            relative = _unit_shortness(y, units)
+            alpha = float(adapter.degradation_alpha())
+            weights = 1.0 + alpha * relative
+            model.sample_weight = np.asarray(weights, dtype=np.float64)
+            changed["sample_weight"] = ("1 + %g * unit-relative remaining life"
+                                          % alpha)
+            changed["weight_alpha"] = alpha
+            changed["weight_mean"] = round(float(weights.mean()), 4)
+            changed["weight_min"] = round(float(weights.min()), 4)
+            changed["weight_max"] = round(float(weights.max()), 4)
+
     elif hypothesis.key == "the-unit-is-the-confounder":
         # The unit's elapsed-observation count would be the natural way to
         # expose the unit's identity, but it **cannot be used as a model
@@ -408,6 +440,21 @@ def epoch_budget(hypothesis, round_index, wall_seconds=None, adapter=None):
     """
     base = {"more-data-helps": 30, "the-parent-was-left-unconverged": 30,
             "the-tail-is-underweighted": 40, "the-test-is-truncated": 40,
+            # The relative-degradation weight is the one profile C spends
+            # its budget on, and the budget is what moves the score: on
+            # held-out engines, 80 epochs beats the baseline on 11 of 12
+            # folds (mean -0.655 RMSE, Wilcoxon p = 0.034) where 20
+            # epochs beats it on 5 of 12 (mean +0.358).  See
+            # ``research/tracks/c_epochs.py``.
+            #
+            # The base is 65 rather than 80 so that the ten rounds stay
+            # **strictly increasing** (a base of 70 would reach the 150
+            # cap at round 9 and repeat the budget at round 10, which
+            # breaks the rule that a repeated hypothesis must still be a
+            # different experiment).  Profile C halves it, so its first
+            # round runs 32 epochs and its last runs 75 - the range the
+            # study measured.
+            "the-degradation-is-relative": 65,
             "the-unit-is-the-confounder": 40,
             "capacity-is-overfitting": 40, "rare-class-is-underweighted": 30,
             "the-batch-is-mixing-scales": 30,

@@ -56,7 +56,15 @@ def _classification(primary, selection=None, selection_name=None):
 
 
 class CompareJointTest(unittest.TestCase):
-    """The conjunction."""
+    """The verdict: the full split decides.
+
+    The slice used to be half of a conjunction.  It is now evidence:
+    measured, recorded, and not able to veto a full-split gain or to
+    rescue a full-split regression.  The leave-one-engine-out study in
+    ``research/tracks/c_horizon.py`` is the reason - every truncated
+    slice is anti-correlated with the held-out outcome and selecting by
+    one beat the baseline in 0 of 12 folds.
+    """
 
     def test_a_profile_without_a_slice_keeps_the_plain_rule(self):
         before = _regression(10.0)
@@ -75,23 +83,27 @@ class CompareJointTest(unittest.TestCase):
     def test_the_slice_improving_cannot_buy_a_full_split_regression(self):
         before = _regression(10.0, 8.0, "late_rmse")
         after = _regression(11.0, 7.0, "late_rmse")
-        self.assertEqual(compare_joint(before, after, "regression"), CONFLICT)
+        self.assertEqual(compare_joint(before, after, "regression"), WORSE)
 
-    def test_the_full_split_improving_cannot_buy_a_flat_slice(self):
-        """The slice is the objective, so it has to move."""
+    def test_the_full_split_improving_is_adopted_even_with_a_flat_slice(self):
         before = _regression(10.0, 8.0, "late_rmse")
         after = _regression(9.5, 8.0, "late_rmse")
-        self.assertEqual(compare_joint(before, after, "regression"), CONFLICT)
+        self.assertEqual(compare_joint(before, after, "regression"), BETTER)
 
     def test_a_flat_full_split_with_a_better_slice_adopts(self):
         before = _regression(10.0, 8.0, "late_rmse")
         after = _regression(10.0, 7.0, "late_rmse")
         self.assertEqual(compare_joint(before, after, "regression"), BETTER)
 
-    def test_a_regressed_slice_is_a_conflict_even_if_the_full_split_held(self):
+    def test_a_regressed_slice_does_not_veto_a_full_split_gain(self):
         before = _regression(10.0, 8.0, "late_rmse")
-        after = _regression(10.0, 9.0, "late_rmse")
-        self.assertEqual(compare_joint(before, after, "regression"), CONFLICT)
+        after = _regression(9.5, 9.0, "late_rmse")
+        self.assertEqual(compare_joint(before, after, "regression"), BETTER)
+
+    def test_a_regressed_full_split_loses_even_with_a_better_slice(self):
+        before = _regression(10.0, 8.0, "late_rmse")
+        after = _regression(11.0, 7.0, "late_rmse")
+        self.assertEqual(compare_joint(before, after, "regression"), WORSE)
 
     def test_nothing_moved_is_the_same(self):
         before = _regression(10.0, 8.0, "late_rmse")
@@ -103,8 +115,7 @@ class CompareJointTest(unittest.TestCase):
         better = _classification(0.85, 0.75, "balanced_f1")
         worse = _classification(0.75, 0.75, "balanced_f1")
         self.assertEqual(compare_joint(before, better, "classification"), BETTER)
-        self.assertEqual(compare_joint(before, worse, "classification"),
-                         CONFLICT)
+        self.assertEqual(compare_joint(before, worse, "classification"), WORSE)
 
     def test_a_missing_record_is_the_same(self):
         before = _regression(10.0, 8.0, "late_rmse")

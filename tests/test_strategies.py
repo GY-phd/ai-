@@ -221,8 +221,8 @@ class DegradationWeightTest(unittest.TestCase):
         self.assertTrue(np.isfinite(losses[0]))
 
 
-class TruncatedTestWeightTest(unittest.TestCase):
-    """The C-only truncated-test hypothesis changes loss mass, nothing else."""
+class RelativeDegradationWeightTest(unittest.TestCase):
+    """The C-only relative-degradation hypothesis changes loss mass, nothing else."""
 
     @staticmethod
     def _sequence_train(units=4, length=500, features=5):
@@ -237,36 +237,92 @@ class TruncatedTestWeightTest(unittest.TestCase):
                 "y": np.asarray(y, dtype=np.float64),
                 "paths": ["f%d" % i for i in range(features)]}
 
-    def test_long_rul_rows_lose_mass(self):
-        hypothesis = next(h for h in BANK if h.key == "the-test-is-truncated")
+    @staticmethod
+    def _mixed_life_train(features=5):
+        """Units with very different lifetimes.
+
+        The absolute-threshold family mislabels these: a cut at
+        ``RUL <= 150`` calls the middle of a 400-cycle engine
+        end-of-life while calling the start of a 500-cycle engine fresh.
+        The relative form does not, because it never uses an absolute
+        threshold.
+        """
+        ids, x, y = [], [], []
+        rng = np.random.default_rng(7)
+        for unit, length in enumerate((120, 400, 500)):
+            for remaining in range(length, 0, -1):
+                ids.append("fd001_train_u%04d_c%05d" % (unit, length - remaining))
+                x.append(rng.normal(0, 1, features))
+                y.append(float(remaining))
+        return {"ids": ids, "x": np.asarray(x, dtype=np.float64),
+                "y": np.asarray(y, dtype=np.float64),
+                "paths": ["f%d" % i for i in range(features)]}
+
+    def test_the_weight_is_relative_to_each_unit(self):
+        hypothesis = next(h for h in BANK if h.key == "the-degradation-is-relative")
         model = _model("regression")
         train = self._sequence_train()
         x, y, changed = prepare(hypothesis, model, train, "C", 42)
         weights = model.sample_weight
         self.assertIn("sample_weight", changed)
-        self.assertEqual(changed["horizon"], 150.0)
-        self.assertEqual(changed["selection_horizon"], 200.0)
-        self.assertEqual(changed["weight_shape"], "uniform")
-        self.assertEqual(changed["weight_floor"], 0.05)
+        self.assertEqual(changed["weight_alpha"], 0.5)
         self.assertEqual(len(weights), len(y))
         self.assertTrue(np.all(np.isfinite(weights)))
-        self.assertTrue(np.all(weights >= 0))
-        self.assertAlmostEqual(float(weights.mean()), 1.0, places=9)
-        inside = (y > 0) & (y <= 200)
-        outside = y > 400
-        self.assertLess(float(weights[outside].mean()),
-                        float(weights[inside].mean()),
-                        "the long-RUL region must carry less mass")
+        self.assertTrue(np.all(weights >= 1.0))
+        # 1 at a unit's first snapshot, 1 + alpha at its last.
+        # (The last row has RUL 1, not 0, so the extreme is just under
+        # 1 + alpha - the weight is a smooth function of the position in
+        # the unit's life, not a step at the boundary.)
+        self.assertAlmostEqual(float(weights.min()), 1.0, places=9)
+        self.assertAlmostEqual(float(weights.max()), 1.5, places=2)
         losses = model.fit(x, y, 1, sample_weight=weights)
         self.assertTrue(np.isfinite(losses[0]))
 
-    def test_a_profile_without_a_horizon_skips_instead_of_weighting(self):
-        hypothesis = next(h for h in BANK if h.key == "the-test-is-truncated")
+    def test_the_weight_does_not_use_an_absolute_threshold(self):
+        """The failure mode of the absolute family, fixed.
+
+        With units of 120, 400 and 500 cycles, the absolute cut at 150
+        would give the 120-cycle unit's *whole* life the tail weight and
+        the 500-cycle unit's first 350 cycles none.  The relative weight
+        gives every unit the same profile.
+        """
+        hypothesis = next(h for h in BANK if h.key == "the-degradation-is-relative")
+        model = _model("regression")
+        train = self._mixed_life_train()
+        x, y, _changed = prepare(hypothesis, model, train, "C", 42)
+        weights = model.sample_weight
+        units = np.asarray([i.rsplit("_c", 1)[0] for i in train["ids"]])
+        starts = []
+        ends = []
+        for name in np.unique(units):
+            rows = units == name
+            # The row with the largest RUL is the unit's first snapshot.
+            first = rows & (y == y[rows].max())
+            last = rows & (y == y[rows].min())
+            starts.append(float(weights[first].mean()))
+            ends.append(float(weights[last].mean()))
+        # Every unit has the same start weight, whatever its lifetime.
+        self.assertAlmostEqual(max(starts) - min(starts), 0.0, places=9)
+        self.assertAlmostEqual(starts[0], 1.0, places=9)
+        # The end weights differ by a hair, and only because the last
+        # row's remaining life is 1 rather than 0: the weight is
+        # `1 + alpha * (1 - RUL / lifetime)`, so a unit's last row
+        # sits at `1 + alpha * (1 - 1/lifetime)`.  What matters is
+        # that the spread is a rounding artefact of that offset and not
+        # a difference of scale - compare with the absolute family, where
+        # a 120-cycle unit's *whole* life would carry the tail weight.
+        self.assertLess(max(ends) - min(ends), 0.01)
+        for weight in ends:
+            self.assertGreater(weight, 1.4)
+
+    def test_a_classification_profile_skips_instead_of_weighting(self):
+        hypothesis = next(h for h in BANK if h.key == "the-degradation-is-relative")
         model = _model("classification")
         train = _train("classification")
         _x, _y, changed = prepare(hypothesis, model, train, "A", 42)
         self.assertIn("skipped", changed)
         self.assertFalse(hasattr(model, "sample_weight"))
+
 
 
 class BoundedPriorShapeTest(unittest.TestCase):

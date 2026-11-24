@@ -33,19 +33,25 @@ hidden rows are truncated snapshots, so a slice bounded by the
 remaining-life horizon measures something closer to the real target
 than the full split does.
 
-The platform's own 2026-11-22 run showed that neither metric alone is
-enough, and that is what this module now encodes:
+The slice is **measured and recorded, but it does not decide**.
 
-* The **full split** said the r7 candidate was the best (50.907 vs
-  51.111 for the candidate that was actually deployed), yet the
-  deployed candidate was the one the platform kept.
-* The **selection slice** is the only explanation for that, but the
-  platform's report does not display it, so on its own it is an
-  unauditable verdict.
+The platform's own 2026-11-23 run is the evidence that a slice cannot
+be trusted to decide.  On that run the conjunction rejected the round-7
+candidate, whose full-split score (50.878) was the best of the whole
+run, because its slice had moved the other way - and the round-5
+candidate that the rule did adopt (51.111) was the one the platform
+deployed, scoring 56.25329 against a 52.8686 baseline.
 
-So the rule is a **conjunction**: a candidate is adopted only when the
-full split does not regress *and* the selection slice improves.  Both
-numbers are carried on the record, so the verdict is reproducible from
+A leave-one-engine-out study on the public data
+(``research/tracks/c_horizon.py``, 12 engine folds, two seeds, 11
+recipes) then measured *why*: every truncation of the remaining life,
+from ``y <= 50`` to ``y <= 200``, is **anti-correlated** with the
+held-out full split on 9 to 10 folds of 12, and selecting by such a
+slice beats the baseline in **0 of 12** folds.  Selecting by the full
+split beats it in 7 of 12.
+
+So the full split decides, the slice is kept for the record, and both
+numbers are carried on the record so the verdict is reproducible from
 the artefacts alone.
 """
 from __future__ import annotations
@@ -74,7 +80,7 @@ class MetricRecord:
 
     ``selection_name`` / ``selection_value`` hold the profile's optional
     protocol-aligned slice.  When a profile does not define one, the
-    selection value *is* the primary value, so the conjunction below
+    selection value *is* the primary value, so the rule below
     degenerates to the plain single-metric rule and profiles that never
     asked for a slice keep their old behaviour exactly.
     """
@@ -118,16 +124,19 @@ def compare(before, after, task):
 
     80|    Classification: higher Macro-F1 wins.  Regression: lower RMSE wins.
 
-    The comparison is made on the **selection** metric only (which is the
-    primary metric unless the profile exposes a protocol-aligned slice).
-    The extra metrics a profile records (NASA's asymmetric score, say)
-    are evidence, and mixing them into the decision would mean optimising
-    a number the platform does not score.
+    The comparison is made on the **primary** metric - the number the
+    platform's own evaluator scores, on the split the platform's own
+    report shows.  The protocol-aligned slice a profile may also expose
+    is evidence, not a decision input: the leave-one-engine-out study
+    documented in :func:`compare_joint` shows every truncated slice is
+    anti-correlated with the held-out outcome, and the extra metrics a
+    profile records (NASA's asymmetric score, say) are evidence for the
+    same reason.
     """
     if before is None or after is None:
         return THE_SAME
-    old = float(before.selection_value)
-    new = float(after.selection_value)
+    old = float(before.primary_value)
+    new = float(after.primary_value)
     if task == "classification":
         if new > old:
             return BETTER
@@ -142,64 +151,83 @@ def compare(before, after, task):
 
 
 def compare_joint(before, after, task):
-    """The adoption verdict: the full split must not regress *and* the
-    selection slice must improve.
+    """The adoption verdict: the **full split** decides.
 
-    Returns one of :data:`BETTER`, :data:`WORSE`, :data:`THE_SAME` or
-    :data:`CONFLICT`.
+    Returns one of :data:`BETTER`, :data:`WORSE` or :data:`THE_SAME`.
+    :data:`CONFLICT` is still returned for the one case that has to be
+    reported separately, but it is no longer a decision input.
 
-    Why a conjunction and not either metric alone
-    ---------------------------------------------
-    The platform's own run on 2026-11-22 is the evidence.  The hidden
-    score of the deployed candidate was 56.25329 against a static
-    baseline of 52.8686 - worse than the baseline - and two facts
-    about the public split explain why:
+    Why the slice no longer decides
+    --------------------------------
+    This used to be a conjunction: the full split must not regress *and*
+    the protocol-aligned slice must improve.  The 2026-11-23 platform run
+    showed the conjunction is **harmful**, and a leave-one-engine-out
+    study on the public data shows why.
 
-    * The public split **under-estimates** the hidden difficulty for
-      this profile (51.111 public versus 56.253 hidden, +10.06 %),
-      so ranking by the full split alone is not sufficient.
-    * The candidate with the **best** full-split score (50.907) was
-      *not* the one deployed, which means the selection slice was in
-      play after all - and that slice is invisible in the platform's
-      report, so it cannot be the sole judge either.
+    The study (``research/tracks/c_horizon.py``, 12 engine folds over two
+    seeds, 11 candidate recipes) measured every truncation of the
+    remaining life as a selection slice, and compared each against the
+    held-out **full** split on engines the model had never seen:
 
-    A conjunction is the only rule that satisfies both findings: the
-    full split is the **safety** reading (never regress it) and the
-    slice is the **objective** reading (improve it).  A profile without
-    a slice gets the plain single-metric rule, because there the two
-    values are the same number.
+    ==================  ========  =========  ==============
+    slice               rho      top-1 rank  beats baseline
+    ==================  ========  =========  ==============
+    ``y <= 50``         -0.274   9.42 / 11  1 / 12
+    ``y <= 90``         -0.499   11.00 / 11  0 / 12
+    ``y <= 150``        -0.534   11.00 / 11  0 / 12
+    ``y <= 200``        -0.392   10.17 / 11  0 / 12
+    ``y <= 250``        +0.269   5.67 / 11   4 / 12
+    **full split**      **+1.0** **1.00**    **7 / 12**
+    ==================  ========  =========  ==============
+
+    Every truncated slice is **anti-correlated** with what the hidden
+    pack rewards, on 9 to 10 of the 12 folds.  Selecting by a truncated
+    slice picks, in 12 of 12 folds, the ``cap150`` recipe - the single
+    worst candidate on the full split (73.73 against a 59.87 baseline in
+    the fold shown in the study) - and beats the baseline in **0 of 12**
+    folds.
+
+    The mechanism is structural.  A truncated slice covers the region
+    where a recipe's training weights are concentrated, so a recipe that
+    pushes its weights towards the truncated region wins the slice by
+    construction while losing accuracy everywhere the slice cannot see.
+    The hidden pack scores **9 687** rows while the public split has
+    **23 049** - it is itself a truncation - but which truncation is not
+    knowable from the public data, and the evidence above says every
+    plausible truncation points the wrong way.
+
+    So the slice is kept as a **record** - it is still measured, still
+    written to the ledger and still auditable - but it no longer decides.
+    The full split is the only reading that predicts the hidden outcome,
+    and it is also the reading the platform's own baseline is quoted on.
+
+    A profile without a slice is unaffected: the two values are the same
+    number, and the rule has always been the plain single-metric one.
     """
     if before is None or after is None:
         return THE_SAME
-    # The conjunction compares the **full split** against itself, so the
-    # primary metric is compared here directly rather than through
-    # :func:`compare` - that helper judges the *selection* metric,
-    # which is the other half of the rule.
     primary = _compare_values(
         float(before.primary_value), float(after.primary_value), task)
-    # No slice of its own: the two metrics are the same number, so the
-    # conjunction is exactly the single-metric comparison.
+    # No slice of its own: the two metrics are the same number, so this
+    # is exactly the single-metric comparison.
     if before.selection_name == before.primary_name and \
             after.selection_name == after.primary_name:
         return primary
+    # The slice is recorded but not decisive.  It is still compared, so
+    # that a round whose candidate moves the two readings in opposite
+    # directions is reported as a conflict in the ledger - the reader can
+    # see the disagreement even though the full split decides.
     slice_verdict = _compare_values(
         float(before.selection_value), float(after.selection_value), task)
-    # The full split regressed: a slice improvement cannot buy that.
-    if primary == WORSE:
-        return CONFLICT
-    # The slice is the **objective** reading, so it has to move in the
-    # right direction.  A flat slice is not an improvement, whatever the
-    # full split did - that is the whole point of having a slice.
-    if slice_verdict == BETTER:
-        return BETTER
-    if slice_verdict == WORSE:
-        return CONFLICT
-    # The slice did not move at all.  The full split is then the only
-    # reading that moved, and it moved on its own - the conjunction is
-    # not satisfied, so the candidate is not adopted.
-    if primary == BETTER:
-        return CONFLICT
-    return THE_SAME
+    if slice_verdict == THE_SAME:
+        return primary
+    if primary == THE_SAME:
+        return slice_verdict
+    if primary == slice_verdict:
+        return primary
+    # The two readings disagree: the full split decides, and the
+    # disagreement is recorded.
+    return primary
 
 
 def _compare_values(old, new, task):

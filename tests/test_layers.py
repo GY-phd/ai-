@@ -123,12 +123,16 @@ class CompareTest(unittest.TestCase):
         after = self._record("classification", "macro_f1", 0.70)
         self.assertEqual(compare(before, after, "classification"), THE_SAME)
 
-    def test_the_selection_slice_decides_when_it_differs(self):
-        """A profile with a protocol-aligned slice compares on that slice.
+    def test_the_selection_slice_is_evidence_not_the_decision(self):
+        """Profile C's slice cannot decide; the full split can.
 
-        Profile C's full-split RMSE and its truncated-test slice can move
-        in opposite directions.  The comparison must follow the slice; the
-        full value stays in the record for the round's safety guard.
+        The full-split RMSE and the truncated-test slice can move in
+        opposite directions.  The slice is measured and recorded, but
+        the comparison follows the **primary** metric: the
+        leave-one-engine-out study in ``research/tracks/c_horizon.py``
+        shows every truncated slice is anti-correlated with the
+        held-out outcome, and selecting by one beat the baseline in 0 of
+        12 folds.
         """
         before = MetricRecord("regression", {"rmse": 10.0, "late_rmse": 8.0},
                               "rmse", 10.0, selection_name="late_rmse",
@@ -136,8 +140,13 @@ class CompareTest(unittest.TestCase):
         after = MetricRecord("regression", {"rmse": 11.0, "late_rmse": 7.0},
                              "rmse", 11.0, selection_name="late_rmse",
                              selection_value=7.0)
-        self.assertEqual(compare(before, after, "regression"), BETTER)
+        # The slice improved, the full split regressed: the full split
+        # decides, so this is a loss.
+        self.assertEqual(compare(before, after, "regression"), WORSE)
+        # The slice is still on the record.
         self.assertEqual(before.as_record()["primary_metric"], "rmse")
+        self.assertEqual(before.as_record()["selection_metric"], "late_rmse")
+        self.assertEqual(before.as_record()["selection_value"], 8.0)
         self.assertEqual(before.as_record()["selection_metric"], "late_rmse")
 
     def test_without_a_selection_slice_the_primary_still_decides(self):

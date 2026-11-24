@@ -1,8 +1,8 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 7099065,
-  "file_count": 414,
+  "total_bytes": 7306666,
+  "file_count": 423,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
   "files": {
@@ -150,6 +150,10 @@
       "bytes": 719,
       "sha256": "c82efc4505ec89fe383ccb3f389c77611fac8ae86fbe32ecabb4e4b0fd5ce77f"
     },
+    "artifacts/tracks/c_alpha.json": {
+      "bytes": 23242,
+      "sha256": "9a5b8ac67b9c75f10b619efa0ffebac373584f7d7d07261996aca17ed441f0c0"
+    },
     "artifacts/tracks/c_calibrate_mid.json": {
       "bytes": 78253,
       "sha256": "447ae8ed3bdbc6751475079e465833e0e03682442b63f6477bba318488145751"
@@ -158,6 +162,10 @@
       "bytes": 32662,
       "sha256": "b20da8939dbff420ee438c2d9d9eac4b109ee70351223da3c581b2d9a5a81818"
     },
+    "artifacts/tracks/c_epochs.json": {
+      "bytes": 10936,
+      "sha256": "9f38cd2d701c0dfd552e4f64e27bf41b1bf3edefc8144a38f6d0c7f85698a0a2"
+    },
     "artifacts/tracks/c_holdout.json": {
       "bytes": 96601,
       "sha256": "f4b0c0fc3951e0e5c610e794f6081471d0683a93df008df5cb84eabb0aca9499"
@@ -165,6 +173,10 @@
     "artifacts/tracks/c_holdout_smoke.json": {
       "bytes": 4234,
       "sha256": "aa989cdd1e219ff0ef7f7f9442b952ff863bc80908c5910c6a4701d49d1ab567"
+    },
+    "artifacts/tracks/c_horizon.json": {
+      "bytes": 110440,
+      "sha256": "12d33f77cb758573e22b94e8748b90c7cf757d90dd09fcf806c4ef0bd4cc6426"
     },
     "artifacts/tracks/c_protocol.json": {
       "bytes": 21438,
@@ -181,6 +193,10 @@
     "artifacts/tracks/c_rule_small.json": {
       "bytes": 90580,
       "sha256": "5f7dd597206d64adacaaaddd56dec940ad12c6fc95995feb67a5af755c361be4"
+    },
+    "artifacts/tracks/c_verify.json": {
+      "bytes": 10432,
+      "sha256": "076a2bb7482be1dbd4f3f46a49987eab1a4f79fac5231ad86638edea8b909ef0"
     },
     "artifacts/tracks/c_weight_priors.json": {
       "bytes": 403333,
@@ -279,12 +295,12 @@
       "sha256": "89198222f054494c947d9c92412dbfd6fb03454b6724f784cec7eecdd12a3360"
     },
     "contest_baselines/adapters/base.py": {
-      "bytes": 11738,
-      "sha256": "45774faf04481494ee1089744e07d6bf0a501aa07dfb99faebf56c6809e03769"
+      "bytes": 11688,
+      "sha256": "89d1ae715050021fc17198b2b29cf596277f51baf8411319f9fdfcbd847cc348"
     },
     "contest_baselines/adapters/hypotheses.py": {
-      "bytes": 10613,
-      "sha256": "4d896dd46bfcfa1c071f11885d8d20e6a1ff024af2b18e60e5bb7b6c95797f7e"
+      "bytes": 11745,
+      "sha256": "57fad64bc0e4347b25dfa2e56cdb15a6b895d5e918777bfdb7d3edaa08a1e531"
     },
     "contest_baselines/adapters/profile_a.py": {
       "bytes": 4832,
@@ -295,8 +311,8 @@
       "sha256": "729648fdebe83fc9098b59df5331109dc2127299fb982d302f5db239ecbc9887"
     },
     "contest_baselines/adapters/profile_c.py": {
-      "bytes": 7561,
-      "sha256": "3c3aded724f718eee5900fce9bb5b31b17e2463aeadfffd307b3062878c86ac4"
+      "bytes": 9511,
+      "sha256": "ac171f8e8734088120edb17b2c749ff17915e6710f3276c590efce7ae558430f"
     },
     "contest_baselines/adapters/registry.py": {
       "bytes": 2518,
@@ -315,8 +331,8 @@
       "sha256": "c17bab0084e51a7d19f00d42bfb530919accda3b930bbbace51c10a8cd81f16a"
     },
     "contest_baselines/layers/controller/round.py": {
-      "bytes": 38506,
-      "sha256": "bac77aed18f400554c96ffb09d20f700c7ee4411fd5efafd30c630776ad37d9a"
+      "bytes": 38640,
+      "sha256": "5be1bb5a8b2ee5f26bbe745078e3e919e9f826a901a7a26a679ef47c26970d68"
     },
     "contest_baselines/layers/controller/serving.py": {
       "bytes": 6412,
@@ -335,8 +351,8 @@
       "sha256": "f7a9fcaf1d8f6e777254ca8bacc7b664b7c8728bc1560fb63920bef0d0195a6b"
     },
     "contest_baselines/layers/model/metrics.py": {
-      "bytes": 10417,
-      "sha256": "69d10613e52c01514f7072b06b0d773ba73b06f1e2a0f74058a184ffd379642d"
+      "bytes": 12004,
+      "sha256": "5f4a9442517013dc55028a22224d7fa75d2071d882fc05e655fa42e544735d20"
     },
     "contest_baselines/layers/model/state.py": {
       "bytes": 3332,
@@ -371,8 +387,8 @@
       "sha256": "324f6106df7e8bb2874435d975ec829b710133840c14f026f5b773eb402306c4"
     },
     "contest_baselines/strategies.py": {
-      "bytes": 21626,
-      "sha256": "462c214e7021420a2bcbd15e18ce297ff60c0ed0ba5c5e0074f76a45a87c9810"
+      "bytes": 24329,
+      "sha256": "2ca01c8edf71c79325561fc9cfa4b12f6cb9cea8877d2dd2acc36aef8f28c341"
     },
     "contest_baselines/swanlab_log.py": {
       "bytes": 5547,
@@ -475,8 +491,12 @@
       "sha256": "77059e91b33ec0f780c8b375f72f0bdbf86baaf428c648fc4d6f32d858d8727b"
     },
     "docs/SELECTION_RULE_DECISION_20261124.md": {
-      "bytes": 15071,
-      "sha256": "95cb4204e73b14e32792a8dc29bf087f2db7aaa619cadec3815de0174f65d0fc"
+      "bytes": 15897,
+      "sha256": "3e16055e4001ad330b5e024ff70af7ed2477998fab31809458ec08257540bfcf"
+    },
+    "docs/SELECTION_SLICE_ROOT_CAUSE_20261124.md": {
+      "bytes": 13339,
+      "sha256": "8b3e0bde659f46728e25e7b8653f6555daa8f1273bcb0a0056d532a4adf667dc"
     },
     "docs/SOLUTION.md": {
       "bytes": 15467,
@@ -503,8 +523,8 @@
       "sha256": "b218dd2bf1230aa184b4c3b1302c2f2730688f8a97f41ddf029cda96b784290b"
     },
     "docs/平台提交表单填写指南.md": {
-      "bytes": 22059,
-      "sha256": "b6a4ba565f7a49706991cda14ac81e821b7a2a12eb67e38f2299bc2e081e58c4"
+      "bytes": 24311,
+      "sha256": "3228b2c8dadee712496c53dc201611198b58abcc45cbf7be767f12bf967bb5c0"
     },
     "docs/数据适配说明.md": {
       "bytes": 4237,
@@ -982,13 +1002,25 @@
       "bytes": 10803,
       "sha256": "ab13bd40d906a4d3b3246430e2e50ab4c070ed17de05df92c65de7799113b619"
     },
+    "research/tracks/c_alpha.py": {
+      "bytes": 4524,
+      "sha256": "aa3d0c7bb0d5ca0de1d4be4bd1036e65cfdf7f6481138a60a9a861cdba1e280b"
+    },
     "research/tracks/c_calibrate.py": {
       "bytes": 6085,
       "sha256": "e5db3a37ec82e1ac8db500039b0c84bba0735e9f250fda777ad1e78a03d9b4c6"
     },
+    "research/tracks/c_epochs.py": {
+      "bytes": 4411,
+      "sha256": "0d3dfdd0069a1d04e78b7541643782280390224e6ec12b2dc308ebc38a73ec44"
+    },
     "research/tracks/c_holdout.py": {
       "bytes": 8955,
       "sha256": "a20172b44362991b69e34c18032505888aa9681f3c58ab34c986872897c0bb33"
+    },
+    "research/tracks/c_horizon.py": {
+      "bytes": 6742,
+      "sha256": "a0c8d7f4d2fb9b4a7e420196557f77f273f87b04008b29a7b3fd8c64f3a32470"
     },
     "research/tracks/c_protocol.py": {
       "bytes": 11191,
@@ -997,6 +1029,10 @@
     "research/tracks/c_rule.py": {
       "bytes": 11017,
       "sha256": "ad7347a2a05a2e2a88b3a571b5e0a4c62dd78f8eaef4012bd03ece949651dcb5"
+    },
+    "research/tracks/c_verify.py": {
+      "bytes": 4696,
+      "sha256": "fc7344d7206e3e9a325c26a8421bfd070c3dc681218d940f9efbfb81aabdb270"
     },
     "research/tracks/c_weight.py": {
       "bytes": 15222,
@@ -1179,132 +1215,132 @@
       "sha256": "1bdee43437ed286b3c41bc792bab9fc7e8fbf16c722bbbd50d648f9ae7d0c00a"
     },
     "runs/harness-offline/ledger.jsonl": {
-      "bytes": 26515,
-      "sha256": "08de38525e2fe8f93117d6b33982a47541781578935d3428bc83c0e9aef72104"
+      "bytes": 26556,
+      "sha256": "82b9c99286b6a57752865635c27b438174ec879620b6d3090a1453f820863e5c"
     },
     "runs/harness-offline/run_report.json": {
-      "bytes": 44330,
-      "sha256": "5ed6844ae52943d4f91d6186eaf9ecf5a536115bef9a83f888d3fd774bf9936c"
+      "bytes": 44333,
+      "sha256": "f032276a8fd2a038d133af04114cf45476af39019442dc739e054d96cda30e9b"
     },
     "runs/harness-offline/swanlab/A-round-1.jsonl": {
-      "bytes": 1246,
-      "sha256": "7451033a9df7b68ffdf2e70e33f6c9faa12ee7c298ce0d79257b66e908fceba4"
+      "bytes": 1245,
+      "sha256": "3493811eafeee962715664026ed66971ca5a6fd2e56f8aaf6953a2b241943e86"
     },
     "runs/harness-offline/swanlab/A-round-10.jsonl": {
       "bytes": 1250,
-      "sha256": "fb43934b166e429ce1f3e8bbee5ca36fb8c1a1be5cdba20770564de83f5e579c"
+      "sha256": "50f4410d69600ef29105fba46b7e52c4a0c4dba5839cbf0c867de7f8d527d903"
     },
     "runs/harness-offline/swanlab/A-round-2.jsonl": {
       "bytes": 1311,
-      "sha256": "0432a41f7177a74278a113de521849c36e73fcdb9c038c3b5c703540f3fe7780"
+      "sha256": "02f607370210c1191d3c43c46cb01dded5a2178f0c9c9eb6ec04df641a7504a5"
     },
     "runs/harness-offline/swanlab/A-round-3.jsonl": {
       "bytes": 1689,
-      "sha256": "40bdf18e206e1fc2a80603426b7388de9fca084e277237e1986015c87802c208"
+      "sha256": "2ee2619cb733a68a8bcf322aa967ec86dd7ff463397de74f656212713f1ca50c"
     },
     "runs/harness-offline/swanlab/A-round-4.jsonl": {
       "bytes": 1530,
-      "sha256": "2a26c4e11ca5ff46c8e9a96b1e7f9531b3a5a68aa10b07bdcb8e01c74d1473d6"
+      "sha256": "13656c7bb3d1e121323c88551ef1f2e97e7315bca1014302dd61673553357ebb"
     },
     "runs/harness-offline/swanlab/A-round-5.jsonl": {
       "bytes": 1467,
-      "sha256": "e040d255ba22ed33297528e5dc5ed530b077dd50b9c9f24cc1c3a43477101da5"
+      "sha256": "3db057be6eab24cfa87741d1d7d865c916f60655caefeef6d4a121261c24960d"
     },
     "runs/harness-offline/swanlab/A-round-6.jsonl": {
       "bytes": 1299,
-      "sha256": "7fd571c59b573aefda21f6d554cd30189a844def4e067ffdce25f381cf8d844c"
+      "sha256": "70dcaabf211f2558a4f777e98341d6ea38dd7cbd4ba3901b7f133bb26e66243b"
     },
     "runs/harness-offline/swanlab/A-round-7.jsonl": {
       "bytes": 1444,
-      "sha256": "0f438559feeb211c5650e9731f12dfa0c1e216e4dea0446ee7150ebb883839a5"
+      "sha256": "35f1e027d6dd7c0c8724291af53c6991eeb5a780f6d6cab20f1a611c86ca5011"
     },
     "runs/harness-offline/swanlab/A-round-8.jsonl": {
-      "bytes": 1248,
-      "sha256": "be79b6425332e822713b30abe38b55dc90905f26ebdc306a1c0445f3e431196a"
+      "bytes": 1249,
+      "sha256": "77909f22741614f86a20191839bfd5747c0326733c2bf8ba2b4df4f912008460"
     },
     "runs/harness-offline/swanlab/A-round-9.jsonl": {
-      "bytes": 1250,
-      "sha256": "8f0e3f92d24b6dd1fcd5c4e63822cb71676c72c0a5377e9ae7072aeac5ed08a0"
+      "bytes": 1249,
+      "sha256": "5c77f16aef8d2089399959d46efc3e9e2101c9020a3e252b1978d90ac89ff9e4"
     },
     "runs/harness-offline/swanlab/B-round-1.jsonl": {
       "bytes": 1222,
-      "sha256": "adada1c7089efa76e4b715e89b4a21d27741da6281198cfe241001f315141347"
+      "sha256": "cc2c05a3f022f72ee4017e12048111d4fefa982ddea2703313fd1696f537c5bd"
     },
     "runs/harness-offline/swanlab/B-round-10.jsonl": {
-      "bytes": 1227,
-      "sha256": "ee077739f476da927d06632443a50328f27c0c3fc469293bde0b8488f2fc0956"
+      "bytes": 1228,
+      "sha256": "c1fef9b038590758bf3336b43664e62e57916215be94988ebf2d0f9baed4c99b"
     },
     "runs/harness-offline/swanlab/B-round-2.jsonl": {
       "bytes": 1288,
-      "sha256": "7994b609cb4830a123b53fb235cbdff343a43c37dff0629b5901ee8d1e41f60d"
+      "sha256": "c58e95b920a153a356274ccd153ea0eda9c067ae1ce951e8c64eb715438c8a37"
     },
     "runs/harness-offline/swanlab/B-round-3.jsonl": {
       "bytes": 1378,
-      "sha256": "4be9059918d5e0ac97a39020cce67e7c867ae5a26e767f039f1f8c063a512f3a"
+      "sha256": "e1688c5e1673a3d79444ccb6e3eb441cb3802470744b1e785db139c6d7003ace"
     },
     "runs/harness-offline/swanlab/B-round-4.jsonl": {
       "bytes": 1607,
-      "sha256": "251e16efa4e51666026980277981f0202208a9c80bfc6f001a88fdd51b4c29d9"
+      "sha256": "5d1b49e4447bd47d8f8722e789f1e94f5ee5fe3ee8c0320b1093437e2ac769c9"
     },
     "runs/harness-offline/swanlab/B-round-5.jsonl": {
       "bytes": 1439,
-      "sha256": "a0d1e09905d77a179403c5373a012f368886df545b2a4ac12ca7ca30879e9e3c"
+      "sha256": "cab54ef27a68fa94b4cefbfb1fbde6e8128f212abf60262d5901b1bbc27415a1"
     },
     "runs/harness-offline/swanlab/B-round-6.jsonl": {
-      "bytes": 1221,
-      "sha256": "3542a2f788a870c2787f36eac0a3453f4d715cc7a4e2e76a413406d7d04d9378"
+      "bytes": 1222,
+      "sha256": "11ddd38295f7df9edcd527dc38098b76e9e1053b39b8700818d1f0aaf1d22a1e"
     },
     "runs/harness-offline/swanlab/B-round-7.jsonl": {
       "bytes": 1222,
-      "sha256": "4816193bd924148e23d302d348ff74f127b88af174578548050c58ed89e694bc"
+      "sha256": "7d951947577d19519744ca3e83f6a16e3c31b353f97ca38714538391a7b4a7cb"
     },
     "runs/harness-offline/swanlab/B-round-8.jsonl": {
       "bytes": 1223,
-      "sha256": "f6a3177c05afb1f2c0b4aa8fc3d4eecebf7002d187f5d7ea63a02a7bc0591b19"
+      "sha256": "83623e63efd64097c83b7499d08037e1325edccde82dcd917a28c1e8a24a1675"
     },
     "runs/harness-offline/swanlab/B-round-9.jsonl": {
       "bytes": 1223,
-      "sha256": "3a821a3a9dc7dda45dc4394824390a12bbad7b1206e464c2d71841c622ba446f"
+      "sha256": "b5938ad2178d7b8c78b27ae68ae80878065b4b9b4c7ee1ea4bc0a0643e65c26c"
     },
     "runs/harness-offline/swanlab/C-round-1.jsonl": {
-      "bytes": 1286,
-      "sha256": "97c051b640b095d3928ce1c450c800eb16eb9a4f5e1e35db2b550a477824d478"
+      "bytes": 1989,
+      "sha256": "eadc467bfbd6e4bd892702dc15b4051501f77625c8237a782ab8702398106577"
     },
     "runs/harness-offline/swanlab/C-round-10.jsonl": {
-      "bytes": 1284,
-      "sha256": "cf9c6e9dd124325bef18e0c3cd328de025da0494e5639b2796047ba34452e71c"
+      "bytes": 1999,
+      "sha256": "39094d00398148313d74de409b85dcc99d55ac2673b5fb65faaa941c84974e35"
     },
     "runs/harness-offline/swanlab/C-round-2.jsonl": {
-      "bytes": 1350,
-      "sha256": "05dda5d2dcb3e76cac7db75c4b839c57199af061e5498ae3c033e3aac3dc8ce1"
+      "bytes": 1421,
+      "sha256": "a461dd62ba94dddf74b77c635095e7b32d845f90e362fe56467899ae7eafb8e0"
     },
     "runs/harness-offline/swanlab/C-round-3.jsonl": {
-      "bytes": 1445,
-      "sha256": "1bed825c833b9d6b11548730921a08b08d4465a46b6cf3753dea02052e07bce8"
+      "bytes": 1481,
+      "sha256": "6572a06c0b23f143cfe5062f08ee07c2212b1059f17c1b6b601d6ad30103221f"
     },
     "runs/harness-offline/swanlab/C-round-4.jsonl": {
-      "bytes": 1677,
-      "sha256": "616675f842bda1c1bfb9a9d3ae60d385f8337f09b3fcec13d678dc287b438297"
+      "bytes": 1521,
+      "sha256": "0475074c5c31b8e6c5eb612a82dedd9fe055fdb33a6a4f3880fc9c74c703ac21"
     },
     "runs/harness-offline/swanlab/C-round-5.jsonl": {
-      "bytes": 1501,
-      "sha256": "1066474495b34427959f889b6aafeb63e71358fc21bfe2c383db7530858e0faf"
+      "bytes": 1748,
+      "sha256": "c4bd07d95d421e928c77b7cfc42549b24b8a4bf9af8b877ad98ce3b3ee60a526"
     },
     "runs/harness-offline/swanlab/C-round-6.jsonl": {
-      "bytes": 1282,
-      "sha256": "9ecebfc9ca2a2ca23ffabefd8e7b54f6070e243473f2bd8a7209bc9adbf24197"
+      "bytes": 1635,
+      "sha256": "f27c3c14947e480a37fd0b033afe411d16f91f59ec3a889d8ea2b8e94b224ef5"
     },
     "runs/harness-offline/swanlab/C-round-7.jsonl": {
-      "bytes": 1283,
-      "sha256": "b75c0478886147131d630f0fae43facb5e798a5bd5ab45309b423653b8716f56"
+      "bytes": 1989,
+      "sha256": "007e8565c9c2ddb26099ddbf16a26a7b7829755d73e3f47ba2f03fdaabef49f0"
     },
     "runs/harness-offline/swanlab/C-round-8.jsonl": {
-      "bytes": 1285,
-      "sha256": "f5cf018fe412c260fdd2cf2d62d0ae7cee4b55d8727a78d30514453bd050927c"
+      "bytes": 1929,
+      "sha256": "4a529ac6a59d88d07bc60820ec5c5ee423dbe9ec0f00ab550cb501b5fbd16be2"
     },
     "runs/harness-offline/swanlab/C-round-9.jsonl": {
-      "bytes": 1282,
-      "sha256": "9ea4e4a7d67724a9e330c09572da05122737faebd7739af173f1a2d4c3bcf5d5"
+      "bytes": 1931,
+      "sha256": "87d9eb7732ee8fb12f93a19c0e1695a7e03d13ae8217e9d971c3e7713fd8dbdf"
     },
     "runs/summary.json": {
       "bytes": 28080,
@@ -1315,8 +1351,8 @@
       "sha256": "719be3163d66230a139e1fd2a26a8a93e3fb0b2598c42f8c346a96c096677781"
     },
     "tests/test_adapters.py": {
-      "bytes": 14501,
-      "sha256": "4444e286a6c5f6ca541e38b85cce6aaf1ce381fdfbc269a604aabe34199a0139"
+      "bytes": 14883,
+      "sha256": "66f6eb6ea43c9e3fcef03c119933b805bd4c9799769d1e3613c0933444e5178a"
     },
     "tests/test_benchmark.py": {
       "bytes": 7267,
@@ -1363,8 +1399,8 @@
       "sha256": "2e637f2ea06a2f28e29b91dc8a2cd651c598adf1955353cdbd13078ecb878c84"
     },
     "tests/test_layers.py": {
-      "bytes": 10447,
-      "sha256": "45eebf7a29a99edc01c078ace4119f35e78cc0fabbffa53da44c0086ba4f3e05"
+      "bytes": 10946,
+      "sha256": "e7353b84c2997c81080dd705c7d6b8297e8172d1a713b41e32f912edb1ef539b"
     },
     "tests/test_ledger.py": {
       "bytes": 3028,
@@ -1411,12 +1447,12 @@
       "sha256": "e29c4c73e1bc4de6f8c5a075e7858e49727f5052975498cd6a07a173d6516fea"
     },
     "tests/test_selection_conjunction.py": {
-      "bytes": 7186,
-      "sha256": "52b3d59dd5dca55be367f7a01d32ee201fcda05d5e5cf69fb9bef9087341ab14"
+      "bytes": 7765,
+      "sha256": "c2db84fe5d19e28147ee17ea0285897962e2846e7843302c26eb661685f7d0f9"
     },
     "tests/test_strategies.py": {
-      "bytes": 12675,
-      "sha256": "0665fdc41d3b5d63e1eed129de2885a37db594277969d63ba0be6794c30497d4"
+      "bytes": 15507,
+      "sha256": "391b320a702265ba245d330ac9d96fd493321ae657b3943fd9179d1174bf76e9"
     },
     "tests/test_swanlab.py": {
       "bytes": 9397,
