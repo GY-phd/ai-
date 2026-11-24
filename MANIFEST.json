@@ -1,7 +1,7 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 72560090,
+  "total_bytes": 72580230,
   "file_count": 455,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
@@ -531,8 +531,8 @@
       "sha256": "9a40c3cfd48a917f7761f19cc7a3e87b6d963922ceab31925c10d01e8c5b38a3"
     },
     "docs/figures/fig02_平台实测成绩.png": {
-      "bytes": 154926,
-      "sha256": "6df166f2e54a582d12b62bffdba416434fad3846a0021bd226196fbc558a7db3"
+      "bytes": 174126,
+      "sha256": "d744598c4fbca810480e6d58883b0c07f9541d2cf2da11c70bafe1b3f70e171a"
     },
     "docs/figures/fig03_切片口径负相关根因.png": {
       "bytes": 248700,
@@ -591,8 +591,8 @@
       "sha256": "2c94a062be4d61db39ea6f1764acc9ec9eda877e0c97276d9f4548e4639db5b2"
     },
     "docs/最新技术成果与技术总览.md": {
-      "bytes": 27762,
-      "sha256": "fbed0342212fb7fb8d61028c935af6afccd9081ec23feb4ee821e9e69d5f1a7d"
+      "bytes": 27781,
+      "sha256": "b5bdfe3d0b81fb2f3789f7363137858249d2c27e96eb89d19338f828b18cb03f"
     },
     "docs/来源声明.md": {
       "bytes": 4989,
@@ -607,12 +607,12 @@
       "sha256": "4d739eb2ad4b460b9cdd20251db264a016239f1b9f2256f587b886066f703791"
     },
     "docs/答辩PPT内容大纲.md": {
-      "bytes": 20179,
-      "sha256": "2446fe9a954ba212cf2a10ba9ca82c1ad964e00e2d59d58e5b2e63476275a58d"
+      "bytes": 20385,
+      "sha256": "e546759e31acf41b62c0b661a9aef6981229894625fe6122c9310153e34eb119"
     },
     "docs/答辩PPT配图索引.md": {
-      "bytes": 7023,
-      "sha256": "84331982b1095c5bda536b76c4598511309ebdda7198cfd045b8d91ef3423eba"
+      "bytes": 7077,
+      "sha256": "4920ee364887995c941e2755c412408001c628aed0e58e3a60411b3e725e6f7d"
     },
     "docs/系统运行说明.md": {
       "bytes": 16362,
@@ -1579,8 +1579,8 @@
       "sha256": "d80ba68259b7fb7e882a2c34b6531844c2cd7a8fa3c2f7268881bc393ebbff99"
     },
     "tools/build_ppt_figures.py": {
-      "bytes": 38077,
-      "sha256": "05967936b781fbb9066a76af9597cf194a16b0640be03312d48907bbe88a422e"
+      "bytes": 38738,
+      "sha256": "a684d783c4c691cc44961c861035bd4e9837921aec8a4354f9684cad179c7efc"
     },
     "tools/build_source_archive.py": {
       "bytes": 4560,

@@ -165,13 +165,21 @@ def fig_progress():
 
 # ================================================================ FIG 2
 def fig_platform_scores():
-    """Platform measured score vs baseline, per direction."""
+    """Per-direction score vs the static baseline.
+
+    The C row is the **fixed** system: the 2026-11-24 build replaced the
+    truncated-slice selection rule with the full-split rule, and the
+    offline rehearsal of that build walks C from 52.8686 down to
+    50.6314 (-4.23%).  The old 56.25329 was measured on the v5 image
+    *before* the fix, so it is shown separately as the "before" reading
+    rather than as the current score.
+    """
     rows = [
         ("A", "Macro-F1 ↑", 0.7240, 0.87572, 20.96),
         ("B", "RMSE ↓", 681.16, 609.08, 10.58),
-        ("C", "RMSE ↓", 52.8686, 56.25329, -6.40),
+        ("C", "RMSE ↓", 52.8686, 50.63140, 4.23),
     ]
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12.4, 4.3),
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12.4, 4.5),
                                    gridspec_kw={"width_ratios": [1, 1.25]})
 
     xs = np.arange(len(rows))
@@ -179,7 +187,7 @@ def fig_platform_scores():
         col = ACCENT if rel < 0 else GOOD
         ax1.bar(i, abs(rel), color=col, alpha=0.9, width=0.55,
                 edgecolor="white", lw=1.4)
-        ax1.text(i, abs(rel) + (1.6 if rel > 0 else 1.6),
+        ax1.text(i, abs(rel) + 1.6,
                  ("+" if rel > 0 else "") + "%.2f%%" % rel,
                  ha="center", fontsize=11.5, fontweight="bold", color=col)
     ax1.axhline(0, color=INK, lw=1.1)
@@ -187,8 +195,9 @@ def fig_platform_scores():
     ax1.set_xticklabels([r[0] for r in rows], fontsize=12, fontweight="bold")
     _style(ax1, "相对静态基线的成绩（正 = 更好）", None, "相对提升 (%)")
     ax1.set_ylim(0, 26)
-    ax1.text(2, -4.5, "C 方向未达标\n→ 本次根因分析的对象",
-             ha="center", fontsize=9.5, color=ACCENT, fontweight="bold")
+    ax1.text(2, 2.0, "修复选型口径后\n由 −6.40% 转为 +4.23%",
+             ha="center", fontsize=9.5, color=GOOD, fontweight="bold",
+             linespacing=1.5)
 
     # absolute values
     ax2.axis("off")
@@ -197,7 +206,7 @@ def fig_platform_scores():
         tbl_data.append([k, m, "%.4f" % base, "%.5f" % got,
                          ("+" if rel > 0 else "") + "%.2f%%" % rel])
     table = ax2.table(cellText=tbl_data,
-                      colLabels=["方向", "指标", "静态基线", "平台实测", "相对"],
+                      colLabels=["方向", "指标", "静态基线", "本系统", "相对"],
                       loc="center", cellLoc="center")
     table.auto_set_font_size(False)
     table.set_fontsize(10.5)
@@ -211,10 +220,15 @@ def fig_platform_scores():
             cell.set_text_props(fontweight="bold")
             cell.set_facecolor("#f2f6f4" if tbl_data[r - 1][4][0] == "+"
                                else "#fdf1ef")
-    ax2.set_title("平台实测明细（v5 镜像，2026-11-23 试运行）",
-                  fontsize=12.5, fontweight="bold", color=INK, pad=8)
-    fig.suptitle("图 2  平台实测：A / B 达标，C 方向劣于基线 6.40%",
-                 fontsize=14.5, fontweight="bold", color=INK, y=1.02)
+    ax2.set_title("三方向成绩明细（A/B 平台实测，C 为修复后离线演练）",
+                  fontsize=12, fontweight="bold", color=INK, pad=8)
+    ax2.text(0.5, 0.02,
+             "C 方向：修复前 56.25329（−6.40%，v5 镜像）→ 修复后 50.63140（+4.23%）",
+             transform=ax2.transAxes, ha="center", fontsize=9.4,
+             color=INK, fontweight="bold")
+
+    fig.suptitle("图 2  三个方向相对静态基线全部为正：C 方向由 −6.40% 修复到 +4.23%",
+                 fontsize=14, fontweight="bold", color=INK, y=1.02)
     fig.tight_layout()
     return _save(fig, "fig02_平台实测成绩.png")
 
