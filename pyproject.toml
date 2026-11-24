@@ -49,3 +49,21 @@ target-version = "py310"
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
 ignore = ["E501"]
+
+[tool.pytest.ini_options]
+# Only this repository's own suite.  ``_tmp_rm/`` and ``art/`` hold
+# read-only copies of a teammate's history kept for review; they carry
+# their own tests, which import packages (``baselines``, ``harness``)
+# that this project does not provide, so collecting them fails.  They
+# are not part of the deliverable (the source archive excludes them).
+testpaths = ["tests"]
+norecursedirs = [
+    "_tmp_rm",
+    "art",
+    ".venv",
+    "venv",
+    "node_modules",
+    "*.egg",
+    "build",
+    "dist",
+]

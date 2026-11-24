@@ -1,8 +1,8 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 7322918,
-  "file_count": 424,
+  "total_bytes": 7420866,
+  "file_count": 436,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
   "files": {
@@ -23,8 +23,8 @@
       "sha256": "6e8c351b368d18e66465c20e4aa11f6b98f4758da53375a9d52cd4ddc2372b34"
     },
     ".gitignore": {
-      "bytes": 6138,
-      "sha256": "d6a2580bdf1d19aca0a321bc09473a4f5d455f934a5db1cb07c91067c36a8cce"
+      "bytes": 6285,
+      "sha256": "868fde1a53aa52b7993b08bfa995ec16ecedcc72ff64a54727df7f3a5670aff7"
     },
     "Dockerfile": {
       "bytes": 4980,
@@ -530,13 +530,37 @@
       "bytes": 25659,
       "sha256": "efee96fd7088d31ed8acdb7aba5483b7d69ffde80bc4d63a639b24141fb4e599"
     },
+    "docs/平台规则与评分要点_20261124.md": {
+      "bytes": 6623,
+      "sha256": "ab1b453dd2358939e67727263ccd142d86f78d61d44a450fff07340b7aadc550"
+    },
+    "docs/技术报告_正文.md": {
+      "bytes": 11366,
+      "sha256": "ac673781054bb96967c4794fadd59640f856277c1efae59cfce015d81fd7e9f0"
+    },
     "docs/数据适配说明.md": {
       "bytes": 4237,
       "sha256": "2c94a062be4d61db39ea6f1764acc9ec9eda877e0c97276d9f4548e4639db5b2"
     },
+    "docs/来源声明.md": {
+      "bytes": 4989,
+      "sha256": "57e15f7de5dcaae54710644875c2637a65aaad6baab6b619d33c5a79c9214639"
+    },
+    "docs/演示视频脚本.md": {
+      "bytes": 6844,
+      "sha256": "719fa44104d7e59f598302b58a451aed9d35684d084f5b288c109dd6989c2fbe"
+    },
+    "docs/答辩PPT内容大纲.md": {
+      "bytes": 18305,
+      "sha256": "4009cfe70fe64ccb9b904174d57eb0d0f3c4dfb363c8d84d7c4727a3908bb96f"
+    },
     "docs/系统运行说明.md": {
       "bytes": 16362,
       "sha256": "0942874ada4462dc28806b809f3a0af802fec22cddbabf572803d4d955a42164"
+    },
+    "docs/系统运行说明文档_正文.md": {
+      "bytes": 11476,
+      "sha256": "08a62c177cdc3116ee05a9f1a20338d635d409e07362ee074e37aa052b562b99"
     },
     "docs/训练凭证.md": {
       "bytes": 13451,
@@ -545,6 +569,10 @@
     "docs/设计论证.md": {
       "bytes": 9703,
       "sha256": "3e8e12dd7dbcb9c659419999737c5106420e0acbdd3df612654975e8a5b0379c"
+    },
+    "docs/项目说明书_正文.md": {
+      "bytes": 13192,
+      "sha256": "aec9b4a81ed739cbfebfca8ed6669309bb086528ae0cd22479521311f41e1c09"
     },
     "evidence/README.md": {
       "bytes": 2270,
@@ -911,8 +939,8 @@
       "sha256": "5f0fd0d0998c7163af9d02873f572f820368ba6977248b41b383fa67fdc70dbc"
     },
     "pyproject.toml": {
-      "bytes": 1344,
-      "sha256": "e4b798969f871518633f8f0e846b3a33fb37b4f755036ef824aebe6e2df81ac9"
+      "bytes": 1871,
+      "sha256": "760267166a932a04e582bdbe812fc5b816c26dcc175f9f78dcd66930788b815f"
     },
     "requirements-dev.txt": {
       "bytes": 1363,
@@ -1486,6 +1514,18 @@
       "bytes": 17920,
       "sha256": "d80ba68259b7fb7e882a2c34b6531844c2cd7a8fa3c2f7268881bc393ebbff99"
     },
+    "tools/build_source_archive.py": {
+      "bytes": 4560,
+      "sha256": "b29f6336e52141a1439e09bb8915cbcd32b6e6e248c5daa6ef2010d0bf4a4d47"
+    },
+    "tools/build_submission_pdfs.py": {
+      "bytes": 12194,
+      "sha256": "c80f0c7432166acb82b7fc0acee05f8984ce78fd29c52d28bf5b7099c00c5b6a"
+    },
+    "tools/build_works_document.py": {
+      "bytes": 4174,
+      "sha256": "a3885f096bafd7aabde08dc826500f7628cd367bb9770b8b074d6378d86e077f"
+    },
     "tools/check_env.py": {
       "bytes": 5320,
       "sha256": "4e0981cbc03002bed96f796dd2f17b7c655908b7403ea2dfb17bacbd41834917"
@@ -1549,6 +1589,14 @@
     "tools/package_submission.py": {
       "bytes": 3856,
       "sha256": "c910035e664062086635dbaf5fb1927a828b90575f2601b3211bd1d0fc3fa9a1"
+    },
+    "tools/read_platform_limits.py": {
+      "bytes": 2270,
+      "sha256": "77b87fcb46cdc0edc2bfa63423efc9756d1ed7b65aea3c74671014249c5c000d"
+    },
+    "tools/read_platform_requirements.py": {
+      "bytes": 1281,
+      "sha256": "b70138b82fb06e6aa308f775093be200812bdac0695ce805fb31f6f57a428dbe"
     },
     "tools/refresh_manifest.py": {
       "bytes": 9495,

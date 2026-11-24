@@ -140,6 +140,10 @@ build/
 zhixun-engine-linux-amd64.tar
 zhixun-engine-linux-amd64.tar.sha256
 
+# The submission package carries the same 174 MB tar plus a source zip;
+# it is a delivery bundle, not repository content.
+提交材料_20261125/
+
 # ---- 4. 本地环境 ----
 .venv/
 venv/
