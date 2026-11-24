@@ -38,7 +38,6 @@ SECTIONS = [
     ("模型配置", ROOT / "提交材料_20261125" / "01_模型配置" / "模型配置.txt"),
     ("设计说明（即项目说明书正文）", ROOT / "docs" / "项目说明书_正文.md"),
     ("技术报告", ROOT / "docs" / "技术报告_正文.md"),
-    ("演示视频说明（分镜脚本）", ROOT / "docs" / "演示视频脚本.md"),
     ("来源声明", ROOT / "docs" / "来源声明.md"),
     ("云端实验记录链接与查询依据",
      ROOT / "提交材料_20261125" / "03_云端实验记录" / "云端实验记录说明.md"),
@@ -53,7 +52,7 @@ def main():
     parts = []
     header = (
         RULE + "\n"
-        "智训引擎 — 作品文档（模型配置 + 设计说明 + 技术报告 + 演示视频说明 + 来源声明）\n"
+        "智训引擎 — 作品文档（模型配置 + 设计说明 + 技术报告 + 来源声明）\n"
         + RULE + "\n"
         "赛题    : “智训引擎”——工业制造场景下的模型训练与超参数优化\n"
         "队伍    : gy_65511\n"
@@ -63,23 +62,23 @@ def main():
         "本文件是平台提交表单唯一的文件入口（“作品文档”）的完整内容。\n"
         "平台规则原文：\n"
         "  “镜像和源码、模型调用信息、实验记录链接，以及设计说明、技术报告\n"
-        "   （不超过 10 页）、演示视频（不超过 5 分钟）和来源声明。\n"
+        "   （不超过 10 页）和来源声明。\n"
         "   平台没有单独入口的材料请随作品文档提交或提供链接。”\n"
         "\n"
         "其它材料各自独立成文件，见同目录的《提交清单与填写指引.md》：\n"
         "  镜像与源码  -> 02_Harness系统镜像/ 与 06_源码与依赖/\n"
         "  模型调用信息 -> 本文件第一节\n"
-        "  实验记录链接 -> 本文件第六节\n"
+        "  实验记录链接 -> 本文件第五节\n"
         + RULE + "\n\n"
     )
     parts.append(header)
 
-    for title, path in SECTIONS:
+    for idx, (title, path) in enumerate(SECTIONS, start=1):
         if not path.exists():
             print("  skip (missing): %s" % path.name, file=sys.stderr)
             continue
         body = path.read_text(encoding="utf-8")
-        parts.append(RULE + "\n第 %d 节  %s\n" % (len(parts), title) + RULE + "\n")
+        parts.append(RULE + "\n第 %d 节  %s\n" % (idx, title) + RULE + "\n")
         parts.append(body)
         parts.append("\n\n")
 

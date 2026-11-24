@@ -1,7 +1,7 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 72575034,
+  "total_bytes": 72575076,
   "file_count": 451,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
@@ -583,8 +583,8 @@
       "sha256": "2c94a062be4d61db39ea6f1764acc9ec9eda877e0c97276d9f4548e4639db5b2"
     },
     "docs/最新技术成果与技术总览.md": {
-      "bytes": 27755,
-      "sha256": "dffb8c72f24e57f9ccf76fb812eb560e729d2821aa3370853b8e85f464240b67"
+      "bytes": 27768,
+      "sha256": "bf6180596ca67b69fb4eb77566b5f321729605946f2bb34904dd98b5e9211e80"
     },
     "docs/来源声明.md": {
       "bytes": 4989,
@@ -595,8 +595,8 @@
       "sha256": "719fa44104d7e59f598302b58a451aed9d35684d084f5b288c109dd6989c2fbe"
     },
     "docs/百度网盘链接_上传与填写指引.md": {
-      "bytes": 5512,
-      "sha256": "8f7fe3e684d2ce502f8466ba2496f0fe129726f3c9438354d3febb2cb81067c4"
+      "bytes": 5668,
+      "sha256": "4d739eb2ad4b460b9cdd20251db264a016239f1b9f2256f587b886066f703791"
     },
     "docs/答辩PPT内容大纲.md": {
       "bytes": 20179,
@@ -1579,8 +1579,8 @@
       "sha256": "c80f0c7432166acb82b7fc0acee05f8984ce78fd29c52d28bf5b7099c00c5b6a"
     },
     "tools/build_works_document.py": {
-      "bytes": 4174,
-      "sha256": "a3885f096bafd7aabde08dc826500f7628cd367bb9770b8b074d6378d86e077f"
+      "bytes": 4047,
+      "sha256": "930c3fb0279cc1d03615b09777af563aa9556db0bba20f60162541716eb0113e"
     },
     "tools/check_env.py": {
       "bytes": 5320,
