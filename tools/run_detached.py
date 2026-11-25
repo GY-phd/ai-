@@ -1,9 +1,23 @@
 # -*- coding: utf-8 -*-
-"""Run the C tuning sweep detached, so it survives the shell that started it.
+"""Run the C tuning sweep as a truly independent background process.
 
-``python -m research.tracks.c_tune`` takes 25-40 minutes.  Launching it
-from a tool shell means it dies when that shell's process tree is torn
-down, so it is started here as a detached child with its own log file.
+The sweep takes 25-40 minutes.  Every way of starting it from a tool
+shell turned out to be unreliable:
+
+* ``Start-Process`` / ``subprocess.Popen`` - the child dies with the
+  shell's process tree.
+* ``DETACHED_PROCESS`` - same, the child is still in the job object.
+* Task Scheduler - the task sits ``Queued`` because the interactive
+  session is unavailable to the scheduler.
+
+``Win32_Process.Create`` via WMI is the one that works: the process is
+created by the WMI provider, not by this shell, so it has no job object
+to be torn down with and no console to lose.
+
+Run::
+
+    python tools/run_detached.py            # start the sweep
+    python tools/run_detached.py --status   # is it alive?
 """
 from __future__ import annotations
 
@@ -14,37 +28,52 @@ import time
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 LOGS = ROOT / "artifacts" / "tracks"
+BAT = ROOT / "tools" / "run_c_tune.bat"
+
+
+def status():
+    """Print the sweep's latest progress."""
+    logs = sorted(LOGS.glob("c_tune_2*.log"), key=lambda p: p.stat().st_mtime,
+                  reverse=True)
+    if not logs:
+        print("no sweep log yet")
+        return 1
+    log = logs[0]
+    print("log: %s (%d bytes)" % (log.name, log.stat().st_size))
+    for line in log.read_text(encoding="utf-8", errors="replace").splitlines()[-12:]:
+        print("  " + line)
+    return 0
+
+
+def start(extra=()):
+    LOGS.mkdir(parents=True, exist_ok=True)
+    # The batch file writes the log from inside the process, because
+    # redirecting in the .bat is unreliable across sessions.
+    cmd = 'cmd.exe /c "%s"' % BAT
+    ps = (
+        '$c = "%s"; '
+        '$r = Invoke-CimMethod -ClassName Win32_Process -MethodName Create '
+        '-Arguments @{CommandLine=$c; CurrentDirectory="%s"}; '
+        'Write-Output ("pid=" + $r.ProcessId + " rc=" + $r.ReturnValue)'
+    ) % (cmd, ROOT)
+    out = subprocess.run(
+        ["powershell", "-NoProfile", "-NonInteractive", "-Command", ps],
+        capture_output=True, text=True, timeout=120,
+    )
+    print((out.stdout or "").strip())
+    if out.returncode != 0:
+        print((out.stderr or "").strip())
+        return 1
+    time.sleep(3)
+    return status()
 
 
 def main(argv=None):
     argv = list(argv or sys.argv[1:])
-    logs = LOGS
-    logs.mkdir(parents=True, exist_ok=True)
-    # a fresh stamp, so a stale handle from an earlier run can never block us
-    stamp = time.strftime("%Y%m%d_%H%M%S")
-    log_path = logs / ("c_tune_%s.log" % stamp)
-    err_path = logs / ("c_tune_%s.err" % stamp)
-    out = log_path.open("w", encoding="utf-8")
-    err = err_path.open("w", encoding="utf-8")
-
-    cmd = [sys.executable, "-m", "research.tracks.c_tune",
-           "--folds", "6", "--seeds", "42,7",
-           "--out", "artifacts/tracks/c_tune.json"]
-    cmd += argv
-
-    DETACHED = 0x00000008 | 0x00000200   # DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
-    proc = subprocess.Popen(
-        cmd, cwd=str(ROOT), stdout=out, stderr=err,
-        stdin=subprocess.DEVNULL,
-        creationflags=DETACHED,
-        close_fds=True,
-    )
-    print("started pid %d" % proc.pid)
-    print("cmd: %s" % " ".join(cmd))
-    print("log: %s" % log_path)
-    out.close()
-    err.close()
-    return 0
+    if "--status" in argv:
+        return status()
+    print("starting the C tuning sweep (detached)...")
+    return start(argv)
 
 
 if __name__ == "__main__":

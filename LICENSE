@@ -1,7 +1,7 @@
 MIT License
 
 Copyright (c) 2026 智训引擎 (Zhixun Engine) Team
-北京大学 AI 竞赛 — 赛题 9「智训引擎」参赛作品
+第二届北京市大学生“人工智能+”创新大赛 — 赛题 9「智训引擎」参赛作品
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,9 @@ SOFTWARE.
 
 附加说明 (与 MIT License 不冲突, 仅作项目声明):
 
-本仓库为北京大学 AI 竞赛赛题 9「智训引擎 — 工业制造场景下的模型训练与
-超参数优化」的参赛实现。
+本仓库为第二届北京市大学生“人工智能+”创新大赛赛题 9「智训引擎 — 工业制造
+场景下的模型训练与超参数优化」的参赛实现（出题企业：软通计算机有限公司、
+华为技术有限公司）。
 
 - 本仓库**不包含任何模型权重文件**。赛题明确要求"严禁将模型权重打包进
   提交包", 故仓库与提交包均以"可复现代码"的形式交付: 评测方在给定

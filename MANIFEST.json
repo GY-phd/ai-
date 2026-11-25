@@ -1,7 +1,7 @@
 {
   "name": "zhixun-engine-b",
   "contains_model_weights": false,
-  "total_bytes": 72627261,
+  "total_bytes": 72628750,
   "file_count": 458,
   "note": "Weights are intentionally absent; the harness regenerates them from the data package at evaluation time.",
   "digest_form": "sha256 over the canonical form of the file (LF line endings, binary payloads untouched), so the digest and the recorded size are the same on every platform.",
@@ -39,8 +39,8 @@
       "sha256": "430fbd7a464a2669f226bf2bf825f4dcd2ba7ab1b864ce40a4df2a1d6db901d9"
     },
     "LICENSE": {
-      "bytes": 2106,
-      "sha256": "d9a6d1b82f8f1ddab350783cf19b12ead89f9e395428d0e4a5e6dc9259da8e81"
+      "bytes": 2254,
+      "sha256": "bea4f9c773fb69d76e3c0ea7831bfb775c8e0cb198a70a3ceac43c0ff6c9e82e"
     },
     "README.md": {
       "bytes": 27209,
@@ -1575,8 +1575,8 @@
       "sha256": "dcbb786886fd01d27d64653cd7e0b7ec85ae5ec28a093a7693dc706eccb973e0"
     },
     "tools/build_github_repo.py": {
-      "bytes": 17920,
-      "sha256": "d80ba68259b7fb7e882a2c34b6531844c2cd7a8fa3c2f7268881bc393ebbff99"
+      "bytes": 18313,
+      "sha256": "2d9597fb5679279240dc04eb85f0e6437c8292b3733468dbf3cb9742beda63cc"
     },
     "tools/build_ppt_figures.py": {
       "bytes": 39866,
@@ -1691,8 +1691,8 @@
       "sha256": "15b4e6da485b9ca82bb6869a4f186011dd98d024bad49d5f5336bbf780a2a289"
     },
     "tools/run_detached.py": {
-      "bytes": 1579,
-      "sha256": "da7daef6c5e2d3dc220aeb91eea7924c50267da484a89c9c9cc32a4ddaaab9d4"
+      "bytes": 2526,
+      "sha256": "873a8d34e52c5e5b946c57662898b1b7db17e1a1423a9730d26ed253c9e8248e"
     },
     "tools/run_harness_offline.py": {
       "bytes": 23026,
@@ -1775,8 +1775,8 @@
       "sha256": "37522872d88f330852363fce598eff60d75e4d7fbfb8656b2e49b95ded12aa08"
     },
     "tools/verify_repo.py": {
-      "bytes": 9450,
-      "sha256": "abb16d390abc1639320166abec7750106cd18a4c322983d61331a08a229dc7e3"
+      "bytes": 9451,
+      "sha256": "28c1457550a4e04c3cbf4b19f9231f11cc1456d44bd2ded2bbd15c875fcdb799"
     },
     "tracks/__init__.py": {
       "bytes": 0,

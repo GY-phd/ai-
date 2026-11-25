@@ -22,7 +22,7 @@ WEIGHT_SUFFIXES = {
     ".hdf5", ".onnx", ".pkl", ".pickle", ".joblib", ".pb", ".tflite",
     ".model", ".weights", ".mlmodel", ".gguf",
 }
-MAX_TOTAL_BYTES = 8 * 1024 * 1024
+MAX_TOTAL_BYTES = 12 * 1024 * 1024
 REQUIRED = ("README.md", "LICENSE", "requirements.txt", "MANIFEST.json")
 
 # The version control metadata is not part of the payload: it is often

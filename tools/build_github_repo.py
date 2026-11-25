@@ -110,14 +110,21 @@ ARTIFACT_GLOBS = ("figures/*.png", "tracks/*.json", "official/*.json")
 # rule itself is the precise check, and it is enforced separately (and
 # again by the pre-commit hook and by the CI).
 #
-# The budget is 8 MiB rather than 4 MiB because the repository carries
+# The budget is 12 MiB rather than 4 MiB because the repository carries
 # more evidence than it used to: the figures for the report
 # (``figureuse/``, ~890 KB), the thirty rounds' SwanLab records
 # (``runs/harness-offline/swanlab/``) and the MVC layer's source and
 # tests.  Every byte of that is either evidence a reviewer reads or code
 # the reviewer runs, and a GitHub repository is not the place to be
 # stingy.  The limit still holds: a stray weight of any size fails.
-MAX_TOTAL_BYTES = 8 * 1024 * 1024
+#
+# It was raised from 8 MiB to 12 MiB in November 2026 when the ten
+# report figures were regenerated: the panels carry more text now (the
+# hypothesis list in figure 7 became a table, the architecture in
+# figure 9 was re-laid out), and re-rendering them produced PNGs about
+# 1.1 MB heavier in total.  The payload is still 9.5 MiB, and a stray
+# weight of any size still fails the check.
+MAX_TOTAL_BYTES = 12 * 1024 * 1024
 
 PUSH_TEMPLATE = """# 上传到 GitHub
 
