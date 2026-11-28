@@ -17,7 +17,7 @@ Run::
 
     python -m research.tracks.c_weight_sweep --shape uniform --horizon 150 \
         --floor 0.15 --power 0.5 --lr 0.002 --epochs 30 \
-        --parent runs/harness-offline-c-weight/checkpoints/C-round-1.npz
+        --parent runs/harness-offline/checkpoints/C-round-1.npz
 
 The search that produced the current production weights is recorded in
 ``artifacts/tracks/c_weight_search.json`` (60+ configurations).

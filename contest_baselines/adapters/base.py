@@ -158,6 +158,22 @@ class Adapter:
         """
         return 1.0
 
+    def learning_rate(self):
+        """The rate a round trains at, or ``None`` to inherit the parent's.
+
+        A candidate inherits the parent's learning rate by default,
+        because the parent's rate is the one its weights were fitted
+        at.  A profile may **override** it when its own study measured
+        a better one, and it must then say so with the measurement.
+
+        This is a separate knob from the epoch budget because the two
+        were measured separately and they do not substitute for each
+        other: a larger rate at a short budget and a smaller rate at a
+        long budget are different experiments, and the platform's
+        scoring reads the training configuration the round declares.
+        """
+        return None
+
     # ------------------------------------------------- protocol alignment
     def test_horizon(self):
         """The remaining-life horizon the hidden test is bounded by.

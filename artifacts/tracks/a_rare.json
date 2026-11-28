@@ -1,0 +1,284 @@
+{
+ "format": "contest.research.a-rare.v1",
+ "seeds": [
+  42,
+  7
+ ],
+ "epochs": 30,
+ "records": [
+  {
+   "arm": "baseline",
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.7192279935410043,
+   "accuracy": 0.8737942122186495,
+   "per_class_f1": {
+    "Ethanol": 0.6766595289079229,
+    "Ethylene": 0.9341692789968651,
+    "Ammonia": 0.9949748743718593,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.7142857142857143
+   },
+   "train_counts": {
+    "Ethanol": 90,
+    "Ethylene": 98,
+    "Ammonia": 83,
+    "Acetaldehyde": 30,
+    "Acetone": 70,
+    "Toluene": 74
+   }
+  },
+  {
+   "arm": "baseline",
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.7192279935410043,
+   "accuracy": 0.8737942122186495,
+   "per_class_f1": {
+    "Ethanol": 0.6766595289079229,
+    "Ethylene": 0.9341692789968651,
+    "Ammonia": 0.9949748743718593,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.7142857142857143
+   },
+   "train_counts": {
+    "Ethanol": 90,
+    "Ethylene": 98,
+    "Ammonia": 83,
+    "Acetaldehyde": 30,
+    "Acetone": 70,
+    "Toluene": 74
+   }
+  },
+  {
+   "arm": "resample",
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.6587337928066171,
+   "accuracy": 0.8311897106109325,
+   "per_class_f1": {
+    "Ethanol": 0.6076923076923076,
+    "Ethylene": 0.9171974522292994,
+    "Ammonia": 0.717948717948718,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.7142857142857143
+   },
+   "train_counts": {
+    "Ethanol": 90,
+    "Ethylene": 98,
+    "Ammonia": 83,
+    "Acetaldehyde": 30,
+    "Acetone": 70,
+    "Toluene": 74
+   }
+  },
+  {
+   "arm": "resample",
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.5123065407516944,
+   "accuracy": 0.7853697749196141,
+   "per_class_f1": {
+    "Ethanol": 0.5454545454545454,
+    "Ethylene": 0.9177215189873417,
+    "Ammonia": 0.0,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.6153846153846154
+   },
+   "train_counts": {
+    "Ethanol": 90,
+    "Ethylene": 98,
+    "Ammonia": 83,
+    "Acetaldehyde": 30,
+    "Acetone": 70,
+    "Toluene": 74
+   }
+  },
+  {
+   "arm": "resample_strong",
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.7037052105622884,
+   "accuracy": 0.862540192926045,
+   "per_class_f1": {
+    "Ethanol": 0.6494623655913978,
+    "Ethylene": 0.9404580152671755,
+    "Ammonia": 0.9071038251366119,
+    "Acetaldehyde": 0.017543859649122806,
+    "Acetone": 0.9933774834437086,
+    "Toluene": 0.7142857142857143
+   },
+   "train_counts": {
+    "Ethanol": 90,
+    "Ethylene": 98,
+    "Ammonia": 83,
+    "Acetaldehyde": 30,
+    "Acetone": 70,
+    "Toluene": 74
+   }
+  },
+  {
+   "arm": "resample_strong",
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.7127333641034704,
+   "accuracy": 0.8802250803858521,
+   "per_class_f1": {
+    "Ethanol": 0.6890380313199105,
+    "Ethylene": 0.952959028831563,
+    "Ammonia": 0.9743589743589743,
+    "Acetaldehyde": 0.05128205128205129,
+    "Acetone": 0.9933774834437086,
+    "Toluene": 0.6153846153846154
+   },
+   "train_counts": {
+    "Ethanol": 90,
+    "Ethylene": 98,
+    "Ammonia": 83,
+    "Acetaldehyde": 30,
+    "Acetone": 70,
+    "Toluene": 74
+   }
+  },
+  {
+   "arm": "class_weight",
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.7191076536762595,
+   "accuracy": 0.8721864951768489,
+   "per_class_f1": {
+    "Ethanol": 0.6752136752136751,
+    "Ethylene": 0.9308176100628931,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9943289224952742,
+    "Toluene": 0.7142857142857143
+   },
+   "train_counts": {
+    "Ethanol": 90,
+    "Ethylene": 98,
+    "Ammonia": 83,
+    "Acetaldehyde": 30,
+    "Acetone": 70,
+    "Toluene": 74
+   }
+  },
+  {
+   "arm": "class_weight",
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.7191076536762595,
+   "accuracy": 0.8721864951768489,
+   "per_class_f1": {
+    "Ethanol": 0.6752136752136751,
+    "Ethylene": 0.9308176100628931,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9943289224952742,
+    "Toluene": 0.7142857142857143
+   },
+   "train_counts": {
+    "Ethanol": 90,
+    "Ethylene": 98,
+    "Ammonia": 83,
+    "Acetaldehyde": 30,
+    "Acetone": 70,
+    "Toluene": 74
+   }
+  },
+  {
+   "arm": "class_weight_strong",
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.7280056660125026,
+   "accuracy": 0.8737942122186495,
+   "per_class_f1": {
+    "Ethanol": 0.6781115879828326,
+    "Ethylene": 0.9291338582677166,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.05217391304347826,
+    "Acetone": 0.9943289224952742,
+    "Toluene": 0.7142857142857143
+   },
+   "train_counts": {
+    "Ethanol": 90,
+    "Ethylene": 98,
+    "Ammonia": 83,
+    "Acetaldehyde": 30,
+    "Acetone": 70,
+    "Toluene": 74
+   }
+  },
+  {
+   "arm": "class_weight_strong",
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.7280056660125026,
+   "accuracy": 0.8737942122186495,
+   "per_class_f1": {
+    "Ethanol": 0.6781115879828326,
+    "Ethylene": 0.9291338582677166,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.05217391304347826,
+    "Acetone": 0.9943289224952742,
+    "Toluene": 0.7142857142857143
+   },
+   "train_counts": {
+    "Ethanol": 90,
+    "Ethylene": 98,
+    "Ammonia": 83,
+    "Acetaldehyde": 30,
+    "Acetone": 70,
+    "Toluene": 74
+   }
+  }
+ ],
+ "summary": [
+  {
+   "arm": "class_weight_strong",
+   "mean_macro_f1": 0.7280056660125026,
+   "std_macro_f1": 0.0,
+   "mean_acetaldehyde_f1": 0.05217391304347826,
+   "worst_dead_classes": []
+  },
+  {
+   "arm": "baseline",
+   "mean_macro_f1": 0.7192279935410043,
+   "std_macro_f1": 0.0,
+   "mean_acetaldehyde_f1": 0.0,
+   "worst_dead_classes": [
+    "Acetaldehyde"
+   ]
+  },
+  {
+   "arm": "class_weight",
+   "mean_macro_f1": 0.7191076536762595,
+   "std_macro_f1": 0.0,
+   "mean_acetaldehyde_f1": 0.0,
+   "worst_dead_classes": [
+    "Acetaldehyde"
+   ]
+  },
+  {
+   "arm": "resample_strong",
+   "mean_macro_f1": 0.7082192873328794,
+   "std_macro_f1": 0.004514076770591013,
+   "mean_acetaldehyde_f1": 0.03441295546558705,
+   "worst_dead_classes": []
+  },
+  {
+   "arm": "resample",
+   "mean_macro_f1": 0.5855201667791557,
+   "std_macro_f1": 0.0732136260274614,
+   "mean_acetaldehyde_f1": 0.0,
+   "worst_dead_classes": [
+    "Acetaldehyde",
+    "Ammonia"
+   ]
+  }
+ ]
+}

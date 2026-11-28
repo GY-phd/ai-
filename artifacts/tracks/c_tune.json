@@ -1,0 +1,1284 @@
+{
+ "records": [
+  {
+   "recipe": "shipped",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 54.84438332444179,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.4305068172511355,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 1.8677724113885115,
+   "seconds": 30.9
+  },
+  {
+   "recipe": "shipped",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 54.34368929546534,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.8169123885231429,
+   "wins": 6,
+   "folds": 6,
+   "holdout_nasa_mean": 1.897938344596611,
+   "seconds": 29.9
+  },
+  {
+   "recipe": "ep20",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 20,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 55.8791660862687,
+   "baseline_rmse": 55.27489014169293,
+   "delta": 0.6042759445757682,
+   "wins": 3,
+   "folds": 6,
+   "holdout_nasa_mean": 1.9358910576772639,
+   "seconds": 17.2
+  },
+  {
+   "recipe": "ep20",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 20,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 55.27308863828956,
+   "baseline_rmse": 55.16060168398848,
+   "delta": 0.11248695430107603,
+   "wins": 2,
+   "folds": 6,
+   "holdout_nasa_mean": 1.9152933910891452,
+   "seconds": 19.2
+  },
+  {
+   "recipe": "ep60",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 60,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 54.79193790553222,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.48295223616070615,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 1.9759243263166955,
+   "seconds": 44.7
+  },
+  {
+   "recipe": "ep60",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 60,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 54.496925702017585,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.663675981970897,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.683804592116731,
+   "seconds": 44.5
+  },
+  {
+   "recipe": "ep80",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 54.39740640018624,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.877483741506687,
+   "wins": 6,
+   "folds": 6,
+   "holdout_nasa_mean": 1.7641097700575565,
+   "seconds": 62.0
+  },
+  {
+   "recipe": "ep80",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 54.72875515332936,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.43184653065912215,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.9177830249707455,
+   "seconds": 68.9
+  },
+  {
+   "recipe": "ep100",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 100,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 54.13901409489662,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -1.1358760467963052,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.8272810932996337,
+   "seconds": 75.0
+  },
+  {
+   "recipe": "ep100",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 100,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 54.91582510451051,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.24477657947797127,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 1.9791328545244078,
+   "seconds": 93.0
+  },
+  {
+   "recipe": "ep120",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 120,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 54.31756783785016,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.9573223038427656,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.692172671255524,
+   "seconds": 119.5
+  },
+  {
+   "recipe": "ep120",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 120,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 54.552240680008175,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.6083610039803062,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.844208394653343,
+   "seconds": 128.7
+  },
+  {
+   "recipe": "lr0.001",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.001,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 54.882705091992534,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.3921850497003945,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.9150282055194285,
+   "seconds": 38.9
+  },
+  {
+   "recipe": "lr0.001",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.001,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 55.10334350659152,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.057258177396960264,
+   "wins": 3,
+   "folds": 6,
+   "holdout_nasa_mean": 1.941476908474901,
+   "seconds": 49.6
+  },
+  {
+   "recipe": "lr0.002",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.002,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 54.767403313861415,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.5074868278315137,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.9140234692207903,
+   "seconds": 61.6
+  },
+  {
+   "recipe": "lr0.002",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.002,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 54.889780479416736,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.27082120457174597,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.9072988154577688,
+   "seconds": 46.5
+  },
+  {
+   "recipe": "lr0.008",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.008,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 55.0229370485773,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.2519530931156311,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 1.8651013326206904,
+   "seconds": 52.6
+  },
+  {
+   "recipe": "lr0.008",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.008,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 54.82205685750214,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.3385448264863413,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 2.061582756156492,
+   "seconds": 128.7
+  },
+  {
+   "recipe": "lr0.012",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.012,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 54.92352276643941,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.3513673752535169,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.8068346531415884,
+   "seconds": 91.4
+  },
+  {
+   "recipe": "lr0.012",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.012,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 55.19636413759434,
+   "baseline_rmse": 55.16060168398848,
+   "delta": 0.03576245360585517,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 2.1679522526317156,
+   "seconds": 78.5
+  },
+  {
+   "recipe": "hid16",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 16,
+   "seed": 42,
+   "holdout_rmse": 54.85912520884375,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.4157649328491786,
+   "wins": 6,
+   "folds": 6,
+   "holdout_nasa_mean": 1.912627016492556,
+   "seconds": 76.6
+  },
+  {
+   "recipe": "hid16",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 16,
+   "seed": 7,
+   "holdout_rmse": 54.97042109747421,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.1901805865142734,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 1.9049920708582535,
+   "seconds": 79.4
+  },
+  {
+   "recipe": "hid64",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 64,
+   "seed": 42,
+   "holdout_rmse": 54.86369719123101,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.41119295046191695,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 1.8632198832109534,
+   "seconds": 147.5
+  },
+  {
+   "recipe": "hid64",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 64,
+   "seed": 7,
+   "holdout_rmse": 54.39191619426796,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.7686854897205251,
+   "wins": 6,
+   "folds": 6,
+   "holdout_nasa_mean": 1.9360498587623785,
+   "seconds": 142.4
+  },
+  {
+   "recipe": "hid128",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 128,
+   "seed": 42,
+   "holdout_rmse": 54.91084632511619,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.36404381657673923,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 1.8482362415992437,
+   "seconds": 260.3
+  },
+  {
+   "recipe": "hid128",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 128,
+   "seed": 7,
+   "holdout_rmse": 54.7992045082193,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.3613971757691843,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.9577938324900923,
+   "seconds": 272.5
+  },
+  {
+   "recipe": "alpha0.25",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.25
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 54.78094390321608,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.4939462384768518,
+   "wins": 6,
+   "folds": 6,
+   "holdout_nasa_mean": 1.916492041930147,
+   "seconds": 94.2
+  },
+  {
+   "recipe": "alpha0.25",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.25
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 54.32275889705317,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.8378427869353118,
+   "wins": 6,
+   "folds": 6,
+   "holdout_nasa_mean": 1.938370575808593,
+   "seconds": 95.8
+  },
+  {
+   "recipe": "alpha1",
+   "spec": {
+    "w": "deg",
+    "alpha": 1.0
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 54.996217868103535,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.27867227358939317,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 1.7716355486024797,
+   "seconds": 94.4
+  },
+  {
+   "recipe": "alpha1",
+   "spec": {
+    "w": "deg",
+    "alpha": 1.0
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 54.49710445584478,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.6634972281437044,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.8444645717791002,
+   "seconds": 95.2
+  },
+  {
+   "recipe": "alpha2",
+   "spec": {
+    "w": "deg",
+    "alpha": 2.0
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 55.36287009794344,
+   "baseline_rmse": 55.27489014169293,
+   "delta": 0.08797995625051414,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 1.6585901498516165,
+   "seconds": 94.7
+  },
+  {
+   "recipe": "alpha2",
+   "spec": {
+    "w": "deg",
+    "alpha": 2.0
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 54.88164575234783,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.27895593164065247,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 1.7722264616492336,
+   "seconds": 91.7
+  },
+  {
+   "recipe": "ep80_lr0.002",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.002,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 54.57130157755452,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.703588564138407,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.720175972855092,
+   "seconds": 62.2
+  },
+  {
+   "recipe": "ep80_lr0.002",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.002,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 54.574723007099756,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.5858786768887256,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.8838291149996007,
+   "seconds": 70.8
+  },
+  {
+   "recipe": "ep80_lr0.008",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.008,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 54.27086778225083,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -1.0040223594420965,
+   "wins": 6,
+   "folds": 6,
+   "holdout_nasa_mean": 1.8292693089057914,
+   "seconds": 153.7
+  },
+  {
+   "recipe": "ep80_lr0.008",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.008,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 54.28031674815394,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.8802849358345384,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.8764243429627723,
+   "seconds": 187.1
+  },
+  {
+   "recipe": "ep80_hid64",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 64,
+   "seed": 42,
+   "holdout_rmse": 54.43984603976758,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.8350441019253481,
+   "wins": 6,
+   "folds": 6,
+   "holdout_nasa_mean": 1.7771379413296782,
+   "seconds": 396.6
+  },
+  {
+   "recipe": "ep80_hid64",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 64,
+   "seed": 7,
+   "holdout_rmse": 54.40862855348831,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.7519731305001685,
+   "wins": 6,
+   "folds": 6,
+   "holdout_nasa_mean": 1.8695187074181188,
+   "seconds": 307.9
+  },
+  {
+   "recipe": "ep80_hid16",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 16,
+   "seed": 42,
+   "holdout_rmse": 54.76993348738434,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.5049566543085859,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.7234582214043355,
+   "seconds": 136.9
+  },
+  {
+   "recipe": "ep80_hid16",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 16,
+   "seed": 7,
+   "holdout_rmse": 54.95766356447218,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.20293811951630403,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.897909097108822,
+   "seconds": 142.8
+  },
+  {
+   "recipe": "ep80_a1",
+   "spec": {
+    "w": "deg",
+    "alpha": 1.0
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 54.55427556040437,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -0.720614581288558,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 1.7179705693978102,
+   "seconds": 183.7
+  },
+  {
+   "recipe": "ep80_a1",
+   "spec": {
+    "w": "deg",
+    "alpha": 1.0
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 54.78900570853383,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.37159597545465317,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 1.8417828125261693,
+   "seconds": 187.1
+  },
+  {
+   "recipe": "ep100_hid64",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 100,
+   "lr": 0.004,
+   "hidden": 64,
+   "seed": 42,
+   "holdout_rmse": 54.04483777917512,
+   "baseline_rmse": 55.27489014169293,
+   "delta": -1.2300523625178101,
+   "wins": 5,
+   "folds": 6,
+   "holdout_nasa_mean": 1.8466301947549904,
+   "seconds": 316.7
+  },
+  {
+   "recipe": "ep100_hid64",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 100,
+   "lr": 0.004,
+   "hidden": 64,
+   "seed": 7,
+   "holdout_rmse": 54.92921006716412,
+   "baseline_rmse": 55.16060168398848,
+   "delta": -0.23139161682436082,
+   "wins": 4,
+   "folds": 6,
+   "holdout_nasa_mean": 1.9985811937349627,
+   "seconds": 163.3
+  },
+  {
+   "recipe": "ep80_cap150",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5,
+    "cap": 150
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 64.39879986460575,
+   "baseline_rmse": 55.27489014169293,
+   "delta": 9.12390972291282,
+   "wins": 0,
+   "folds": 6,
+   "holdout_nasa_mean": 1.3477031057118303,
+   "seconds": 89.6
+  },
+  {
+   "recipe": "ep80_cap150",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5,
+    "cap": 150
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 64.26926145606011,
+   "baseline_rmse": 55.16060168398848,
+   "delta": 9.108659772071626,
+   "wins": 0,
+   "folds": 6,
+   "holdout_nasa_mean": 1.3985686746936832,
+   "seconds": 90.9
+  },
+  {
+   "recipe": "ep80_cap200",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5,
+    "cap": 200
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 42,
+   "holdout_rmse": 57.335288132455695,
+   "baseline_rmse": 55.27489014169293,
+   "delta": 2.060397990762766,
+   "wins": 1,
+   "folds": 6,
+   "holdout_nasa_mean": 1.5918729594033596,
+   "seconds": 87.2
+  },
+  {
+   "recipe": "ep80_cap200",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5,
+    "cap": 200
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "seed": 7,
+   "holdout_rmse": 57.302402168716064,
+   "baseline_rmse": 55.16060168398848,
+   "delta": 2.1418004847275824,
+   "wins": 2,
+   "folds": 6,
+   "holdout_nasa_mean": 1.7036431265992753,
+   "seconds": 89.7
+  }
+ ],
+ "summary": [
+  {
+   "recipe": "ep80_lr0.008",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.008,
+   "hidden": 32,
+   "mean_holdout": 54.27559226520239,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.9421536476383174,
+   "mean_wins": 5.5,
+   "wins_total": 11,
+   "folds_total": 12,
+   "rel_pct": -1.7062515538491454
+  },
+  {
+   "recipe": "ep80_hid64",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 64,
+   "mean_holdout": 54.42423729662795,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.7935086162127583,
+   "mean_wins": 6.0,
+   "wins_total": 12,
+   "folds_total": 12,
+   "rel_pct": -1.437053619438367
+  },
+  {
+   "recipe": "ep120",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 120,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 54.434904258929166,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.7828416539115359,
+   "mean_wins": 5.0,
+   "wins_total": 10,
+   "folds_total": 12,
+   "rel_pct": -1.417735622796382
+  },
+  {
+   "recipe": "ep100_hid64",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 100,
+   "lr": 0.004,
+   "hidden": 64,
+   "mean_holdout": 54.487023923169616,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.7307219896710855,
+   "mean_wins": 4.5,
+   "wins_total": 9,
+   "folds_total": 12,
+   "rel_pct": -1.3233462858561897
+  },
+  {
+   "recipe": "ep100",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 100,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 54.52741959970356,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.6903263131371382,
+   "mean_wins": 4.5,
+   "wins_total": 9,
+   "folds_total": 12,
+   "rel_pct": -1.250189231242424
+  },
+  {
+   "recipe": "alpha0.25",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.25
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 54.55185140013462,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.6658945127060818,
+   "mean_wins": 6.0,
+   "wins_total": 12,
+   "folds_total": 12,
+   "rel_pct": -1.2059429476841976
+  },
+  {
+   "recipe": "ep80",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 54.5630807767578,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.6546651360829046,
+   "mean_wins": 5.5,
+   "wins_total": 11,
+   "folds_total": 12,
+   "rel_pct": -1.1856064119608771
+  },
+  {
+   "recipe": "ep80_lr0.002",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.002,
+   "hidden": 32,
+   "mean_holdout": 54.573012292327135,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.6447336205135663,
+   "mean_wins": 5.0,
+   "wins_total": 10,
+   "folds_total": 12,
+   "rel_pct": -1.1676203181695535
+  },
+  {
+   "recipe": "shipped",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 54.594036309953566,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.6237096028871392,
+   "mean_wins": 5.0,
+   "wins_total": 10,
+   "folds_total": 12,
+   "rel_pct": -1.1295455701354473
+  },
+  {
+   "recipe": "hid64",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 64,
+   "mean_holdout": 54.62780669274949,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.589939220091221,
+   "mean_wins": 5.0,
+   "wins_total": 10,
+   "folds_total": 12,
+   "rel_pct": -1.0683870019294515
+  },
+  {
+   "recipe": "ep60",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 60,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 54.64443180377491,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.5733141090658016,
+   "mean_wins": 4.5,
+   "wins_total": 9,
+   "folds_total": 12,
+   "rel_pct": -1.0382787264999156
+  },
+  {
+   "recipe": "ep80_a1",
+   "spec": {
+    "w": "deg",
+    "alpha": 1.0
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 54.6716406344691,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.5461052783716056,
+   "mean_wins": 4.0,
+   "wins_total": 8,
+   "folds_total": 12,
+   "rel_pct": -0.9890032078339703
+  },
+  {
+   "recipe": "alpha1",
+   "spec": {
+    "w": "deg",
+    "alpha": 1.0
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 54.74666116197416,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.4710847508665488,
+   "mean_wins": 4.5,
+   "wins_total": 9,
+   "folds_total": 12,
+   "rel_pct": -0.8531401329024545
+  },
+  {
+   "recipe": "lr0.002",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.002,
+   "hidden": 32,
+   "mean_holdout": 54.828591896639075,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.3891540162016298,
+   "mean_wins": 5.0,
+   "wins_total": 10,
+   "folds_total": 12,
+   "rel_pct": -0.7047625899396471
+  },
+  {
+   "recipe": "hid128",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 128,
+   "mean_holdout": 54.85502541666774,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.36272049617296176,
+   "mean_wins": 4.5,
+   "wins_total": 9,
+   "folds_total": 12,
+   "rel_pct": -0.6568911681862267
+  },
+  {
+   "recipe": "ep80_hid16",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 16,
+   "mean_holdout": 54.86379852592826,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.353947386912445,
+   "mean_wins": 5.0,
+   "wins_total": 10,
+   "folds_total": 12,
+   "rel_pct": -0.6410029621113811
+  },
+  {
+   "recipe": "hid16",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 16,
+   "mean_holdout": 54.914773153158976,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.302972759681726,
+   "mean_wins": 5.0,
+   "wins_total": 10,
+   "folds_total": 12,
+   "rel_pct": -0.5486873009266948
+  },
+  {
+   "recipe": "lr0.008",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.008,
+   "hidden": 32,
+   "mean_holdout": 54.92249695303972,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.2952489598009862,
+   "mean_wins": 4.0,
+   "wins_total": 8,
+   "folds_total": 12,
+   "rel_pct": -0.5346994067215753
+  },
+  {
+   "recipe": "lr0.001",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.001,
+   "hidden": 32,
+   "mean_holdout": 54.99302429929203,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.22472161354867737,
+   "mean_wins": 4.0,
+   "wins_total": 8,
+   "folds_total": 12,
+   "rel_pct": -0.40697353691944005
+  },
+  {
+   "recipe": "lr0.012",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 40,
+   "lr": 0.012,
+   "hidden": 32,
+   "mean_holdout": 55.059943452016874,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.15780246082383087,
+   "mean_wins": 4.5,
+   "wins_total": 9,
+   "folds_total": 12,
+   "rel_pct": -0.2857821488637305
+  },
+  {
+   "recipe": "alpha2",
+   "spec": {
+    "w": "deg",
+    "alpha": 2.0
+   },
+   "epochs": 40,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 55.12225792514563,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": -0.09548798769506917,
+   "mean_wins": 4.0,
+   "wins_total": 8,
+   "folds_total": 12,
+   "rel_pct": -0.17292989077423343
+  },
+  {
+   "recipe": "ep20",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5
+   },
+   "epochs": 20,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 55.576127362279124,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": 0.3583814494384221,
+   "mean_wins": 2.5,
+   "wins_total": 5,
+   "folds_total": 12,
+   "rel_pct": 0.6490331025176486
+  },
+  {
+   "recipe": "ep80_cap200",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5,
+    "cap": 200
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 57.31884515058588,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": 2.1010992377451743,
+   "mean_wins": 1.5,
+   "wins_total": 3,
+   "folds_total": 12,
+   "rel_pct": 3.8051159152017657
+  },
+  {
+   "recipe": "ep80_cap150",
+   "spec": {
+    "w": "deg",
+    "alpha": 0.5,
+    "cap": 150
+   },
+   "epochs": 80,
+   "lr": 0.004,
+   "hidden": 32,
+   "mean_holdout": 64.33403066033293,
+   "mean_baseline": 55.217745912840705,
+   "mean_delta": 9.116284747492223,
+   "mean_wins": 0.0,
+   "wins_total": 0,
+   "folds_total": 12,
+   "rel_pct": 16.50970099699825
+  }
+ ]
+}

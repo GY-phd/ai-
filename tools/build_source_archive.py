@@ -23,7 +23,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "提交材料_20261125" / "06_源码与依赖" / "智训引擎-源码包-v8.zip"
+OUT = ROOT / "提交材料_20261125" / "06_源码与依赖" / "智训引擎-源码包-v10.zip"
 
 # Directories and files that are part of the deliverable.
 INCLUDE_DIRS = [

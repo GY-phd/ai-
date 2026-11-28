@@ -17,7 +17,7 @@
 
 | 文件 | 大小 | SHA256 |
 | --- | --- | --- |
-| `zhixun-engine-linux-amd64.tar` | 174.3 MiB | `ffc64b8e95e7d98ddeae37f186c27cee6236efe18d5c0f3b89e4b3982abf03eb` |
+| `zhixun-engine-linux-amd64.tar` | 174.3 MiB | `84474fc8d906702cbc1eaa327ffe335c025fbbbcc6fa1d27b2ddd297b4b378e9` |
 | `zhixun-engine-linux-amd64.tar.sha256` | 校验和旁挂文件 | — |
 
 镜像属性（`--verify-only` 校验通过）：
@@ -346,11 +346,12 @@ python tools/run_harness_offline.py --rounds 10 --live --out runs/harness-offlin
 ## 8. 平台操作步骤
 
 1. 在 `https://rsi-index.115.zone/#submissions` 上传
-   `zhixun-engine-linux-amd64.tar`（174.3 MiB 的**未压缩** tar，不要打包成 zip）。
-   SHA256：`ffc64b8e95e7d98ddeae37f186c27cee6236efe18d5c0f3b89e4b3982abf03eb`。
-   > **必须上传新包**：当前这一版（`ffc64b8e…`）带上了 2026-11-24 的
-   > C 方向根因修复（切片降级为记录、判决只看全量 RMSE、相对退化度加权、
-   > epoch 预算 32–75）；历史版本的失败记录见 §7 与 §8。
+   `zhixun-engine-linux-amd64.tar`（174.30 MiB 的**未压缩** tar，不要打包成 zip）。
+   SHA256：`84474fc8d906702cbc1eaa327ffe335c025fbbbcc6fa1d27b2ddd297b4b378e9`。
+   > **必须上传新包**：当前这一版带上了 **v10** 的两处 C 方向根因修复 ——
+   > 判决与证伪器改读全量主指标（切片降级为只记录）、以及输出层仿射校准
+   > （抬高漂移流的「最差阶段」底线）；epoch 预算 42–74。
+   > 历史版本的失败记录见 §7 与 §8。
 2. 平台会依次执行 `describe` → `train` × 10 → `predict`。
    入口声明通过**不代表**训练、预测和比赛要求都已通过。
 3. **模型选 `Qwen/Qwen3.8-27B`**（赛题白名单内，见

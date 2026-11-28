@@ -216,10 +216,32 @@ def prepare(hypothesis, model, train, profile_key, seed, adapter=None):
     parent_paths = list(model.meta["paths"])
     changed = {}
 
+    # The profile's own learning rate, when it declares one.  A profile
+    # that does not declare one leaves the parent's rate alone, which is
+    # the historical behaviour.
+    #
+    # The override happens **before** the hypothesis branches, so the
+    # ``the-parent-was-left-unconverged`` hypothesis doubles the
+    # profile's rate rather than the parent's.  That hypothesis's claim
+    # is about the *schedule* the parent was stopped on, and the rate
+    # it doubles has to be the rate the rest of the study measured -
+    # doubling a rate that the study never used would test a different
+    # experiment than the one that was measured.
+    profile_rate = adapter.learning_rate()
+    if profile_rate is not None:
+        profile_rate = float(profile_rate)
+        if profile_rate != float(model.meta["learning_rate"]):
+            changed["learning_rate"] = profile_rate
+            changed["learning_rate_source"] = ("profile %s" % adapter.key)
+        model.meta["learning_rate"] = profile_rate
+
     if hypothesis.key == "the-parent-was-left-unconverged":
         rate = min(0.01, float(model.meta["learning_rate"]) * 2.0)
         model.meta["learning_rate"] = rate
         changed["learning_rate"] = rate
+        changed["learning_rate_source"] = ("twice the profile rate (%g)"
+                                           % profile_rate if profile_rate
+                                           is not None else "twice the parent's")
 
     elif hypothesis.key in ("the-tail-is-underweight", "the-tail-is-underweighted"):
         weight = _unit_shortness(y, units)
@@ -300,6 +322,44 @@ def prepare(hypothesis, model, train, profile_key, seed, adapter=None):
             changed["weight_mean"] = round(float(weights.mean()), 4)
             changed["weight_min"] = round(float(weights.min()), 4)
             changed["weight_max"] = round(float(weights.max()), 4)
+
+    elif hypothesis.key == "the-output-is-biased":
+        # Remove the constant offset in the model's output.
+        #
+        # Measured on profile C's public validation split, cut into five
+        # lifecycle stages, the freshest stage's error is **44% bias**:
+        # the model systematically predicts a lower remaining life than
+        # the truth at the fresh end of an engine's life, where the
+        # absolute targets are largest.  A constant offset is not a shape
+        # error, so no amount of extra training removes it - the fresh
+        # rows are a tiny share of the training mass, while the scoring
+        # rows are spread over the whole life cycle.
+        #
+        # The affine map is fitted on the **training** rows (the
+        # validation split is a measurement split and fitting on it would
+        # leak) and folded into ``w2``/``b2``, so the calibrated model
+        # *is* the checkpoint.  The platform runs the reference forward
+        # pass, so a calibration that lived outside the weights would not
+        # be applied at scoring time at all.
+        #
+        # The hypothesis is recorded as ``skipped`` when the profile is
+        # not a regression task, because the calibration is a regression
+        # operation.
+        #
+        # The map is **not** fitted here: ``prepare`` runs before the
+        # training, and the map has to be fitted on the *trained*
+        # model's output.  So the branch records the intent, and the
+        # controller applies it after the fit - see
+        # ``RoundController.build_candidate``.
+        if task != "regression":
+            changed["skipped"] = ("profile %s is not a regression task"
+                                  % adapter.key)
+        else:
+            changed["calibration_requested"] = True
+            changed["note"] = ("the affine output map is fitted on the "
+                                "training rows after the fit and folded "
+                                "into the output layer; the feature schema "
+                                "and the prediction path are untouched")
 
     elif hypothesis.key == "the-unit-is-the-confounder":
         # The unit's elapsed-observation count would be the natural way to
@@ -447,14 +507,55 @@ def epoch_budget(hypothesis, round_index, wall_seconds=None, adapter=None):
             # epochs beats it on 5 of 12 (mean +0.358).  See
             # ``research/tracks/c_epochs.py``.
             #
-            # The base is 65 rather than 80 so that the ten rounds stay
-            # **strictly increasing** (a base of 70 would reach the 150
-            # cap at round 9 and repeat the budget at round 10, which
-            # breaks the rule that a repeated hypothesis must still be a
-            # different experiment).  Profile C halves it, so its first
-            # round runs 32 epochs and its last runs 75 - the range the
-            # study measured.
-            "the-degradation-is-relative": 65,
+            # The base is **85** so that profile C's ten rounds run
+            # **42 to 74 epochs**, and the reason for starting at 42 is
+            # the measurement, not taste: the epoch curve is **not**
+            # monotone.  The leave-one-engine-out study
+            # (``research/tracks/c_epochs.py``; 12 engine folds over two
+            # seeds, the weight fixed at ``deg0.5``) measured
+            #
+            # =========  ==========  =========  ==============
+            # epochs     holdout     delta      beats baseline
+            # =========  ==========  =========  ==============
+            # 10          55.5271    +0.3094    4 / 12
+            # 20          55.5761    +0.3584    5 / 12
+            # 40          54.5940    -0.6237   10 / 12
+            # 80          54.5631    -0.6547   11 / 12
+            # =========  ==========  =========  ==============
+            #
+            # The crossing is at **40**: 10 and 20 epochs both *lose* to
+            # the static baseline, and only from 40 on does the candidate
+            # win.  The previous base of 65 put round 1 at **32 epochs -
+            # inside the losing region** - so the first round of every
+            # run trained a candidate the evidence says was worse than
+            # the parent, before the loop had even started.  That is
+            # exactly the shape of the platform's 2026-11-25 run, whose
+            # first C round landed on 32 epochs.
+            #
+            # The budget therefore starts **above** the crossing, and
+            # every value in between is inside the measured 40-to-80
+            # interval where the gain saturates.  The growth step is
+            # **derived** rather than flat - ``_epoch_step`` spreads the
+            # schedule across the ten rounds - because a flat step of ten
+            # reaches the 150-epoch cap at round 8 and rounds 9 and 10
+            # then repeat the capped value, which breaks the rule that
+            # a repeated hypothesis must still be a different
+            # experiment.  With a step of seven the budget reads 42, 46,
+            # 49, 53, 56, 60, 63, 67, 70, 74 for profile C.
+            #
+            # The cost is 580 epochs over the ten rounds, 8 % more than
+            # the 535 the previous budget spent.  ``research/tracks/
+            # c_ship.py`` measured 0.152 s per epoch on the full 113 089
+            # rows, so that is about 9 s of training per round against a
+            # wall clock of 21 600 s for the whole run - the C direction
+            # used about 8 000 s of it in the platform's own run.
+            "the-degradation-is-relative": 85,
+            # The output calibration needs the model to have been trained
+            # before the map is fitted, so it uses the **same** budget as
+            # the plain continuation.  It costs **no** extra epochs: the
+            # map is a least-squares fit over the training rows, folded
+            # into the output layer.
+            "the-output-is-biased": 40,
             "the-unit-is-the-confounder": 40,
             "capacity-is-overfitting": 40, "rare-class-is-underweighted": 30,
             "the-batch-is-mixing-scales": 30,
@@ -473,8 +574,40 @@ def epoch_budget(hypothesis, round_index, wall_seconds=None, adapter=None):
     # same budget from the same parent would produce the same numbers,
     # and the second round would be a repetition dressed up as an
     # experiment rather than an experiment at all.
-    count += (round_index - 1) * 10
+    count += (round_index - 1) * _epoch_step(hypothesis)
     count = int(min(count, 150))
     if adapter is not None:
         count = max(1, int(count * float(adapter.epoch_scale())))
     return count
+
+
+def _epoch_step(hypothesis):
+    """The per-round growth of the epoch budget.
+
+    The budget has to be **strictly increasing** across the run, because
+    a repeated hypothesis must still be a *different* experiment: the
+    same strategy with the same budget from the same parent produces
+    the same numbers, and the second round would be a repetition dressed
+    up as an experiment.
+
+    A flat step of ten per round does not satisfy that for the
+    degradation hypothesis at a base of 85: the schedule reaches the
+    150-epoch cap at round 8, and rounds 9 and 10 then repeat the
+    capped value - a repetition, not an experiment.  The step is
+    therefore **derived** rather than fixed: the schedule is spread
+    evenly across the ten rounds of a run so that the last round lands
+    just under the cap and no two rounds share a budget.
+
+    For the degradation hypothesis that gives a step of
+    ``(150 - 85) // 9 = 7``, and profile C - which halves the budget -
+    reads 42, 46, 49, 53, 56, 60, 63, 67, 70, 74.  Every value is
+    inside the measured 40-to-80-epoch interval where the held-out
+    study says the gain saturates, every value is distinct, and none
+    reaches the cap.
+
+    The other hypotheses keep the flat step of ten, which their bases
+    (30, 40 and 60) reach the cap with cleanly.
+    """
+    if hypothesis.key != "the-degradation-is-relative":
+        return 10
+    return max(1, (150 - 85) // 9)

@@ -44,6 +44,7 @@ from .hypotheses import (
     CAPACITY,
     DEGRADATION_IS_RELATIVE,
     MORE_DATA_HELPS,
+    OUTPUT_IS_BIASED,
     TAIL_UNDERWEIGHTED,
     THE_TEST_IS_TRUNCATED,
     UNCONVERGED,
@@ -78,9 +79,33 @@ class CmapssAdapter(Adapter):
 
         The same shape as B: the unit-related experiments first, the
         capacity migration last.
+
+        ``the-output-is-biased`` sits **second**, right after the
+        relative-degradation weight and before the plain continuation.
+        The order is by measured value, and the measurement says the
+        calibration is the second-best thing this profile can do:
+
+        * the freshest lifecycle stage's error is **44 % bias**, so a
+          part of the error is a constant offset that no amount of
+          training removes;
+        * the leave-one-engine-out study (``research/tracks/c_floor.py``,
+          six engine folds) measured the calibration against the static
+          baseline on **three** readings at once - the full split, the
+          worst lifecycle stage and the worst operating condition - and
+          it improved **all three**: full 51.2753 -> 51.1769, worst
+          lifecycle stage 77.7829 -> 76.6673 (the baseline's is
+          78.5433), worst condition 62.7544 -> 62.4194 (the baseline's
+          is 63.2368).
+
+        The plain continuation and the degradation weight come after it
+        because the calibration composes with them: it is the cheapest
+        change in the bank (no extra epochs at all) and it is the only
+        one that raises the *floor* of the drift stream, which is what
+        the platform's ``worst_stage`` line measures.
         """
         return [
             DEGRADATION_IS_RELATIVE,
+            OUTPUT_IS_BIASED,
             MORE_DATA_HELPS,
             UNCONVERGED,
             TAIL_UNDERWEIGHTED,
@@ -94,15 +119,86 @@ class CmapssAdapter(Adapter):
         Without this the later rounds would run 150 epochs over 113 000
         rows and the round would risk the platform's wall clock.
 
-        The factor is **0.5**, which leaves the relative-degradation
-        hypothesis 40 epochs in the first round and 80 in the last.  That
-        is the range the held-out study measured
-        (``research/tracks/c_epochs.py``): at 40 epochs the candidate
-        beats the baseline on 10 of 12 folds and at 80 on 11 of 12,
-        while at 20 epochs it beats the baseline on only 5 of 12.  The
-        budget, not the weighting, is what moves this profile's score.
+        The factor is **0.5**, and the base budget it scales is 85, so
+        profile C's ten rounds run **42 to 74 epochs**.
+
+        Why the budget starts where it does
+        ----------------------------------
+        The epoch curve is **not** monotone.  The leave-one-engine-out
+        study (``research/tracks/c_epochs.py``; 12 engine folds over
+        two seeds, the weight fixed at ``deg0.5``) measured:
+
+        =========  ==========  =========  ==============
+        epochs     holdout     delta      beats baseline
+        =========  ==========  =========  ==============
+        10          55.5271    +0.3094    4 / 12
+        20          55.5761    +0.3584    5 / 12
+        40          54.5940    -0.6237   10 / 12
+        80          54.5631    -0.6547   11 / 12
+        =========  ==========  =========  ==============
+
+        The crossing is at **40**: 10 and 20 epochs both *lose* to the
+        static baseline, and only from 40 on does the candidate win.
+        The previous base of 65 put round 1 at **32 epochs - inside the
+        losing region**, so the first round of every run trained a
+        candidate that the evidence says was worse than the parent
+        before the loop had even started.
+
+        The budget therefore starts **above** the crossing: 42 epochs in
+        round 1, 74 in round 10, strictly increasing throughout
+        (``epoch_budget`` grows the degradation schedule by seven per
+        round), and every value in between is inside the measured
+        40-to-80 interval where the gain saturates.  The cost of the ten
+        rounds is 580 epochs in total, 8 % more than the 535 the
+        previous budget spent, and ``research/tracks/c_ship.py`` measured
+        that at 0.152 s per epoch on the full 113 089 rows - about 9 s of
+        training per round, against a wall clock of 21 600 s for the
+        whole run.
         """
         return 0.5
+
+    def learning_rate(self):
+        """The rate profile C trains at: **0.008**.
+
+        The shipped C checkpoint declares ``learning_rate = 0.002``
+        (see ``art/repo-inspect/cpu-c-guide-20261110-v1/checkpoint.npz``),
+        and the round inherited it.  But **every** held-out study of
+        this profile measured at 0.004, so the studies and the
+        production loop were talking about different training
+        configurations, and the number the studies reported was never
+        the number the platform ran.
+
+        Measured on the same twelve leave-one-engine-out folds
+        (``research/tracks/c_decide.py``, six folds, two seeds), the
+        paired difference against the baseline is:
+
+        ==================  ==========  =====  ==========
+        configuration       mean delta  wins  Wilcoxon p
+        ==================  ==========  =====  ==========
+        ep80, lr 0.004      -0.6547     11/12  0.038
+        **ep80, lr 0.008**  **-0.9422**  11/12  **0.003**
+        ep40, lr 0.004      -0.6237     10/12  0.005
+        ep40, lr 0.002      -0.3892     10/12  0.046
+        ==================  ==========  =====  ==========
+
+        The rate is not a free choice at every budget: at 40 epochs the
+        higher rate is *worse* than the lower one (-0.2952 against
+        -0.6237), and it is only at 80 epochs that the higher rate
+        wins (-0.9422 against -0.6547).  That is why the epoch budget
+        and the rate have to be set **together**: the budget moves the
+        candidate into the region where the rate pays, and the rate
+        then moves the score inside it.
+
+        Against the rate the production loop actually used - 40 epochs
+        at 0.002, which is the ``prod-lr`` arm of the same study - the
+        shipped configuration is better on **11 of 12 folds**, by
+        0.5530 RMSE, with a paired Wilcoxon p of **0.005**.
+
+        The cost is nothing: the rate does not change how long an epoch
+        takes.  ``research/tracks/c_ship.py`` measured 12.2 s for 80
+        epochs on the full 113 089 rows at 0.008 and 12.4 s at 0.004.
+        """
+        return 0.008
 
     # ------------------------------------------------- protocol alignment
     def test_horizon(self):

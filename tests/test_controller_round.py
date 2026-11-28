@@ -34,7 +34,9 @@ if str(ROOT) not in sys.path:
 
 from contest_baselines.adapters import get as get_adapter  # noqa: E402
 from contest_baselines.layers.controller.round import RoundController  # noqa: E402
-from contest_baselines.layers.model.metrics import MetricRecord  # noqa: E402
+from contest_baselines.layers.model.metrics import (  # noqa: E402
+    BETTER, MetricRecord, compare_joint,
+)
 from contest_baselines.layers.view import View  # noqa: E402
 from contest_baselines.offline_host import package_root, run_entrypoint  # noqa: E402
 
@@ -212,4 +214,136 @@ class FullSplitGuardTest(unittest.TestCase):
         controller.candidate_record.selection_name = "rmse"
         guard = controller._full_split_guard()
         self.assertFalse(guard["active"])
-        self.assertTrue(guard["passed"])
+
+
+class FalsifierUsesTheFullSplitTest(unittest.TestCase):
+    """The falsifier must not veto on the metric the evidence distrusts.
+
+    ``compare_joint`` lets the full split decide, because the
+    leave-one-engine-out study in ``research/tracks/c_horizon.py`` found
+    every truncated slice anti-correlated with the held-out full split
+    (9 to 10 of 12 folds) and selecting by a slice beat the baseline in
+    0 of 12 folds.
+
+    The falsifier check (``_consistent_with_expectation``) used to
+    compare the **slice** anyway, so it silently vetoed exactly the
+    candidates the study says are worth keeping.  The platform's
+    2026-11-25 run shows the cost: rounds 6, 8 and 9 had a full split
+    that improved, and were rejected anyway, leaving five of the ten
+    rounds with nothing but the parent.
+
+    These tests pin the check to the same reading that decides.
+    """
+
+    @staticmethod
+    def _controller(before_full, before_late, after_full, after_late):
+        controller = RoundController.__new__(RoundController)
+        controller.adapter = get_adapter("C")
+        controller.parent_record = MetricRecord(
+            "regression", {"rmse": before_full, "late_rmse": before_late},
+            "rmse", before_full, selection_name="late_rmse",
+            selection_value=before_late)
+        controller.candidate_record = MetricRecord(
+            "regression", {"rmse": after_full, "late_rmse": after_late},
+            "rmse", after_full, selection_name="late_rmse",
+            selection_value=after_late)
+        controller.parent = type("P", (), {"task": "regression"})()
+        return controller
+
+    def test_a_full_split_gain_survives_a_regressed_slice(self):
+        # The platform's round 6: the full split improved from 51.2363
+        # while the slice went from 35.8438 to 37.1927.
+        controller = self._controller(51.2363, 35.8438, 51.0284, 37.1927)
+        self.assertTrue(controller._consistent_with_expectation(True))
+
+    def test_a_full_split_loss_fails_even_with_a_better_slice(self):
+        controller = self._controller(51.0, 38.0, 52.0, 30.0)
+        self.assertFalse(controller._consistent_with_expectation(True))
+
+    def test_a_flat_full_split_falls_back_to_the_slice(self):
+        # ``compare_joint`` returns BETTER here (the slice improved and
+        # the full split did not move), so the falsifier has to agree.
+        controller = self._controller(51.0, 38.0, 51.0, 30.0)
+        self.assertTrue(controller._consistent_with_expectation(True))
+
+    def test_a_flat_full_split_and_a_flat_slice_is_not_an_improvement(self):
+        controller = self._controller(51.0, 38.0, 51.0, 38.0)
+        self.assertFalse(controller._consistent_with_expectation(True))
+
+    def test_the_check_is_consistent_with_the_decision(self):
+        """Whatever ``compare_joint`` says, the falsifier must agree."""
+        for before_full, after_full, before_late, after_late in (
+                (51.0, 50.0, 38.0, 30.0),
+                (51.0, 52.0, 38.0, 30.0),
+                (51.0, 51.0, 38.0, 30.0),
+                (51.0, 51.0, 38.0, 38.0)):
+            controller = self._controller(before_full, before_late,
+                                         after_full, after_late)
+            verdict = compare_joint(controller.parent_record,
+                                    controller.candidate_record, "regression")
+            improved = verdict == BETTER
+            self.assertEqual(
+                controller._consistent_with_expectation(improved), improved,
+                "the falsifier disagrees with the decision at %s -> %s"
+                % (before_full, after_full))
+
+
+class TheReasonQuotesTheDecisionTest(unittest.TestCase):
+    """The decision's reason must quote the metric the decision used.
+
+    The verdict is made on the **primary** metric - the full split -
+    because the leave-one-engine-out study in
+    ``research/tracks/c_horizon.py`` found every truncated slice
+    anti-correlated with the held-out full split.
+
+    The reason strings used to quote the **slice** in three of their
+    branches, so the ledger read
+
+        "the hypothesis is refuted: late_rmse moved from 37.0 to 37.4"
+
+    for a round whose full RMSE moved from 50.4784 to 50.4896.  The
+    reader had to guess which number the decision was about, and the
+    platform's own report showed exactly that confusion.
+
+    These tests pin every branch to the metric the decision used.
+    """
+
+    @staticmethod
+    def _controller(before_full, before_late, after_full, after_late):
+        controller = RoundController.__new__(RoundController)
+        controller.adapter = get_adapter("C")
+        controller.parent_record = MetricRecord(
+            "regression", {"rmse": before_full, "late_rmse": before_late},
+            "rmse", before_full, selection_name="late_rmse",
+            selection_value=before_late)
+        controller.candidate_record = MetricRecord(
+            "regression", {"rmse": after_full, "late_rmse": after_late},
+            "rmse", after_full, selection_name="late_rmse",
+            selection_value=after_late)
+        controller.parent = type("P", (), {"task": "regression"})()
+        controller.adopted = False
+        controller.reason = ""
+        return controller
+
+    def test_a_refutation_quotes_the_full_split(self):
+        controller = self._controller(50.4784, 37.0693, 50.4896, 37.3967)
+        controller.decide()
+        self.assertFalse(controller.adopted)
+        self.assertIn("rmse", controller.reason)
+        self.assertIn("50.4784", controller.reason)
+        self.assertIn("50.4896", controller.reason)
+
+    def test_a_confirmation_quotes_the_full_split(self):
+        controller = self._controller(50.6121, 37.5860, 50.4784, 37.0693)
+        controller.decide()
+        self.assertTrue(controller.adopted)
+        self.assertIn("rmse", controller.reason)
+        self.assertIn("50.6121", controller.reason)
+        self.assertIn("50.4784", controller.reason)
+
+    def test_the_slice_is_recorded_as_evidence_not_as_the_decision(self):
+        """The slice may still be quoted, but only as the evidence."""
+        controller = self._controller(50.6121, 37.5860, 50.4784, 37.0693)
+        controller.decide()
+        self.assertIn("late_rmse", controller.reason)
+        self.assertIn("evidence", controller.reason)

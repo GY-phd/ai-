@@ -242,6 +242,16 @@ def render(markdown, path, title, s):
                 story.append(Spacer(1, 7))
             continue
 
+        m = re.match(r"^!\[\s*([^\]]*)\]\(\s*([^\)]+)\s*\)\s*$", stripped)
+        if m:
+            # A figure reference in the source.  The submitted PDFs are
+            # text documents, so the image is dropped rather than
+            # embedded; the reference is kept out of the flow too.
+            flush_paragraph(para)
+            para = []
+            i += 1
+            continue
+
         m = re.match(r"^(#{1,3})\s+(.*)$", stripped)
         if m:
             flush_paragraph(para)
@@ -304,7 +314,6 @@ def render(markdown, path, title, s):
                                        onPage=decorate)])
     doc.build(story)
     return path
-
 
 def main():
     s = styles()

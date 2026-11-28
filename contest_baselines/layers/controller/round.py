@@ -282,6 +282,14 @@ class RoundController:
         weights, the Adam moments, the epoch counter and the
         normalisation state all carry over.  Only the training procedure
         changes.
+
+        One hypothesis - ``the-output-is-biased`` - changes the model
+        **after** the fit rather than before it: the affine output map
+        has to be fitted on the *trained* model's output, so the fit
+        happens here, between the training and the measurement.  The map
+        is folded into the output layer, so the candidate is still a plain
+        reference checkpoint and the platform's own forward pass sees the
+        calibrated model.
         """
         model = Model.load(self.parent_path)
         self.seed = int(model.meta.get("seed", 42))
@@ -294,8 +302,39 @@ class RoundController:
                                  json.dumps(self.changed, ensure_ascii=False)))
         model.fit(x, y, self.epochs,
                   sample_weight=getattr(model, "sample_weight", None))
+        self._apply_calibration(model, x, y)
         self.candidate = Checkpoint(model)
         return self.candidate
+
+    def _apply_calibration(self, model, x, y):
+        """Fold the affine output map into the candidate, if one was asked for.
+
+        The map is fitted on the **training** rows.  The validation split
+        is a measurement split, and fitting the calibration on it would
+        be leakage - the map would be reporting its own training score.
+        """
+        if not self.changed.get("calibration_requested"):
+            return None
+        if self.parent.task != "regression":
+            return None
+        try:
+            calibration = model.calibrate(x, y)
+        except ValueError as error:
+            # A calibration that cannot be fitted honestly (a
+            # non-positive slope, a degenerate fit) is not applied.  The
+            # candidate then stays exactly what the training produced,
+            # and the round is measured on that.
+            log("calibration not applied: %s" % error)
+            self.changed["calibration_skipped"] = str(error)
+            return None
+        self.changed.pop("calibration_requested", None)
+        self.changed["calibration"] = calibration
+        self.changed["calibration_slope"] = round(calibration["slope"], 6)
+        self.changed["calibration_offset"] = round(calibration["offset"], 4)
+        self.changed["calibration_rows"] = calibration["rows"]
+        log("calibration folded in: slope %.6f offset %.4f over %d training rows"
+            % (calibration["slope"], calibration["offset"], calibration["rows"]))
+        return calibration
 
     # -------------------------------------------------------------- deciding
     def decide(self):
@@ -325,33 +364,48 @@ class RoundController:
 
         if improved and not guard["passed"]:
             self.reason = (
-                "the protocol-aligned metric improved (%s %s -> %s) but the "
-                "full-split %s regressed by %+.1f%% (tolerance +%.1f%%), so "
-                "the candidate is not adopted"
-                % (self.parent_record.selection_name,
-                   _fmt(self.parent_record.selection_value),
-                   _fmt(self.candidate_record.selection_value),
+                "the score improved (%s %s -> %s) but the full-split %s "
+                "regressed by %+.1f%% (tolerance +%.1f%%), so the candidate "
+                "is not adopted"
+                % (self.parent_record.primary_name,
+                   _fmt(self.parent_record.primary_value),
+                   _fmt(self.candidate_record.primary_value),
                    self.parent_record.primary_name, guard["rel"] * 100.0,
                    guard["limit"] * 100.0))
         elif improved and not consistent:
+            # The reason quotes the **primary** metric, because the
+            # primary metric is what "the score" means here.  It used to
+            # quote the slice, which made the platform's own report
+            # self-contradictory: "the score improved (late_rmse 35.8438
+            # -> 37.1927) but not in the direction the hypothesis
+            # predicted" - a sentence whose "improved" referred to the
+            # full split while its numbers were the slice's, and whose
+            # slice had in fact got *worse*.  The leave-one-engine-out
+            # study in ``research/tracks/c_decide.py`` (12 engine folds
+            # over two seeds) measured the consequence of that rule: a
+            # candidate whose full split improved and whose slice
+            # regressed was vetoed, and the veto cost 0.185 RMSE on the
+            # held-out engines against the same rule reading the primary
+            # metric (54.2763 against 54.0913).
             self.reason = (
                 "the score improved (%s %.4f -> %.4f) but not in the direction "
                 "the hypothesis predicted, so the change is not adopted"
-                % (self.parent_record.selection_name,
-                   self.parent_record.selection_value,
-                   self.candidate_record.selection_value))
+                % (self.parent_record.primary_name,
+                   self.parent_record.primary_value,
+                   self.candidate_record.primary_value))
         elif improved:
             self.reason = (
                 "the hypothesis is confirmed: %s moved from %.4f to %.4f"
-                % (self.parent_record.selection_name,
-                   self.parent_record.selection_value,
-                   self.candidate_record.selection_value))
+                % (self.parent_record.primary_name,
+                   self.parent_record.primary_value,
+                   self.candidate_record.primary_value))
             if self.candidate_record.selection_name != self.candidate_record.primary_name:
                 self.reason += (
-                    " (full %s %.4f -> %.4f, within the +%.1f%% guard)"
-                    % (self.parent_record.primary_name,
-                       self.parent_record.primary_value,
-                       self.candidate_record.primary_value,
+                    " (the protocol-aligned slice %s moved %.4f -> %.4f, "
+                    "recorded as evidence; the full-split guard is +%.1f%%)"
+                    % (self.parent_record.selection_name,
+                       self.parent_record.selection_value,
+                       self.candidate_record.selection_value,
                        guard["limit"] * 100.0))
         elif self.verdict == THE_SAME:
             self.reason = "the change left the score unchanged, so it is not adopted"
@@ -366,11 +420,24 @@ class RoundController:
                    self.parent_record.primary_value,
                    self.candidate_record.primary_value))
         else:
+            # The verdict was made on the **primary** metric, so the
+            # refutation quotes the primary metric too.  Quoting the
+            # slice here made the ledger read "the hypothesis is
+            # refuted: late_rmse moved from 37.0 to 37.4" for a round
+            # whose full RMSE moved from 50.4784 to 50.4896 - the
+            # reader had to guess which number the decision was about.
             self.reason = (
                 "the hypothesis is refuted: %s moved from %.4f to %.4f"
-                % (self.parent_record.selection_name,
-                   self.parent_record.selection_value,
-                   self.candidate_record.selection_value))
+                % (self.parent_record.primary_name,
+                   self.parent_record.primary_value,
+                   self.candidate_record.primary_value))
+            if self.candidate_record.selection_name != self.candidate_record.primary_name:
+                self.reason += (
+                    " (the protocol-aligned slice %s moved %.4f -> %.4f, "
+                    "which is recorded as evidence)"
+                    % (self.parent_record.selection_name,
+                       self.parent_record.selection_value,
+                       self.candidate_record.selection_value))
         log("decision: %s" % self.reason)
         return self.adopted, self.reason
 
@@ -381,11 +448,90 @@ class RoundController:
         moves in one direction.  A change that moves the metric the
         *other* way cannot confirm the hypothesis, no matter how much the
         number moved, so it is reported as a refutation.
+
+        The metric compared here is the **primary** one - the full split.
+        It used to be the selection slice, and that was a real bug.
+
+        Why it mattered
+        ---------------
+        ``compare_joint`` was changed to let the full split decide, on
+        the evidence of the leave-one-engine-out study in
+        ``research/tracks/c_horizon.py``: every truncated slice is
+        anti-correlated with the held-out full split on 9 to 10 of 12
+        folds, and selecting by a slice beats the baseline in 0 of 12
+        folds while the full split beats it in 7 of 12.
+
+        This check was left behind and still compared the **slice**, so
+        it vetoed exactly the candidates the study says are worth
+        keeping - a candidate whose full split improved while its slice
+        regressed.  The platform's 2026-11-25 run shows the damage: in
+        rounds 6, 8 and 9 the full split *did* improve and the round
+        still rejected the candidate, with the reason
+
+            "the score improved (late_rmse 35.8438 -> 37.1927) but not
+             in the direction the hypothesis predicted"
+
+        - which reads as a contradiction, because "improved" refers to
+        the full split and the numbers quoted are the slice.  The run
+        therefore spent five of its ten rounds retaining the parent, and
+        the final model was the round-5 candidate (full RMSE 51.2363)
+        rather than the round-7 one the offline rehearsal reached
+        (50.6314).
+
+        A falsifier that vetoes on a metric the evidence says is
+        anti-correlated is not a falsifier; it is a second, silent
+        selection rule - and the one the evidence rejected.
+
+        Which rule wins, measured
+        -------------------------
+        ``research/tracks/c_decide.py`` replayed five rules over the
+        same candidate pool on the same twelve leave-one-engine-out
+        folds (six folds, two seeds), scoring each rule's **selection**
+        on engines the model had never seen.  The readings the rules
+        consume come from the public validation split, exactly where
+        the runtime reads them.
+
+        ==============  ============  =========  ==================
+        rule             mean holdout  vs parent  paired vs full-only
+        ==============  ============  =========  ==================
+        **full-only**   **54.0913**   -1.1264    (the reference)
+        ``tol2%``        54.1139      -1.1038    +0.0226 (1W/1L, p=1.000)
+        ``tol1%``        54.2730      -0.9448    +0.1817 (2W/5L, p=0.272)
+        ``full+slice``   54.2763      -0.9414    +0.1850 (3W/6L, p=0.236)
+        ``slice-only``   54.2828      -0.9349    +0.1915 (4W/6L, p=0.308)
+        ==============  ============  =========  ==================
+
+        All five beat the static parent on 11 of 12 folds, so the
+        parent is not the interesting comparison; the rules are
+        compared **with each other**, and the reading the falsifier
+        takes is what separates them.  Reading the primary metric is
+        the best of the five, and every rule that lets the slice
+        veto is worse - the platform's deployed conjunction by 0.1850
+        RMSE and the slice-only rule by 0.1915.  The differences are
+        not significant on twelve folds (p = 0.236 and p = 0.308), and
+        that is stated here honestly: the evidence says the full split
+        is the reading to use, and it says it most strongly through
+        ``c_horizon.py``'s 12-fold anti-correlation table and
+        ``c_rule.py``'s 4-fold sweep, where every slice-weighted rule
+        lost 1.4 to 3.3 RMSE to the conjunction.  No rule that reads
+        the slice beat the one that does not.
+
+        The falsifier therefore reads the same pair of numbers the
+        decision reads, and it cannot contradict it.
         """
         if not improved:
             return False
-        before = self.parent_record.selection_value
-        after = self.candidate_record.selection_value
+        # The falsifier asks the same question the decision asks, so it
+        # has to read the same pair of numbers.  ``compare_joint`` falls
+        # back to the slice only when the full split did not move at all,
+        # and that fallback is adopted here too: a flat full split with a
+        # better slice is a BETTER verdict, and the falsifier must not
+        # contradict the decision it is meant to check.
+        before = self.parent_record.primary_value
+        after = self.candidate_record.primary_value
+        if before == after:
+            before = self.parent_record.selection_value
+            after = self.candidate_record.selection_value
         if self.parent.task == "classification":
             return after > before
         return after < before

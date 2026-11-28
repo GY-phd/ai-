@@ -537,6 +537,93 @@ class Model:
         self.meta["target_mean"] = 0.0
         return True
 
+    # ----------------------------------------------------------- calibration
+    def _internal_output(self, x):
+        """The network's raw regression output, before the nonnegativity clamp."""
+        _, logits = self.forward(self.normalized(x))
+        return logits[:, 0] * self.meta["target_scale"] + self.meta["target_mean"]
+
+    def calibrate(self, x, y):
+        """Fit an affine map on the output and fold it into the weights.
+
+        The problem it solves
+        --------------------
+        A regression model's error is not all shape: part of it is a
+        **constant offset**.  Measured on profile C's public validation
+        split, cut into five lifecycle stages, the freshest stage's error
+        is **44 % bias** - the model systematically predicts a lower
+        remaining life than the truth at the fresh end of an engine's
+        life, where the absolute targets are largest.
+
+        A constant offset in the output cannot be removed by any amount
+        of extra training, because the training rows and the scoring rows
+        are not distributed the same way (the fresh rows of an engine
+        that lives 435 cycles are a tiny share of the training mass).
+        But an affine map ``y ~ a * output + b`` removes it exactly.
+
+        Where the map is applied
+        -----------------------
+        The map is fitted on the network's **raw output**, before the
+        nonnegativity clamp, and folded into ``w2`` and ``b2``.  Two
+        reasons for that choice:
+
+        * The platform's own forward pass computes
+          ``max(0, logits * target_scale + target_mean)``, so a map that
+          lives *outside* the weights would have to be reproduced by the
+          platform - and the platform runs the reference forward, not
+          ours.  Folded into ``w2``/``b2``, the calibrated model **is**
+          the checkpoint, and the deployment path is byte-for-byte the
+          reference one.
+        * Fitting before the clamp means the calibration is fitted on the
+          quantity the network actually produces, so the fold is exact
+          rather than approximate.
+
+        The fold
+        --------
+        The internal representation is ``logits``, and the reconstruction
+        is ``output = logits * target_scale + target_mean``.  For the
+        calibrated output ``a * output + b`` to come out of the network,
+        the internal map has to be::
+
+            logits' = a * logits + ((a - 1) * target_mean + b) / target_scale
+
+        so ``w2`` is scaled by ``a`` and ``b2`` absorbs the rest.
+
+        The fit is a **least squares** on the rows given, which the
+        caller must take from the *training* split: the validation split
+        is a measurement split, and fitting on it would leak.
+
+        Returns a record of what was applied, for the ledger.
+        """
+        if self.meta["task"] != "regression":
+            raise ValueError("calibration is a regression-only operation")
+        x = np.asarray(x, dtype=np.float64)
+        y = np.asarray(y, dtype=np.float64).ravel()
+        if x.ndim != 2 or len(x) != len(y) or not len(y):
+            raise ValueError("calibration needs matching training rows")
+        raw = np.asarray(self._internal_output(x), dtype=np.float64).ravel()
+        # ``polyfit`` returns the highest power first: slope, intercept.
+        slope, offset = np.polyfit(raw, y, 1)
+        slope = float(slope)
+        offset = float(offset)
+        if not (math.isfinite(slope) and math.isfinite(offset)):
+            raise ValueError("the calibration fit is not finite")
+        if slope <= 0.0:
+            # A non-positive slope would fold a sign flip into the
+            # weights, which changes the model rather than calibrating
+            # it.  Such a fit means the map is not a calibration, so it
+            # is refused rather than applied.
+            raise ValueError("the calibration slope must be positive")
+        scale = float(self.meta.get("target_scale", 1.0))
+        mean = float(self.meta.get("target_mean", 0.0))
+        if scale <= 0.0:
+            raise ValueError("the checkpoint's target scale is not positive")
+        self.params["w2"] = self.params["w2"] * slope
+        self.params["b2"] = (self.params["b2"] * slope
+                              + ((slope - 1.0) * mean + offset) / scale)
+        self.validate()
+        return {"slope": slope, "offset": offset, "rows": int(len(y))}
+
 
 def checkpoint_digest(path):
     return "sha256:" + hashlib.sha256(Path(path).read_bytes()).hexdigest()

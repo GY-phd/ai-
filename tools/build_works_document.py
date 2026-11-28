@@ -28,6 +28,10 @@ import io
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from tools.normalize_report_style import normalize
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "提交材料_20261125" / "01_模型配置" / "作品文档.txt"
 
@@ -54,16 +58,16 @@ def main():
         RULE + "\n"
         "智训引擎 — 作品文档（模型配置 + 设计说明 + 技术报告 + 来源声明）\n"
         + RULE + "\n"
-        "赛题    : “智训引擎”——工业制造场景下的模型训练与超参数优化\n"
+        "赛题    : \"智训引擎\"——工业制造场景下的模型训练与超参数优化\n"
         "队伍    : gy_65511\n"
-        "版本    : v8\n"
-        "生成日期: 2026-11-24\n"
+        "版本    : v10\n"
+        "生成日期: 2026-11-25\n"
         "\n"
-        "本文件是平台提交表单唯一的文件入口（“作品文档”）的完整内容。\n"
+        "本文件是平台提交表单唯一的文件入口（\"作品文档\"）的完整内容。\n"
         "平台规则原文：\n"
-        "  “镜像和源码、模型调用信息、实验记录链接，以及设计说明、技术报告\n"
+        "  \"镜像和源码、模型调用信息、实验记录链接，以及设计说明、技术报告\n"
         "   （不超过 10 页）和来源声明。\n"
-        "   平台没有单独入口的材料请随作品文档提交或提供链接。”\n"
+        "   平台没有单独入口的材料请随作品文档提交或提供链接。\"\n"
         "\n"
         "其它材料各自独立成文件，见同目录的《提交清单与填写指引.md》：\n"
         "  镜像与源码  -> 02_Harness系统镜像/ 与 06_源码与依赖/\n"
@@ -77,7 +81,7 @@ def main():
         if not path.exists():
             print("  skip (missing): %s" % path.name, file=sys.stderr)
             continue
-        body = path.read_text(encoding="utf-8")
+        body = normalize(path.read_text(encoding="utf-8"))
         parts.append(RULE + "\n第 %d 节  %s\n" % (idx, title) + RULE + "\n")
         parts.append(body)
         parts.append("\n\n")

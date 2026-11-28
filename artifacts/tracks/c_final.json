@@ -1,0 +1,85 @@
+{
+ "format": "contest.research.c-final.v1",
+ "baseline": {
+  "full": 52.86857256611151,
+  "stage1": 78.543299768547,
+  "stage2": 50.03033679885555,
+  "stage3": 48.453912096207674,
+  "stage4": 47.481589852679186,
+  "stage5": 28.12523741088125,
+  "FD001": 42.83453261937968,
+  "FD002": 41.152059506011675,
+  "FD003": 55.355939500721526,
+  "FD004": 63.236794880334166,
+  "worst_lifecycle": 78.543299768547,
+  "worst_condition": 63.236794880334166
+ },
+ "candidates": [
+  {
+   "epochs": 53,
+   "lr": 0.008,
+   "alpha": 0.5,
+   "raw_full": 51.49946687332275,
+   "cal_full": 51.21118635085148,
+   "cal_worst_lifecycle": 77.74229766997955,
+   "cal_worst_condition": 63.00160099576671,
+   "wins_total": 6,
+   "folds_total": 6
+  },
+  {
+   "epochs": 53,
+   "lr": 0.004,
+   "alpha": 0.25,
+   "raw_full": 51.687528066101,
+   "cal_full": 51.50285111832895,
+   "cal_worst_lifecycle": 78.111225517338,
+   "cal_worst_condition": 63.91828012155861,
+   "wins_total": 5,
+   "folds_total": 6
+  },
+  {
+   "epochs": 63,
+   "lr": 0.004,
+   "alpha": 0.25,
+   "raw_full": 51.46626192748462,
+   "cal_full": 51.4196516243371,
+   "cal_worst_lifecycle": 78.56550819674315,
+   "cal_worst_condition": 63.25442936558119,
+   "wins_total": 6,
+   "folds_total": 6
+  },
+  {
+   "epochs": 74,
+   "lr": 0.004,
+   "alpha": 0.25,
+   "raw_full": 51.554055541602764,
+   "cal_full": 51.49227831474058,
+   "cal_worst_lifecycle": 78.57796444475139,
+   "cal_worst_condition": 63.45044745636806,
+   "wins_total": 6,
+   "folds_total": 6
+  },
+  {
+   "epochs": 74,
+   "lr": 0.008,
+   "alpha": 0.25,
+   "raw_full": 51.229065227857966,
+   "cal_full": 51.17837543274418,
+   "cal_worst_lifecycle": 77.62166931788776,
+   "cal_worst_condition": 63.147256896110456,
+   "wins_total": 6,
+   "folds_total": 6
+  },
+  {
+   "epochs": 74,
+   "lr": 0.004,
+   "alpha": 0.5,
+   "raw_full": 51.47223874979151,
+   "cal_full": 51.37705997799899,
+   "cal_worst_lifecycle": 78.35210123707722,
+   "cal_worst_condition": 63.35863801794999,
+   "wins_total": 6,
+   "folds_total": 6
+  }
+ ]
+}

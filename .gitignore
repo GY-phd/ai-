@@ -42,6 +42,11 @@ swanlog/
 *.log
 !docs/**/*.log
 
+# The ``.err`` sidecars are the standard error streams of background runs.
+# They are scratch: an empty one carries nothing, and a non-empty one is
+# a duplicate of what the run's own stdout log already records.
+*.err
+
 # The experiment folders under artifacts/ carry trained weights, which
 # the competition forbids in the submission.  The text beside them -
 # the run summaries, the ledgers, the comparison tables - is the
@@ -55,6 +60,13 @@ artifacts/**/*.pt
 artifacts/**/*.pth
 artifacts/**/*.joblib
 artifacts/**/*.onnx
+
+# The platform's own frontend bundle, saved locally so the scoring rules
+# can be read without hitting the network.  It is the platform's
+# copyrighted code, not ours, and the tools that need it
+# (``read_platform_*.py``) fetch it live.
+artifacts/platform_bundle.js
+artifacts/platform_index.html
 
 # ---- 2b. 本地工作区的重物与重复品 ----------------------------------
 # The repository root is a **working** directory: it holds the research
@@ -139,10 +151,19 @@ build/
 # The Harness image archive is a local build artefact, not source.
 zhixun-engine-linux-amd64.tar
 zhixun-engine-linux-amd64.tar.sha256
+# The versioned copy of the same archive.  It is 174 MB, which is past
+# GitHub's per-file limit, and it is delivered through the net-disk
+# link instead.
+zhixun-engine-linux-amd64-v10.tar
+zhixun-engine-linux-amd64-v10.tar.sha256
 
 # The submission package carries the same 174 MB tar plus a source zip;
 # it is a delivery bundle, not repository content.
 提交材料_20261125/
+# A zipped snapshot of that folder.  It is a convenience copy for
+# hand-off, and a snapshot always goes stale relative to the folder it
+# was taken from, so it is not kept in the repository.
+提交材料_*.zip
 
 # ---- 4. 本地环境 ----
 .venv/

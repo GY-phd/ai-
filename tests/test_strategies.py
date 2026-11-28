@@ -324,6 +324,143 @@ class RelativeDegradationWeightTest(unittest.TestCase):
         self.assertFalse(hasattr(model, "sample_weight"))
 
 
+class OutputCalibrationTest(unittest.TestCase):
+    """The affine output map is fitted on the training rows and folded in.
+
+    The invariants guarded here are the ones that make the calibration
+    honest and deployable:
+
+    * it is fitted on the **training** rows, never on the validation
+      split;
+    * it is folded into the output layer, so the calibrated model *is*
+      the checkpoint and the platform's own forward pass applies it;
+    * the fold is **exact** - the checkpoint's output after the fold is
+      the affine map applied to the output before it;
+    * it is refused when the fit is not a calibration (a non-positive
+      slope), rather than applied as a sign flip.
+
+    The synthetic rows are built so the target is a **positive** affine
+    function of a feature - a real regression target has to correlate
+    with the model's output, or the fit is a sign flip and the
+    calibration is (correctly) refused.
+    """
+
+    @staticmethod
+    def _hypothesis():
+        return next(h for h in BANK if h.key == "the-output-is-biased")
+
+    @staticmethod
+    def _correlated_train(units=4, per_unit=32, features=5, seed=13):
+        """Training rows whose target rises with a feature."""
+        ids, x, y = [], [], []
+        rng = np.random.default_rng(seed)
+        for unit in range(units):
+            for index in range(per_unit):
+                ids.append("fd001_train_u%04d_c%05d" % (unit, index))
+                row = rng.normal(0, 1, features)
+                row[0] += unit
+                x.append(row)
+                y.append(80.0 + 12.0 * row[0] + 3.0 * row[1]
+                         + 0.5 * index)
+        return {"ids": ids,
+                "x": np.asarray(x, dtype=np.float64),
+                "y": np.asarray(y, dtype=np.float64),
+                "paths": ["f%d" % i for i in range(features)]}
+
+    @staticmethod
+    def _regression_model(train, hidden=8):
+        """A model fitted on the correlated rows, so the map has a slope."""
+        return Model("regression", list(train["paths"]), [], train["x"],
+                     train["y"], hidden=hidden)
+
+    def test_the_fold_is_exact(self):
+        train = self._correlated_train()
+        model = self._regression_model(train)
+        model.fit(train["x"], train["y"], 60)
+        raw_before = np.asarray(model._internal_output(train["x"]), dtype=np.float64)
+        record = model.calibrate(train["x"], train["y"])
+        raw_after = np.asarray(model._internal_output(train["x"]), dtype=np.float64)
+        slope, offset = record["slope"], record["offset"]
+        self.assertGreater(slope, 0.0)
+        self.assertLess(float(np.max(np.abs(raw_after - (slope * raw_before + offset)))),
+                        1e-9)
+
+    def test_the_calibration_removes_a_constant_offset(self):
+        """A model with a known offset is corrected by the map."""
+        rng = np.random.default_rng(11)
+        features = 5
+        x = rng.normal(0, 1, (400, features))
+        y = 100.0 + 2.0 * x[:, 0] + 25.0          # a known 25-unit offset
+        model = Model("regression", ["f%d" % i for i in range(features)], [],
+                      x, y, hidden=8)
+        model.fit(x, y, 60)
+        before = np.asarray(model.predict(x), dtype=np.float64)
+        offset_before = float(np.mean(before - y))
+        model.calibrate(x, y)
+        after = np.asarray(model.predict(x), dtype=np.float64)
+        offset_after = float(np.mean(after - y))
+        self.assertLess(abs(offset_after), abs(offset_before))
+        self.assertAlmostEqual(offset_after, 0.0, delta=1.0)
+
+    def test_the_calibration_does_not_change_the_schema(self):
+        train = self._correlated_train()
+        model = self._regression_model(train)
+        model.fit(train["x"], train["y"], 60)
+        before = list(model.meta["paths"])
+        model.calibrate(train["x"], train["y"])
+        self.assertEqual(list(model.meta["paths"]), before)
+        self.assertEqual(model.meta["parameter_count"],
+                         sum(v.size for v in model.params.values()))
+
+    def test_a_non_positive_slope_is_refused(self):
+        train = self._correlated_train()
+        model = self._regression_model(train)
+        model.fit(train["x"], train["y"], 60)
+        raw = np.asarray(model._internal_output(train["x"]), dtype=np.float64)
+        with self.assertRaises(ValueError):
+            model.calibrate(train["x"], -raw)
+
+    def test_a_classification_model_refuses_the_calibration(self):
+        model = _model("classification")
+        train = _train("classification")
+        with self.assertRaises(ValueError):
+            model.calibrate(train["x"], train["y"])
+
+    def test_the_strategy_records_the_intent_and_the_controller_folds_it(self):
+        from contest_baselines.layers.controller.round import RoundController
+
+        hypothesis = self._hypothesis()
+        model = _model("regression")
+        train = self._correlated_train()
+        _x, _y, changed = prepare(hypothesis, model, train, "C", 42)
+        # ``prepare`` runs before the training, so it may only record the
+        # intent - the map has to be fitted on the *trained* model.
+        self.assertTrue(changed.get("calibration_requested"))
+        self.assertNotIn("calibration_slope", changed)
+
+        controller = RoundController.__new__(RoundController)
+        controller.changed = changed
+        controller.parent = type("P", (), {"task": "regression"})()
+        trained = self._regression_model(train)
+        trained.fit(train["x"], train["y"], 60)
+        record = controller._apply_calibration(trained, train["x"], train["y"])
+        self.assertIsNotNone(record)
+        self.assertIn("calibration_slope", controller.changed)
+        self.assertFalse(controller.changed.get("calibration_requested"))
+
+    def test_the_controller_leaves_the_model_alone_when_not_asked(self):
+        from contest_baselines.layers.controller.round import RoundController
+
+        controller = RoundController.__new__(RoundController)
+        controller.changed = {"sample_weight": "none"}
+        controller.parent = type("P", (), {"task": "regression"})()
+        model = _model("regression")
+        before = {k: v.copy() for k, v in model.params.items()}
+        self.assertIsNone(controller._apply_calibration(
+            model, np.zeros((1, 5)), np.zeros(1)))
+        for name, value in before.items():
+            self.assertTrue(np.array_equal(value, model.params[name]))
+
 
 class BoundedPriorShapeTest(unittest.TestCase):
     """The prior shape is a knob, and every shape is a valid loss mass."""

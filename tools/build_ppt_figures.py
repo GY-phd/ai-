@@ -186,17 +186,62 @@ def fig_platform_scores():
     ``runs/harness-offline/run_report.json`` - the offline rehearsal of
     the shipped system, on the same public split, with the same metric.
     """
-    # C: reference = our best measured candidate (round 10 of the shipped
-    # system's own rehearsal); the static checkpoint is kept as the
-    # secondary, weaker reference.
-    C_STATIC = 52.8686
-    C_OURS = 50.63140          # our best measured candidate
-    C_BEST = 50.63140          # best candidate under the identical protocol
-    rows = [
-        ("A", "Macro-F1 ↑", 0.7240, 0.87572, 20.96),
-        ("B", "RMSE ↓", 681.16, 609.08, 10.58),
-        ("C", "RMSE ↓", C_STATIC, C_BEST, 4.23),
-    ]
+    # The C numbers are **read from the rehearsal report**, not written
+    # down here.  They used to be hardcoded, and they went stale: the
+    # figure still carried v9's 50.63140 (+4.23%) while every document
+    # in the package had moved to v10's 50.6676 (+4.16%).  A figure that
+    # disagrees with the report it claims to plot is worse than no
+    # figure, so the numbers now come from the same file the other
+    # figures read.
+    rep = load_report()
+
+    def _final(key, metric):
+        """The **deployed** value of a direction's metric.
+
+        Not the last round's candidate: a round that is not adopted
+        leaves the parent in place, so the value the platform scores is
+        the last **adopted** round's.  Reading ``rounds[-1]`` instead
+        silently reported round 10's rejected candidate for C
+        (50.8439 against the deployed 50.6676).
+        """
+        rounds = rep["datasets"][key]["rounds"]
+        adopted = [r for r in rounds if r.get("adopted")]
+        chosen = (adopted or rounds)[-1]
+        return chosen["validation_after"][metric]
+
+    def _static(key, metric):
+        """The static baseline's value, from the measured baseline file."""
+        base = json.loads(
+            (ROOT / "artifacts" / "tracks" / "official_baselines.json")
+            .read_text(encoding="utf-8"))
+        return base[key]["validation"][metric]
+
+    # The static baselines are the platform's own numbers, as the
+    # package quotes them.  A's is 0.7240 - the platform's figure for
+    # the shipped checkpoint - which is *not* the 0.71403 that
+    # re-measuring that checkpoint locally produces; the two differ by
+    # the platform's split, and the platform's number is the one the
+    # score is relative to.  B and C agree to four decimals.
+    STATIC = {"A": 0.7240, "B": 681.160, "C": 52.8686}
+    C_STATIC = STATIC["C"]
+    C_OURS = _final("C", "rmse")
+    C_BEST = C_OURS
+    rows = []
+    for key, metric, label in (
+        ("A", "macro_f1", "Macro-F1 ↑"),
+        ("B", "rmse", "RMSE ↓"),
+        ("C", "rmse", "RMSE ↓"),
+    ):
+        static = STATIC[key]
+        got = _final(key, metric)
+        # Lower is better for RMSE, higher is better for Macro-F1, so the
+        # relative gain is signed by the direction of the metric.
+        rel = ((static - got) / static * 100.0 if metric == "rmse"
+               else (got - static) / static * 100.0)
+        rows.append((key, label, static, got, rel))
+    C_REL = rows[2][4]
+    A_REL = rows[0][4]
+    B_REL = rows[1][4]
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12.4, 4.6),
                                    gridspec_kw={"width_ratios": [1, 1.25]})
 
@@ -211,9 +256,10 @@ def fig_platform_scores():
     ax1.axhline(0, color=INK, lw=1.1)
     ax1.set_xticks(xs)
     ax1.set_xticklabels([r[0] for r in rows], fontsize=12, fontweight="bold")
-    _style(ax1, "相对参考基线的成绩（正 = 更好）", None, "相对提升 (%)")
-    ax1.set_ylim(0, 26)
-    ax1.text(2, 2.0, "平台 C 评测自身有 +10.06% 的\n系统性偏移，不宜作标尺",
+    _style(ax1, "相对静态基线的成绩（正 = 更好）", None, "相对提升 (%)")
+    ax1.set_ylim(0, max(6.0, max(abs(r[4]) for r in rows) * 1.45))
+    ax1.text(2, ax1.get_ylim()[0] * 0.22,
+             "平台 C 评测自身有 +10.06% 的\n系统性偏移，不宜作标尺",
              ha="center", fontsize=9.3, color=MUTED, fontweight="bold",
              linespacing=1.5)
 
@@ -224,7 +270,7 @@ def fig_platform_scores():
         tbl_data.append([k, m, "%.4f" % base, "%.5f" % got,
                          ("+" if rel > 0 else "") + "%.2f%%" % rel])
     table = ax2.table(cellText=tbl_data,
-                      colLabels=["方向", "指标", "参考基线", "本系统", "相对"],
+                      colLabels=["方向", "指标", "静态基线", "本系统", "相对"],
                       loc="center", cellLoc="center")
     table.auto_set_font_size(False)
     table.set_fontsize(10.5)
@@ -238,17 +284,21 @@ def fig_platform_scores():
             cell.set_text_props(fontweight="bold")
             cell.set_facecolor("#f2f6f4" if tbl_data[r - 1][4][0] == "+"
                                else "#fdf1ef")
-    ax2.set_title("三方向成绩明细（A/B 平台实测，C 为同协议下的自测对照）",
+    ax2.set_title("三方向成绩明细（同一协议下的十轮离线演练）",
                   fontsize=12, fontweight="bold", color=INK, pad=8)
     ax2.text(0.5, 0.06,
-             "C 方向参考基线取「我们自己的最优结果」%s：\n"
-             "平台 C 评测在公开 51.11116 的产物上报隐藏 56.25329（+10.06%%），\n"
-             "标尺本身不可信，故改用同一协议下可复现的自测最优值作参照。"
-             % ("%.5f" % C_OURS),
+             "三个方向都取自同一份十轮离线演练（runs/harness-offline）：\n"
+             "A %.5f（+%.2f%%）、B %.5f（+%.2f%%）、C %.5f（+%.2f%%）。\n"
+             "C 方向另注明：平台评测在公开 51.11116 的产物上报隐藏 56.25329\n"
+             "（+10.06%%），标尺本身不可信，故 C 以同一协议下的自测值为参照。"
+             % (_final("A", "macro_f1"), A_REL,
+                _final("B", "rmse"), B_REL,
+                C_OURS, C_REL),
              transform=ax2.transAxes, ha="center", fontsize=9.2,
              color=INK, fontweight="bold", linespacing=1.6)
 
-    fig.suptitle("图 2  三个方向相对参考基线全部为正，C 方向较静态基线再提升 4.23%",
+    fig.suptitle("图 2  三个方向相对静态基线全部为正，C 方向较静态基线再提升 %.2f%%"
+                 % C_REL,
                  fontsize=14, fontweight="bold", color=INK, y=1.02)
     fig.tight_layout()
     return _save(fig, "fig02_平台实测成绩.png")
@@ -842,6 +892,93 @@ def fig_failure():
     return _save(fig, "fig10_失败诊断与镜像体积.png")
 
 
+# ================================================================ FIG 11
+def fig_floor():
+    """The v10 finding: the worst stage's error is a constant offset.
+
+    Two panels:
+
+    * **left** - the per-stage error of the static baseline, split into
+      the part a constant offset explains (the bias) and the rest (the
+      shape).  The freshest stage's bar is dominated by its bias, and
+      that is exactly the stage the platform's ``worst_stage`` line
+      scores.
+    * **right** - the three readings the platform scores, before and
+      after the calibration, with the static baseline as the ruler.
+    """
+    data = json.loads((ROOT / "artifacts" / "tracks" / "c_fresh.json")
+                      .read_text(encoding="utf-8"))
+    deployed = json.loads((ROOT / "artifacts" / "tracks" / "c_deployed.json")
+                          .read_text(encoding="utf-8"))
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13.0, 4.5),
+                                   gridspec_kw={"width_ratios": [1.0, 1.05]})
+
+    # ---- left: where the error is --------------------------------------
+    stages = ["stage1", "stage2", "stage3", "stage4", "stage5"]
+    labels = ["stage1\n(新鲜)", "stage2", "stage3", "stage4", "stage5\n(最晚)"]
+    base = data["baseline_stages"]
+    rmse = [base[s]["rmse"] for s in stages]
+    shape = [base[s]["shape_rmse"] for s in stages]
+    bias_part = [max(0.0, r ** 2 - sh ** 2) ** 0.5 for r, sh in zip(rmse, shape)]
+    xs = np.arange(len(stages))
+
+    ax1.bar(xs, shape, 0.56, color="#4a7f96", alpha=0.92,
+            label="形状误差（校准治不了的部分）", edgecolor="white", lw=1.1)
+    ax1.bar(xs, bias_part, 0.56, bottom=shape, color=ACCENT, alpha=0.92,
+            label="常数偏移（校准能消掉的部分）", edgecolor="white", lw=1.1)
+    for i, s in enumerate(stages):
+        share = base[s]["bias_share"] * 100
+        ax1.text(xs[i], rmse[i] + 2.2, "偏移占 %.0f%%" % share,
+                 ha="center", fontsize=9.4,
+                 color=ACCENT if share > 30 else MUTED,
+                 fontweight="bold" if share > 30 else "normal")
+    ax1.set_xticks(xs)
+    ax1.set_xticklabels(labels, fontsize=9.4)
+    ax1.set_ylabel("RMSE（越小越好）", fontsize=10)
+    ax1.set_ylim(0, max(rmse) * 1.28)
+    _style(ax1, "静态基线逐段误差：新鲜段的误差 41.8% 是常数偏移", None, None)
+    ax1.legend(fontsize=8.8, loc="upper right", framealpha=0.94)
+
+    # ---- right: the three readings -------------------------------------
+    keys = [("full", "全量 RMSE"),
+            ("worst_lifecycle", "最差生命周期阶段"),
+            ("worst_condition", "最差工况 FD004")]
+    b = deployed["baseline"]
+    f = deployed["floors"]
+    names = [k[1] for k in keys]
+    base_vals = [b[k[0]] for k in keys]
+    new_vals = [f[k[0]] for k in keys]
+    xs2 = np.arange(len(keys))
+    w = 0.36
+
+    ax2.bar(xs2 - w / 2, base_vals, w, color="#9aa7b4", alpha=0.92,
+            label="静态基线", edgecolor="white", lw=1.1)
+    ax2.bar(xs2 + w / 2, new_vals, w, color=GOOD, alpha=0.92,
+            label="v10 部署轨迹底线", edgecolor="white", lw=1.1)
+    for i, (bv, nv) in enumerate(zip(base_vals, new_vals)):
+        gain = (bv - nv) / bv * 100
+        ax2.text(xs2[i] + w / 2, nv - max(base_vals) * 0.075,
+                 "改善 %.2f%%" % gain, ha="center", fontsize=9.6,
+                 color="white", fontweight="bold")
+        ax2.text(xs2[i] - w / 2, bv + max(base_vals) * 0.022,
+                 "%.4f" % bv, ha="center", fontsize=9.2, color=MUTED)
+        ax2.text(xs2[i] + w / 2, nv + max(base_vals) * 0.022,
+                 "%.4f" % nv, ha="center", fontsize=9.2, color=INK,
+                 fontweight="bold")
+    ax2.set_xticks(xs2)
+    ax2.set_xticklabels(names, fontsize=9.6)
+    ax2.set_ylim(0, max(base_vals) * 1.22)
+    ax2.set_ylabel("RMSE（越小越好）", fontsize=10)
+    _style(ax2, "三个读数同时抬高：底线不是拿头条换来的", None, None)
+    ax2.legend(fontsize=9.0, loc="upper right", framealpha=0.94)
+
+    fig.suptitle("图 11  v10 根因：最差阶段的误差是常数偏移，输出层仿射校准一次消掉",
+                 fontsize=13.8, fontweight="bold", color=INK, y=1.03)
+    fig.tight_layout()
+    return _save(fig, "fig11_最差阶段偏移与校准.png")
+
+
 # ================================================================ MAIN
 FIGURES = {
     "progress": fig_progress,
@@ -854,6 +991,7 @@ FIGURES = {
     "sft": fig_sft,
     "system": fig_system,
     "failure": fig_failure,
+    "floor": fig_floor,
 }
 
 

@@ -49,13 +49,18 @@ def start(extra=()):
     LOGS.mkdir(parents=True, exist_ok=True)
     # The batch file writes the log from inside the process, because
     # redirecting in the .bat is unreliable across sessions.
-    cmd = 'cmd.exe /c "%s"' % BAT
+    #
+    # The command line is built without embedded quotes: WMI's Create takes
+    # the string verbatim, and a nested-quoted path (the repository has a
+    # space in it) is what breaks it.
+    bat = str(BAT)
+    cmd = "cmd.exe /c %s" % bat
     ps = (
-        '$c = "%s"; '
+        '$c = "{cmd}"; '
         '$r = Invoke-CimMethod -ClassName Win32_Process -MethodName Create '
-        '-Arguments @{CommandLine=$c; CurrentDirectory="%s"}; '
+        '-Arguments @{{CommandLine=$c; CurrentDirectory="{cwd}"}}; '
         'Write-Output ("pid=" + $r.ProcessId + " rc=" + $r.ReturnValue)'
-    ) % (cmd, ROOT)
+    ).format(cmd=cmd, cwd=ROOT)
     out = subprocess.run(
         ["powershell", "-NoProfile", "-NonInteractive", "-Command", ps],
         capture_output=True, text=True, timeout=120,

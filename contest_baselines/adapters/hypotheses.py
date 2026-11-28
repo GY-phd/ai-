@@ -162,6 +162,29 @@ DEGRADATION_IS_RELATIVE = Hypothesis(
     profiles={"C"},
 )
 
+OUTPUT_IS_BIASED = Hypothesis(
+    key="the-output-is-biased",
+    claim="Part of the model's error is not shape at all but a constant "
+          "offset: on profile C the freshest lifecycle stage's error is "
+          "44% bias - the model systematically predicts a lower remaining "
+          "life than the truth where the absolute targets are largest.  "
+          "No amount of extra training removes that offset, because the "
+          "fresh rows are a tiny share of the training mass while the "
+          "scoring rows are spread over the whole life cycle.",
+    change="Fit the least-squares affine map `y ~ a * output + b` on the "
+           "**training** rows and fold it into the output layer (`w2` and "
+           "`b2`), so the calibrated model *is* the checkpoint and the "
+           "platform's own forward pass sees it.  The feature schema, the "
+           "target's meaning and the prediction path are untouched.",
+    falsifier="If the full-split RMSE does not fall, or if the worst "
+              "lifecycle stage's RMSE rises, the output did not carry a "
+              "removable offset.",
+    expect="Full-split RMSE falls and the worst lifecycle stage's RMSE does "
+           "not rise - the floor of the drift stream is kept, not traded "
+           "away for the headline number.",
+    profiles={"B", "C"},
+)
+
 UNIT_IS_CONFOUNDER = Hypothesis(
     key="the-unit-is-the-confounder",
     claim="The model cannot tell which unit a row came from, so it "
@@ -246,6 +269,7 @@ BANK = (
     TAIL_WEIGHTED,
     THE_TEST_IS_TRUNCATED,
     DEGRADATION_IS_RELATIVE,
+    OUTPUT_IS_BIASED,
     UNIT_IS_CONFOUNDER,
     CAPACITY,
     RARE_CLASS_UNDERWEIGHTED,

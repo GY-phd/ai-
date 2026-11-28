@@ -1,0 +1,480 @@
+{
+ "format": "contest.research.a-ceiling.v1",
+ "seeds": [
+  42,
+  7
+ ],
+ "epochs": 30,
+ "records": [
+  {
+   "hidden": 32,
+   "alpha_power": 0.0,
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.7192279935410043,
+   "accuracy": 0.8737942122186495,
+   "per_class_f1": {
+    "Ethanol": 0.6766595289079229,
+    "Ethylene": 0.9341692789968651,
+    "Ammonia": 0.9949748743718593,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.7142857142857143
+   }
+  },
+  {
+   "hidden": 32,
+   "alpha_power": 0.0,
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.7192279935410043,
+   "accuracy": 0.8737942122186495,
+   "per_class_f1": {
+    "Ethanol": 0.6766595289079229,
+    "Ethylene": 0.9341692789968651,
+    "Ammonia": 0.9949748743718593,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.7142857142857143
+   }
+  },
+  {
+   "hidden": 32,
+   "alpha_power": 1.0,
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.7218712074733441,
+   "accuracy": 0.8770096463022508,
+   "per_class_f1": {
+    "Ethanol": 0.6825053995680345,
+    "Ethylene": 0.939157566302652,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.7142857142857143
+   }
+  },
+  {
+   "hidden": 32,
+   "alpha_power": 1.0,
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.7218712074733441,
+   "accuracy": 0.8770096463022508,
+   "per_class_f1": {
+    "Ethanol": 0.6825053995680345,
+    "Ethylene": 0.939157566302652,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.7142857142857143
+   }
+  },
+  {
+   "hidden": 32,
+   "alpha_power": 2.0,
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.7280056660125026,
+   "accuracy": 0.8737942122186495,
+   "per_class_f1": {
+    "Ethanol": 0.6781115879828326,
+    "Ethylene": 0.9291338582677166,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.05217391304347826,
+    "Acetone": 0.9943289224952742,
+    "Toluene": 0.7142857142857143
+   }
+  },
+  {
+   "hidden": 32,
+   "alpha_power": 2.0,
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.7280056660125026,
+   "accuracy": 0.8737942122186495,
+   "per_class_f1": {
+    "Ethanol": 0.6781115879828326,
+    "Ethylene": 0.9291338582677166,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.05217391304347826,
+    "Acetone": 0.9943289224952742,
+    "Toluene": 0.7142857142857143
+   }
+  },
+  {
+   "hidden": 32,
+   "alpha_power": 3.0,
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.7108966522191932,
+   "accuracy": 0.8697749196141479,
+   "per_class_f1": {
+    "Ethanol": 0.6695278969957081,
+    "Ethylene": 0.9257503949447078,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.05172413793103448,
+    "Acetone": 0.9933774834437086,
+    "Toluene": 0.625
+   }
+  },
+  {
+   "hidden": 32,
+   "alpha_power": 3.0,
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.7108966522191932,
+   "accuracy": 0.8697749196141479,
+   "per_class_f1": {
+    "Ethanol": 0.6695278969957081,
+    "Ethylene": 0.9257503949447078,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.05172413793103448,
+    "Acetone": 0.9933774834437086,
+    "Toluene": 0.625
+   }
+  },
+  {
+   "hidden": 64,
+   "alpha_power": 0.0,
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.7260506633243945,
+   "accuracy": 0.8834405144694534,
+   "per_class_f1": {
+    "Ethanol": 0.6945054945054945,
+    "Ethylene": 0.9522342064714946,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.7142857142857143
+   }
+  },
+  {
+   "hidden": 64,
+   "alpha_power": 0.0,
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.7260506633243945,
+   "accuracy": 0.8834405144694534,
+   "per_class_f1": {
+    "Ethanol": 0.6945054945054945,
+    "Ethylene": 0.9522342064714946,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.7142857142857143
+   }
+  },
+  {
+   "hidden": 64,
+   "alpha_power": 1.0,
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.7250936120186428,
+   "accuracy": 0.8778135048231511,
+   "per_class_f1": {
+    "Ethanol": 0.683982683982684,
+    "Ethylene": 0.939157566302652,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.01785714285714286,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.7142857142857143
+   }
+  },
+  {
+   "hidden": 64,
+   "alpha_power": 1.0,
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.7250936120186428,
+   "accuracy": 0.8778135048231511,
+   "per_class_f1": {
+    "Ethanol": 0.683982683982684,
+    "Ethylene": 0.939157566302652,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.01785714285714286,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.7142857142857143
+   }
+  },
+  {
+   "hidden": 64,
+   "alpha_power": 2.0,
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.721399961491374,
+   "accuracy": 0.8762057877813505,
+   "per_class_f1": {
+    "Ethanol": 0.6796536796536797,
+    "Ethylene": 0.9341692789968651,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.05263157894736843,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.6666666666666666
+   }
+  },
+  {
+   "hidden": 64,
+   "alpha_power": 2.0,
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.721399961491374,
+   "accuracy": 0.8762057877813505,
+   "per_class_f1": {
+    "Ethanol": 0.6796536796536797,
+    "Ethylene": 0.9341692789968651,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.05263157894736843,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.6666666666666666
+   }
+  },
+  {
+   "hidden": 64,
+   "alpha_power": 3.0,
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.6808673304021764,
+   "accuracy": 0.867363344051447,
+   "per_class_f1": {
+    "Ethanol": 0.6550218340611355,
+    "Ethylene": 0.9291338582677166,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.05217391304347826,
+    "Acetone": 0.9943289224952742,
+    "Toluene": 0.45454545454545453
+   }
+  },
+  {
+   "hidden": 64,
+   "alpha_power": 3.0,
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.6808673304021764,
+   "accuracy": 0.867363344051447,
+   "per_class_f1": {
+    "Ethanol": 0.6550218340611355,
+    "Ethylene": 0.9291338582677166,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.05217391304347826,
+    "Acetone": 0.9943289224952742,
+    "Toluene": 0.45454545454545453
+   }
+  },
+  {
+   "hidden": 96,
+   "alpha_power": 0.0,
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.6987490969870284,
+   "accuracy": 0.8713826366559485,
+   "per_class_f1": {
+    "Ethanol": 0.6695278969957081,
+    "Ethylene": 0.9439252336448597,
+    "Ammonia": 0.9587628865979382,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.625
+   }
+  },
+  {
+   "hidden": 96,
+   "alpha_power": 0.0,
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.6987490969870284,
+   "accuracy": 0.8713826366559485,
+   "per_class_f1": {
+    "Ethanol": 0.6695278969957081,
+    "Ethylene": 0.9439252336448597,
+    "Ammonia": 0.9587628865979382,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.625
+   }
+  },
+  {
+   "hidden": 96,
+   "alpha_power": 1.0,
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.6983055612668615,
+   "accuracy": 0.8697749196141479,
+   "per_class_f1": {
+    "Ethanol": 0.6666666666666667,
+    "Ethylene": 0.939157566302652,
+    "Ammonia": 0.9637305699481865,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.625
+   }
+  },
+  {
+   "hidden": 96,
+   "alpha_power": 1.0,
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.6983055612668615,
+   "accuracy": 0.8697749196141479,
+   "per_class_f1": {
+    "Ethanol": 0.6666666666666667,
+    "Ethylene": 0.939157566302652,
+    "Ammonia": 0.9637305699481865,
+    "Acetaldehyde": 0.0,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.625
+   }
+  },
+  {
+   "hidden": 96,
+   "alpha_power": 2.0,
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.7145013764821084,
+   "accuracy": 0.8762057877813505,
+   "per_class_f1": {
+    "Ethanol": 0.6782608695652174,
+    "Ethylene": 0.9358372456964007,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.05263157894736843,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.625
+   }
+  },
+  {
+   "hidden": 96,
+   "alpha_power": 2.0,
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.7145013764821084,
+   "accuracy": 0.8762057877813505,
+   "per_class_f1": {
+    "Ethanol": 0.6782608695652174,
+    "Ethylene": 0.9358372456964007,
+    "Ammonia": 1.0,
+    "Acetaldehyde": 0.05263157894736843,
+    "Acetone": 0.9952785646836638,
+    "Toluene": 0.625
+   }
+  },
+  {
+   "hidden": 96,
+   "alpha_power": 3.0,
+   "seed": 42,
+   "epochs": 30,
+   "macro_f1": 0.659950120256842,
+   "accuracy": 0.862540192926045,
+   "per_class_f1": {
+    "Ethanol": 0.6371681415929205,
+    "Ethylene": 0.9339622641509435,
+    "Ammonia": 0.9849246231155778,
+    "Acetaldehyde": 0.05217391304347826,
+    "Acetone": 0.9943289224952742,
+    "Toluene": 0.3571428571428571
+   }
+  },
+  {
+   "hidden": 96,
+   "alpha_power": 3.0,
+   "seed": 7,
+   "epochs": 30,
+   "macro_f1": 0.659950120256842,
+   "accuracy": 0.862540192926045,
+   "per_class_f1": {
+    "Ethanol": 0.6371681415929205,
+    "Ethylene": 0.9339622641509435,
+    "Ammonia": 0.9849246231155778,
+    "Acetaldehyde": 0.05217391304347826,
+    "Acetone": 0.9943289224952742,
+    "Toluene": 0.3571428571428571
+   }
+  }
+ ],
+ "summary": [
+  {
+   "hidden": 32,
+   "alpha_power": 2.0,
+   "mean_macro_f1": 0.7280056660125026,
+   "mean_acetaldehyde": 0.05217391304347826,
+   "mean_min_class": 0.05217391304347826
+  },
+  {
+   "hidden": 64,
+   "alpha_power": 0.0,
+   "mean_macro_f1": 0.7260506633243945,
+   "mean_acetaldehyde": 0.0,
+   "mean_min_class": 0.0
+  },
+  {
+   "hidden": 64,
+   "alpha_power": 1.0,
+   "mean_macro_f1": 0.7250936120186428,
+   "mean_acetaldehyde": 0.01785714285714286,
+   "mean_min_class": 0.01785714285714286
+  },
+  {
+   "hidden": 32,
+   "alpha_power": 1.0,
+   "mean_macro_f1": 0.7218712074733441,
+   "mean_acetaldehyde": 0.0,
+   "mean_min_class": 0.0
+  },
+  {
+   "hidden": 64,
+   "alpha_power": 2.0,
+   "mean_macro_f1": 0.721399961491374,
+   "mean_acetaldehyde": 0.05263157894736843,
+   "mean_min_class": 0.05263157894736843
+  },
+  {
+   "hidden": 32,
+   "alpha_power": 0.0,
+   "mean_macro_f1": 0.7192279935410043,
+   "mean_acetaldehyde": 0.0,
+   "mean_min_class": 0.0
+  },
+  {
+   "hidden": 96,
+   "alpha_power": 2.0,
+   "mean_macro_f1": 0.7145013764821084,
+   "mean_acetaldehyde": 0.05263157894736843,
+   "mean_min_class": 0.05263157894736843
+  },
+  {
+   "hidden": 32,
+   "alpha_power": 3.0,
+   "mean_macro_f1": 0.7108966522191932,
+   "mean_acetaldehyde": 0.05172413793103448,
+   "mean_min_class": 0.05172413793103448
+  },
+  {
+   "hidden": 96,
+   "alpha_power": 0.0,
+   "mean_macro_f1": 0.6987490969870284,
+   "mean_acetaldehyde": 0.0,
+   "mean_min_class": 0.0
+  },
+  {
+   "hidden": 96,
+   "alpha_power": 1.0,
+   "mean_macro_f1": 0.6983055612668615,
+   "mean_acetaldehyde": 0.0,
+   "mean_min_class": 0.0
+  },
+  {
+   "hidden": 64,
+   "alpha_power": 3.0,
+   "mean_macro_f1": 0.6808673304021764,
+   "mean_acetaldehyde": 0.05217391304347826,
+   "mean_min_class": 0.05217391304347826
+  },
+  {
+   "hidden": 96,
+   "alpha_power": 3.0,
+   "mean_macro_f1": 0.659950120256842,
+   "mean_acetaldehyde": 0.05217391304347826,
+   "mean_min_class": 0.05217391304347826
+  }
+ ]
+}
